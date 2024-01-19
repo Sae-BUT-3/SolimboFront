@@ -15,7 +15,6 @@ function SignInScreen({ navigation }) {
           placeholder="Email"
           value={email}
           onChangeText={setEmail}
-          defaultValue="user@gmail.com"
           textContentType="emailAddress"
         />
       <Text>Password</Text>

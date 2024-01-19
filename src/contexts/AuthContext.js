@@ -1,7 +1,8 @@
 // AuthContext.js
 import { createContext, useContext, useState } from 'react';
 import Tokenizer from '../utils/Tokenizer';
-import axios from 'axios';
+import axiosInstance from '../api/axiosInstance';
+
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
@@ -10,30 +11,50 @@ export const AuthProvider = ({ children }) => {
 
   const signIn = (email, password) => {
 
-    axios.post('api/users/signin',
-    { 
-      email: email,
-      password: password,
-    })
-    .then((response) => {
-      if (response.status == 201) {
-        let { data } = response;
-        if (data.error) {
-          throw new Error(data.error);
-        }
-        tokenize.setToken(data);
-        setUser(
-          {
-            email: email,
-            password: password,
-          }
-        );
-      }
-    })
-    .catch((error) => {
-      console.log("🚀 ~ file: AuthContext.js:36 ~ login ~ error:", error)
-    });
-  }
+    const postData = {
+      email: 'alban.talagrand@gmail.com',
+      password: 'testpassword'
+    };
+    
+    axiosInstance.post("/users/signin", postData)
+      .then(response => {
+        // Traitement de la réponse
+        console.log(response.data);
+      })
+      .catch(error => {
+        // Gestion des erreurs
+        console.error(error);
+      });
+  
+    // instance.post('/users/signin', {
+    //   email: email,
+    //   password: password,
+    // }, {
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //   },
+    // })
+    //   .then((response) => {
+    //     console.log("🚀 ~ file: AuthContext.js:65 ~ signIn ~ response", response);
+    //     // Pas besoin de response.json() ici avec Axios, la réponse est déjà en format JSON
+    //     const data = response.data;
+        
+    //     if (data.error) {
+    //       throw new Error(data.error);
+    //     }
+  
+    //     tokenize.setToken(data);
+    //     setUser({
+    //       email: email,
+    //       password: password,
+    //     });
+    //   })
+    //   .catch(error => {
+    //     console.error(error);
+    //     console.error(JSON.stringify(error));
+    //   });
+  };
+  
 
   const logout = () => {
     setUser(null);
