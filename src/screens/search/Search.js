@@ -14,7 +14,11 @@ function Search() {
         });
     }, [])
     function handleSerch(query){
-       console.log(query.filters.join(","))
+        if(!query.text.length) {
+            setItems([])
+            return
+        }
+        console.log(query.text)
         const params = {
             query: query.text,
             spotify_filter: query.filters.join(","),
