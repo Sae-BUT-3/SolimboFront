@@ -3,6 +3,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useAuth } from "../contexts/AuthContext";
 import SignInScreen from "../screens/auth/SignInScreen";
 import SignUpScreen from "../screens/auth/SignUpScreen";
+import Search from "../screens/search/Search";
 import TabNavigator from "./TabNavigator";
 
 const Stack = createNativeStackNavigator();
@@ -13,14 +14,15 @@ const MainNavigator = () => {
 
     return (
         <Stack.Navigator>
-        {user == null ? (
-            <>
-                <Stack.Screen name="SignIn" component={SignInScreen} />
-                <Stack.Screen name="SignUp" component={SignUpScreen} />
-            </>
-            ) : (
-            <Stack.Screen name="TabNavigator" component={TabNavigator} />
-        )}
+        {/*{user == null ? (*/}
+        {/*    <>*/}
+        {/*        <Stack.Screen name="SignIn" component={SignInScreen} />*/}
+        {/*        <Stack.Screen name="SignUp" component={SignUpScreen} />*/}
+        {/*    </>*/}
+        {/*    ) : (*/}
+        {/*    <Stack.Screen name="TabNavigator" component={TabNavigator} />*/}
+        {/*)}*/}
+            <Stack.Screen name="Search" component={Search}/>
         </Stack.Navigator>
     );
 };

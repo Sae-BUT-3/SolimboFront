@@ -1,9 +1,29 @@
 import React, {useEffect, useState} from 'react';
-import { View, Button, TextInput, Text } from 'react-native';
+import {View, Button, TextInput, Text, StyleSheet} from 'react-native';
 import axiosInstance from '../../api/axiosInstance';
 import Searchbar from "../../component/search/Searchbar";
 import SearchResult from "../../component/search/SearchResult";
+import Svg, {Path} from "react-native-svg";
 function Search() {
+    const styles = StyleSheet.create({
+        container: {
+            backgroundColor: "#191414",
+            height: "100%",
+            display: "flex",
+            flexDirection: "column",
+            maxWidth: "100vw",
+            alignItems: "center"
+        },
+        SearchBarContainer: {
+            width: "95%",
+            paddingBottom: "10px"
+        },
+        resultContainer: {
+            display: "flex",
+            flexDirection: "column",
+            gap: "10px"
+        }
+    })
     const [filter, setFilter] = useState([]);
     const [items, setItems] = useState([]);
 
@@ -18,7 +38,6 @@ function Search() {
             setItems([])
             return
         }
-        console.log(query.text)
         const params = {
             query: query.text,
             spotify_filter: query.filters.join(","),
@@ -27,15 +46,23 @@ function Search() {
         axiosInstance.get("/spotify/search",{
             params
         }).then(response => {
-            console.log(response.data)
             setItems(response.data)
         })
     }
 
     return (
-        <View>
-            <Searchbar filters={filter} keyPressHandler={query => handleSerch(query)}/>
-            <View>
+        <View
+            style={styles.container}
+        >
+            <View
+                style={styles.SearchBarContainer}
+            >
+                <Searchbar filters={filter} keyPressHandler={query => handleSerch(query)}/>
+            </View>
+
+            <View
+                style={styles.resultContainer}
+            >
                 {items.map((item, index) => (
                     <SearchResult
                         key={index}
@@ -46,6 +73,7 @@ function Search() {
                 ))
                 }
             </View>
+
         </View>
     );
 
