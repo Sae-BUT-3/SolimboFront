@@ -18,15 +18,14 @@ const MainNavigator = () => {
                 headerShown: false
             }}
         >
-        {/*{user == null ? (*/}
-        {/*    <>*/}
-        {/*        <Stack.Screen name="SignIn" component={SignInScreen} />*/}
-        {/*        <Stack.Screen name="SignUp" component={SignUpScreen} />*/}
-        {/*    </>*/}
-        {/*    ) : (*/}
-        {/*    <Stack.Screen name="TabNavigator" component={TabNavigator} />*/}
-        {/*)}*/}
-            <Stack.Screen name="Search" component={Search}/>
+        {user == null ? (
+            <>
+                <Stack.Screen name="SignIn" component={SignInScreen} />
+                <Stack.Screen name="SignUp" component={SignUpScreen} />
+            </>
+            ) : (
+            <Stack.Screen name="TabNavigator" component={TabNavigator} />
+        )}
         </Stack.Navigator>
     );
 };
