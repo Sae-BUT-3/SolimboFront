@@ -7,8 +7,8 @@ import Svg, {Path} from "react-native-svg";
 function Search() {
     const styles = StyleSheet.create({
         container: {
+            minHeight: "100%",
             backgroundColor: "#191414",
-            height: "100%",
             display: "flex",
             flexDirection: "column",
             maxWidth: "100vw",
