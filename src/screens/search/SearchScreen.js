@@ -1,29 +1,15 @@
 import React, {useEffect, useState} from 'react';
-import {View, Button, TextInput, Text, StyleSheet} from 'react-native';
+import {View, Button, TextInput, Text} from 'react-native';
 import axiosInstance from '../../api/axiosInstance';
-import Searchbar from "../../component/search/Searchbar";
-import SearchResult from "../../component/search/SearchResult";
+import Searchbar from "../../components/search/Searchbar";
+import SearchResult from "../../components/search/SearchResult";
+import commonStyles from '../../style/commonStyle';
+import searchStyle from '../../style/searchStyle';
+
 import Svg, {Path} from "react-native-svg";
-function Search() {
-    const styles = StyleSheet.create({
-        container: {
-            minHeight: "100%",
-            backgroundColor: "#191414",
-            display: "flex",
-            flexDirection: "column",
-            maxWidth: "100vw",
-            alignItems: "center"
-        },
-        SearchBarContainer: {
-            width: "95%",
-            paddingBottom: "10px"
-        },
-        resultContainer: {
-            display: "flex",
-            flexDirection: "column",
-            gap: "10px"
-        }
-    })
+
+function SearchScreen() {
+
     const [filter, setFilter] = useState([]);
     const [items, setItems] = useState([]);
 
@@ -52,16 +38,16 @@ function Search() {
 
     return (
         <View
-            style={styles.container}
+            style={commonStyles.container}
         >
             <View
-                style={styles.SearchBarContainer}
+                style={searchStyle.searchContainer}
             >
                 <Searchbar filters={filter} keyPressHandler={query => handleSerch(query)}/>
             </View>
 
             <View
-                style={styles.resultContainer}
+                style={searchStyle.searchResultContainer}
             >
                 {items.map((item, index) => (
                     <SearchResult
@@ -80,4 +66,4 @@ function Search() {
 
 }
 
-export default Search;
+export default SearchScreen;

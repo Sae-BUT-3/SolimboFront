@@ -12,7 +12,7 @@ const styles = StyleSheet.create({
         paddingBottom: "2px",
         paddingLeft: "10px",
         paddingRight: "10px",
-        borderRadius:"20px",
+        borderRadius:"20",
         borderColor: "#404040",
         borderWidth: "1px",
     },

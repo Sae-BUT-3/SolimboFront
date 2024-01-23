@@ -1,5 +1,4 @@
-// AuthContext.js
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useState, useEffect } from 'react';
 import Tokenizer from '../utils/Tokenizer';
 import axiosInstance from '../api/axiosInstance';
 
@@ -7,7 +6,6 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const tokenize = new Tokenizer();
 
   const signIn = (email, password) => {
 
@@ -18,47 +16,35 @@ export const AuthProvider = ({ children }) => {
     
     axiosInstance.post("/users/signin", postData)
       .then(response => {
-        // Traitement de la réponse
-        console.log(response.data);
+        console.log("🚀 ~ signIn ~ response:", response)
+        const token = response.data.token;
+        Tokenizer.setToken(token);
+        setUser({ email });
       })
       .catch(error => {
-        // Gestion des erreurs
         console.error(error);
       });
-  
-    // instance.post('/users/signin', {
-    //   email: email,
-    //   password: password,
-    // }, {
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //   },
-    // })
-    //   .then((response) => {
-    //     console.log("🚀 ~ file: AuthContext.js:65 ~ signIn ~ response", response);
-    //     // Pas besoin de response.json() ici avec Axios, la réponse est déjà en format JSON
-    //     const data = response.data;
-        
-    //     if (data.error) {
-    //       throw new Error(data.error);
-    //     }
-  
-    //     tokenize.setToken(data);
-    //     setUser({
-    //       email: email,
-    //       password: password,
-    //     });
-    //   })
-    //   .catch(error => {
-    //     console.error(error);
-    //     console.error(JSON.stringify(error));
-    //   });
   };
-  
+
+  const autoSignIn = async () => {
+    const token = await Tokenizer.getValidToken();
+
+    if (token) {
+      // Récupérer les informations de l'utilisateur avec le token
+      // Vous devrez peut-être envoyer une requête au serveur pour valider le token et obtenir les données de l'utilisateur
+      // Assurez-vous que le serveur est configuré pour vérifier et retourner les détails de l'utilisateur avec le token
+      // Utilisez les informations récupérées pour définir l'utilisateur dans l'état local
+      setUser({ email: 'user@example.com' }); // Remplacez par les données réelles de l'utilisateur
+    }
+  };
+
+  useEffect(() => {
+    autoSignIn();
+  }, []); // S'exécute une fois au montage du composant
 
   const logout = () => {
     setUser(null);
-    setToken(null);
+    Tokenizer.clearToken();
   };
 
   return (

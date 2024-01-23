@@ -21,7 +21,7 @@ function SearchResult({imageURL, title, subtitle}) {
             width: "50px"
         },
         imageSquare: {
-            borderRadius: "5px",
+            borderRadius: "5",
         },
         imageRound: {
             borderRadius: "50%",

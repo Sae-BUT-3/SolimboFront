@@ -7,6 +7,8 @@ module.exports = function(api) {
         moduleName: '@env',
         path: '.env',
       }],
+      '@babel/plugin-proposal-export-namespace-from',
+      'react-native-reanimated/plugin',
     ],
   };
 };
