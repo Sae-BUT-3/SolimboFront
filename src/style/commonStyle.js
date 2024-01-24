@@ -36,7 +36,7 @@ const commonStyles = StyleSheet.create({
         color: Colors.BattleShipGray,
         height: 40,
         fontFamily : "inter-regular",
-        outlineStyle: "none",
+        // outlineStyle: "none",
     },
     inputFocused: {
         color : Colors.White,

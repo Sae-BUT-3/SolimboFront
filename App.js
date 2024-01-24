@@ -8,7 +8,7 @@ import { useEffect, useState } from 'react';
 import * as Font from 'expo-font';
 
 export default function App() {
-  
+  const [fontsLoaded, setFontsLoaded] = useState(false);
   // useEffect(() => {
   //   makeServer();
 
@@ -45,10 +45,17 @@ export default function App() {
         'inter-extra-bold': require('./src/assets/fonts/Inter-ExtraBold.ttf'),
         'inter-semi-bold': require('./src/assets/fonts/Inter-SemiBold.ttf'),
       });
+
+      setFontsLoaded(true);
     };
 
     loadFonts();
   }, []);
+  
+  if (!fontsLoaded) {
+    // Vous pouvez afficher un écran de chargement ici ou tout autre composant indiquant que les polices sont en cours de chargement.
+    return null;
+  }
 
   return (
     <AuthProvider>
