@@ -33,11 +33,11 @@ function SearchScreen() {
         axiosInstance.get("/spotify/search",{
             params
         }).then(response => {
+            setItems(response.data)
             if(response.data.length > 0){
                 setMesssageText(null)
                 return
             }
-            setItems(response.data)
             setMesssageText('Pas de résulat pour cette recherche')
         })
     }
