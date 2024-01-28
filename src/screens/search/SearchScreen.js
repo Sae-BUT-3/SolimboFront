@@ -12,6 +12,7 @@ function SearchScreen() {
 
     const [filter, setFilter] = useState([]);
     const [items, setItems] = useState([]);
+    const [messsageText, setMesssageText] = useState("Recherchez vos artistes, musiques ou amis");
 
     useEffect(() => {
         // Fetch search filters when the component mounts
@@ -32,7 +33,12 @@ function SearchScreen() {
         axiosInstance.get("/spotify/search",{
             params
         }).then(response => {
+            if(response.data.length > 0){
+                setMesssageText(null)
+                return
+            }
             setItems(response.data)
+            setMesssageText('Pas de résulat pour cette recherche')
         })
     }
 
@@ -45,7 +51,13 @@ function SearchScreen() {
             >
                 <Searchbar filters={filter} keyPressHandler={query => handleSerch(query)}/>
             </View>
-
+            {messsageText ?
+                <Text
+                    style={searchStyle.messageText}
+                >
+                    {messsageText}
+                </Text> : null
+            }
             <ScrollView
                 style={[searchStyle.resultContainer]}
             >

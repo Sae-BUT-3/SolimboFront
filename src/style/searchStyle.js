@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-
+import {Colors} from './color'
 const searchStyle = StyleSheet.create({
     searchContainer: {
         width: "95%",
@@ -11,6 +11,11 @@ const searchStyle = StyleSheet.create({
         gap: 10,
         width: "95%",
         paddingLeft: "5px",
+    },
+    messageText: {
+        fontSize: 50,
+        fontWeight: "500",
+        color: Colors.Celadon
     }
 });
 
