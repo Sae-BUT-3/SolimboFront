@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {View, Button, TextInput, Text} from 'react-native';
+import {View, Button, TextInput, Text, ScrollView} from 'react-native';
 import axiosInstance from '../../api/axiosInstance';
 import Searchbar from "../../components/search/Searchbar";
 import SearchResult from "../../components/search/SearchResult";
@@ -27,7 +27,7 @@ function SearchScreen() {
         const params = {
             query: query.text,
             spotify_filter: query.filters.join(","),
-            limit: 10
+            limit: 20
         }
         axiosInstance.get("/spotify/search",{
             params
@@ -46,20 +46,21 @@ function SearchScreen() {
                 <Searchbar filters={filter} keyPressHandler={query => handleSerch(query)}/>
             </View>
 
-            <View
-                style={searchStyle.searchResultContainer}
+            <ScrollView
+                style={[searchStyle.resultContainer]}
             >
-                {items.map((item, index) => (
-                    <SearchResult
-                        key={index}
-                        imageURL={item.imageURL}
-                        title={item.title}
-                        subtitle={item.subtitle}
-                    />
-                ))
-                }
-            </View>
-
+                <View style={[searchStyle.resultContainer]}>
+                    {items.map((item, index) => (
+                        <SearchResult
+                            key={index}
+                            imageURL={item.imageURL}
+                            title={item.title}
+                            subtitle={item.subtitle}
+                        />
+                    ))
+                    }
+                </View>
+            </ScrollView>
         </View>
     );
 

@@ -1,51 +1,56 @@
 import React from 'react';
 import { View, Text, Image,StyleSheet } from 'react-native';
+import commonStyles from "../../style/commonStyle";
+import {Colors} from "../../style/color";
 
 function SearchResult({imageURL, title, subtitle}) {
     const baseImageURL = "https://merriam-webster.com/assets/mw/images/article/art-wap-article-main/egg-3442-e1f6463624338504cd021bf23aef8441@1x.jpg"
     const styles = StyleSheet.create({
         diplayContainer: {
             display: "flex",
-            flexDirection: "row"
+            flexDirection: "row",
+            flex: 1,
         },
         searchResultContainer: {
-            gap: "10px"
+            gap: 10,
         },
         infoContainer: {
             alignItems: "center",
-            width: "calc(95vw - 100px)",
-            gap: "15px"
+            width: "90%",
+            gap: 15
         },
         resultImage: {
-            height: "50px",
-            width: "50px"
+            height: 50,
+            width: 50
         },
         imageSquare: {
-            borderRadius: "5",
+            borderRadius: 5,
         },
         imageRound: {
-            borderRadius: "50%",
-        },
-        tempText: {
-            color: "#FFFFFF",
+            borderRadius: 50,
         },
         dot: {
-            width: "100%",
-            height: "100%",
             alignItems: "center",
-            color: "#B3B3B3",
-            fontSize: "6px"
+            color: Colors.Silver,
+            fontSize: 10,
         },
         subtitleContainer: {
-            gap: "10px"
+            alignItems: "center",
+            flex: 1,
+            gap: 10
         },
         subtitles: {
+            color: Colors.Silver,
+            paddingLeft: 10
 
-            color: "#B3B3B3",
+        },
+        limitSize: {
+            maxWidth: "60%"
         }
     })
 
     const imageStyle = subtitle ? styles.imageRound : styles.imageSquare
+    const limitSize = subtitle ? styles.limitSize : {}
     return (
         <View
             style={[styles.diplayContainer,styles.searchResultContainer]}
@@ -62,7 +67,7 @@ function SearchResult({imageURL, title, subtitle}) {
                 <Text
                     numberOfLines={3}
                     ellipsizeMode="tail"
-                    style={styles.tempText}
+                    style={[commonStyles.text,limitSize]}
                 >
                     {title}
                 </Text>

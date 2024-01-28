@@ -7,10 +7,10 @@ const commonStyles = StyleSheet.create({
         backgroundColor: Colors.Licorice,
         display: "flex",
         flexDirection: "column",
-        maxWidth: "100vw",
+        minWidth: "100vw",
         alignItems: "center",
         // justifyContent: "center",
-        paddingTop: "20%",
+        paddingTop: 20,
     },
     text: {
         fontSize: 16,
