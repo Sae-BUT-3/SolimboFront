@@ -3,7 +3,7 @@ import { View, Text, Image,StyleSheet } from 'react-native';
 import commonStyles from "../../style/commonStyle";
 import {Colors} from "../../style/color";
 
-function SearchResult({imageURL, title, subtitle}) {
+function SearchResult({imageURL, title, subtitle, rounded}) {
     const baseImageURL = "https://merriam-webster.com/assets/mw/images/article/art-wap-article-main/egg-3442-e1f6463624338504cd021bf23aef8441@1x.jpg"
     const styles = StyleSheet.create({
         diplayContainer: {
@@ -41,16 +41,14 @@ function SearchResult({imageURL, title, subtitle}) {
         },
         subtitles: {
             color: Colors.Silver,
-            paddingLeft: 10
-
+            marginLeft: 10
         },
         limitSize: {
             maxWidth: "60%"
         }
     })
 
-    const imageStyle = subtitle ? styles.imageRound : styles.imageSquare
-    const limitSize = subtitle ? styles.limitSize : {}
+    const imageStyle = rounded ? styles.imageRound : styles.imageSquare
     return (
         <View
             style={[styles.diplayContainer,styles.searchResultContainer]}
@@ -67,7 +65,7 @@ function SearchResult({imageURL, title, subtitle}) {
                 <Text
                     numberOfLines={3}
                     ellipsizeMode="tail"
-                    style={[commonStyles.text,limitSize]}
+                    style={[commonStyles.text,styles.limitSize]}
                 >
                     {title}
                 </Text>
@@ -82,7 +80,7 @@ function SearchResult({imageURL, title, subtitle}) {
 
                                 style={[styles.dot,styles.diplayContainer]}
                             >
-                                {'\u2B24'}
+                                {'\u2B24' + "     "}
                             </Text>
                         </Text>
                         <Text

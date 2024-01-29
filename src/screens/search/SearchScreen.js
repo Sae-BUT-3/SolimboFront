@@ -8,6 +8,8 @@ import searchStyle from '../../style/searchStyle';
 
 import Svg, {Path} from "react-native-svg";
 
+
+
 function SearchScreen() {
 
     const [filter, setFilter] = useState([]);
@@ -42,6 +44,7 @@ function SearchScreen() {
         })
     }
 
+
     return (
         <View
             style={commonStyles.container}
@@ -62,12 +65,15 @@ function SearchScreen() {
                 style={[searchStyle.resultContainer]}
             >
                 <View style={[searchStyle.resultContainer]}>
-                    {items.map((item, index) => (
+                    {
+
+                        items.map((item, index) => (
                         <SearchResult
                             key={index}
                             imageURL={item.imageURL}
                             title={item.title}
                             subtitle={item.subtitle}
+                            rounded={item.type === 'user' || item.type === 'artist'}
                         />
                     ))
                     }
