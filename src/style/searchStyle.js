@@ -15,7 +15,9 @@ const searchStyle = StyleSheet.create({
     messageText: {
         fontSize: 50,
         fontWeight: "500",
-        color: Colors.Celadon
+        color: Colors.Celadon,
+        paddingLeft: 15,
+        paddingRight: 15,
     }
 });
 
