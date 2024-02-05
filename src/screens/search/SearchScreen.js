@@ -1,17 +1,23 @@
 import React, {useEffect, useState} from 'react';
-import {View, Button, TextInput, Text, ScrollView} from 'react-native';
+import {View, Button, TextInput, Text, ScrollView, StyleSheet, useWindowDimensions} from 'react-native';
 import axiosInstance from '../../api/axiosInstance';
 import Searchbar from "../../components/search/Searchbar";
 import SearchResult from "../../components/search/SearchResult";
 import commonStyles from '../../style/commonStyle';
 import searchStyle from '../../style/searchStyle';
 
-import Svg, {Path} from "react-native-svg";
 
 
 
 function SearchScreen() {
+    const {height, width} = useWindowDimensions();
+    console.log(width)
+    const responsiveStyle = StyleSheet.create({
+        container: {
+            width: width> 1080 ? 1080 : "100vw",
+        }
 
+    })
     const [filter, setFilter] = useState([]);
     const [items, setItems] = useState([]);
     const [messsageText, setMesssageText] = useState("Recherchez vos artistes, musiques ou amis");
@@ -47,7 +53,7 @@ function SearchScreen() {
 
     return (
         <View
-            style={commonStyles.container}
+            style={[commonStyles.container, responsiveStyle.container]}
         >
             <View
                 style={searchStyle.searchContainer}

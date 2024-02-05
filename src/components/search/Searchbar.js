@@ -1,46 +1,50 @@
 import React, {useState} from 'react';
-import {View, Text, TextInput, StyleSheet} from 'react-native';
+import {View, Text, TextInput, StyleSheet, useWindowDimensions, Platform} from 'react-native';
 import Filter from "./Filter";
 import Svg, { Path } from 'react-native-svg';
 import {Colors} from "../../style/color";
+import {breakpoint} from "../../style/breakpoint";
 
-const styles = StyleSheet.create({
-    diplayContainer: {
-        display: "flex",
-        flexDirection: "row",
-        width: "100%",
-        alignItems: "center"
-    },
-    SearchBarContainer: {
-        paddingBottom: 10,
-        display:"flex",
-        justifyContent: "space-between"
-    },
-    SearchBar: {
-        display: "flex",
-        flexDirection: "row",
-        width: "70%",
-        backgroundColor: "#2B2B2B",
-        paddingTop: 10,
-        paddingLeft: 10,
-        paddingBottom: 10,
-        borderRadius:10,
-        color: Colors.Silver,
-    },
-    filters: {
-        gap: 10,
-        overflowY: "scroll"
-    },
-    cancelText: {
-        color:Colors.Silver,
-
-    },
-
-})
 function SearchBar({keyPressHandler, filters}) {
+    const {height, width} = useWindowDimensions();
     const allFilters = filters.map(item => item.id)
     const [filterArray, setFilterArray] = useState([])
     const [inputValue, setInputValue] = useState('');
+
+    const styles = StyleSheet.create({
+        diplayContainer: {
+            display: "flex",
+            flexDirection: "row",
+            width: "100%",
+            alignItems: "center"
+        },
+        SearchBarContainer: {
+            paddingBottom: 10,
+            display:"flex",
+            justifyContent: "space-between"
+        },
+        SearchBar: {
+            display: "flex",
+            flexDirection: "row",
+            width: "70%",
+            backgroundColor: "#2B2B2B",
+            paddingTop: 10,
+            paddingLeft: 10,
+            paddingBottom: 10,
+            borderRadius:10,
+            color: Colors.Silver,
+        },
+        filters: {
+            gap: 10,
+            overflowY: width < breakpoint.mobile && Platform.OS !== "web" ? "scroll" : "none",
+            flexWrap: Platform.OS === "web" ? "wrap" : "nowrap"
+        },
+        cancelText: {
+            color:Colors.Silver,
+
+        },
+
+    })
 
     function triggerSearch(text,filter){
         const query =  {}
