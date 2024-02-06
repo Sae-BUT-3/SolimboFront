@@ -9,7 +9,6 @@ const commonStyles = StyleSheet.create({
         flexDirection: "column",
         alignItems: "center",
         margin: 'auto',
-        // justifyContent: "center",
         paddingTop: 20,
     },
     text: {

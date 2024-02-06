@@ -21,7 +21,7 @@ function SearchBar({keyPressHandler, filters}) {
         SearchBarContainer: {
             paddingBottom: 10,
             display:"flex",
-            justifyContent: "space-between"
+            justifyContent: width < breakpoint.medium && Platform.OS === "web" ? "space-around" : "space-between"
         },
         SearchBar: {
             display: "flex",

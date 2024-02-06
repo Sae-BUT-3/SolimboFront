@@ -1,10 +1,11 @@
 import React from 'react';
-import { View, Text, Image,StyleSheet } from 'react-native';
+import {View, Text, Image, StyleSheet, useWindowDimensions, Platform} from 'react-native';
 import commonStyles from "../../style/commonStyle";
 import {Colors} from "../../style/color";
 
 function SearchResult({imageURL, title, subtitle, rounded}) {
     const baseImageURL = "https://merriam-webster.com/assets/mw/images/article/art-wap-article-main/egg-3442-e1f6463624338504cd021bf23aef8441@1x.jpg"
+    const {height, width} = useWindowDimensions()
     const styles = StyleSheet.create({
         diplayContainer: {
             display: "flex",
@@ -12,6 +13,7 @@ function SearchResult({imageURL, title, subtitle, rounded}) {
             flex: 1,
         },
         searchResultContainer: {
+            width: "100%",
             gap: 10,
         },
         infoContainer: {
@@ -41,7 +43,8 @@ function SearchResult({imageURL, title, subtitle, rounded}) {
         },
         subtitles: {
             color: Colors.Silver,
-            marginLeft: 10
+            marginLeft: 10,
+            marginRight: Platform.OS === 'web' ? 15 : 0
         },
         limitSize: {
             maxWidth: "60%"
@@ -69,7 +72,7 @@ function SearchResult({imageURL, title, subtitle, rounded}) {
                 >
                     {title}
                 </Text>
-                {subtitle ?
+                {subtitle && width > 250 ?
                     <Text
                         numberOfLines={1}
                         ellipsizeMode="tail"

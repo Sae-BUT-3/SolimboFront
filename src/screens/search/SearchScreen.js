@@ -3,21 +3,55 @@ import {View, Button, TextInput, Text, ScrollView, StyleSheet, useWindowDimensio
 import axiosInstance from '../../api/axiosInstance';
 import Searchbar from "../../components/search/Searchbar";
 import SearchResult from "../../components/search/SearchResult";
-import commonStyles from '../../style/commonStyle';
-import searchStyle from '../../style/searchStyle';
+import {Colors} from "../../style/color";
 
 
 
 
 function SearchScreen() {
-    const {height, width} = useWindowDimensions();
-    console.log(width)
-    const responsiveStyle = StyleSheet.create({
+    const {height, width} = useWindowDimensions()
+    const searchStyle = StyleSheet.create({
         container: {
-            width: width> 1080 ? 1080 : "100vw",
-        }
+            width: "100%",
+            height: "100%",
+            minHeight: "100%",
+            backgroundColor: Colors.Licorice,
+            margin: 'auto',
+        },
+        subContainer: {
+            width: width> 1200 ? 1200 : "100%",
+            height: "100%",
+            margin: "auto"
+        },
+        searchContainer: {
+            paddingBottom: 10,
+            paddingTop: 10,
+            paddingLeft: 10,
+            position: "sticky",
+            top: 0,
+            backgroundColor: Colors.Licorice,
+            zIndex: 1,
+        },
+        resultContainer: {
+            display: "flex",
+            flexDirection: "column",
+            gap: 10,
 
-    })
+            width: width> 1200 ? 1200 : "100vw",
+        },
+        resultItemContainer: {
+            width: "95%",
+            margin: "auto"
+        },
+        messageText: {
+            fontSize: 50,
+            fontWeight: "500",
+            color: Colors.Celadon,
+            paddingLeft: 15,
+            paddingRight: 15,
+        }
+    });
+
     const [filter, setFilter] = useState([]);
     const [items, setItems] = useState([]);
     const [messsageText, setMesssageText] = useState("Recherchez vos artistes, musiques ou amis");
@@ -52,40 +86,44 @@ function SearchScreen() {
 
 
     return (
-        <View
-            style={[commonStyles.container, responsiveStyle.container]}
+        <ScrollView
+            style={[searchStyle.container]}
         >
             <View
-                style={searchStyle.searchContainer}
+                style={searchStyle.subContainer}
             >
-                <Searchbar filters={filter} keyPressHandler={query => handleSerch(query)}/>
-            </View>
-            {messsageText ?
-                <Text
-                    style={searchStyle.messageText}
+                <View
+                    style={searchStyle.searchContainer}
                 >
-                    {messsageText}
-                </Text> : null
-            }
-            <ScrollView
-                style={[searchStyle.resultContainer]}
-            >
-                <View style={[searchStyle.resultContainer]}>
-                    {
-
-                        items.map((item, index) => (
-                        <SearchResult
-                            key={index}
-                            imageURL={item.imageURL}
-                            title={item.title}
-                            subtitle={item.subtitle}
-                            rounded={item.type === 'user' || item.type === 'artist'}
-                        />
-                    ))
-                    }
+                    <Searchbar filters={filter} keyPressHandler={query => handleSerch(query)}/>
                 </View>
-            </ScrollView>
-        </View>
+                {messsageText ?
+                    <Text
+                        style={searchStyle.messageText}
+                    >
+                        {messsageText}
+                    </Text> : null
+                }
+                    <View style={[searchStyle.resultContainer]}>
+
+                        {
+                            items.map((item, index) => (
+                                <View
+                                    key={index}
+                                    style={searchStyle.resultItemContainer}>
+                                    <SearchResult
+                                        key={index}
+                                        imageURL={item.imageURL}
+                                        title={item.title}
+                                        subtitle={item.subtitle}
+                                        rounded={item.type === 'user' || item.type === 'artist'}
+                                    />
+                                </View>
+                        ))
+                        }
+                    </View>
+            </View>
+        </ScrollView>
     );
 
 
