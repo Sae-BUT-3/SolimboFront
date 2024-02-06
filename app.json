@@ -1,5 +1,6 @@
 {
   "expo": {
+    "scheme" : "solimbo",
     "name": "Solimbo",
     "slug": "Solimbo",
     "version": "1.0.0",
@@ -15,7 +16,8 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.solimbo.app",
     },
     "android": {
       "adaptiveIcon": {

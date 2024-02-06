@@ -38,7 +38,7 @@ function SearchScreen() {
 
     return (
         <View
-            style={commonStyles.container}
+            style={commonStyles.safeAreaContainer}
         >
             <View
                 style={searchStyle.searchContainer}

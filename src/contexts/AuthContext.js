@@ -16,10 +16,9 @@ export const AuthProvider = ({ children }) => {
     
     axiosInstance.post("/users/signin", postData)
       .then(response => {
-        console.log("🚀 ~ signIn ~ response:", response)
+        console.log("🚀 ~ signIn ~ response:", response.data)
         const token = response.data.token;
         Tokenizer.setToken(token);
-        setUser({ email });
       })
       .catch(error => {
         console.error(error);
