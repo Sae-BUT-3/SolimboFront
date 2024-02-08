@@ -1,30 +1,74 @@
 import React, { useState, useEffect } from 'react';
-import { Pressable, StyleSheet, Text, Image} from 'react-native';
-import { Colors } from '../../style/color';
+import {Pressable, Text, Image, Platform} from 'react-native';
 import pressableBasicStyle from '../../style/pressableBasicStyle';
-import commonStyles from '../../style/commonStyle';
+import * as WebBrowser from 'expo-web-browser';
+import { makeRedirectUri, useAuthRequest } from 'expo-auth-session';
 import authStyle from '../../style/authStyle';
-// import fonts from '../config/fonts';
-import { Linking } from 'react-native';
 import axiosInstance from '../../api/axiosInstance';
 
+WebBrowser.maybeCompleteAuthSession();
+const scopes = [
+    'user-read-private',
+    'user-read-email',
+    'user-library-read',
+    'playlist-read-private',
+    'playlist-read-collaborative',
+    'playlist-modify-public',
+    'playlist-modify-private',
+    'user-read-playback-state',
+    'user-modify-playback-state',
+    'user-read-currently-playing',
+    'user-follow-read',
+    'user-follow-modify',
+    'user-library-read',
+    'user-library-modify',
+    'user-top-read',
+    'user-read-recently-played',
+    'ugc-image-upload'
+]
+// Endpoint
+const discovery = {
+    authorizationEndpoint: 'https://accounts.spotify.com/authorize',
+    tokenEndpoint: 'https://accounts.spotify.com/api/token',
+};
 
 const PressableSpotify = ({ ...props }) => {
+    const [request, response, promptAsync] = useAuthRequest(
+        {
+            clientId: process.env.CLIENT_ID,
+            scopes,
+            // To follow the "Authorization Code Flow" to fetch token after authorizationEndpoint
+            // this must be set to false
+            usePKCE: false,
+            redirectUri: makeRedirectUri({
+                scheme: 'exp',
+                preferLocalhost: true,
+            }),
+        },
+        discovery
+    );
+
+
     const [isPressed, setIsPressed] = useState(false);
-    const [spotifyAuthURL, setSpotifyAuthURL] = useState('');
-
     useEffect(() => {
-
-        axiosInstance.get('/spotify/getAuthURL')
-        .then((response) => {
-            console.log("SpotifyURL",response.data)
-            setSpotifyAuthURL(response.data)
-        })
-        .catch(error => {
-            console.log("🚀 ~ file: App.js:33 ~ axios.get ~ error", error)
-        });
-        
-    }, []);
+        if (response?.type === 'success') {
+            const { code } = response.params;
+            axiosInstance.post("/users/authWithSpotify", {
+                spotify_code: code,
+                mobile: Platform.OS !== 'web'
+            }).then(response => {
+                console.log(response.data)
+                console.log(response.data.confirmToken)
+                if(response.data.confirmToken) {
+                    //confirm
+                }
+                else {
+                    //response.data.token
+                    //login
+                }
+            }).catch(error => console.log("error /users/authWithSpotify",JSON.stringify(error)))
+        }
+    }, [response]);
 
     const handlePressIn = () => {
         setIsPressed(true);
@@ -35,7 +79,7 @@ const PressableSpotify = ({ ...props }) => {
     };
 
     const handlePress = () => {
-        Linking.openURL(spotifyAuthURL)
+        promptAsync()
     }
 
     return (
