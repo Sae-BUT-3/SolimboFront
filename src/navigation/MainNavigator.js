@@ -13,7 +13,7 @@ const Stack = createNativeStackNavigator();
 
 const MainNavigator = () => {
     
-    const { token } = Tokenizer.getValidToken();
+    const { isAuthenticated } = useAuth();
 
     return (
         <Stack.Navigator
@@ -21,14 +21,14 @@ const MainNavigator = () => {
                 headerShown: false
             }}
         >
-        {token == null ? (
-            <>
-                <Stack.Screen name="SignIn" component={SignInScreen} />
-                <Stack.Screen name="SignUp" component={SignUpScreen} />
-                <Stack.Screen name="Spotify" component={SpotifyAuthScreen} />
-            </>
-            ) : (
+            {isAuthenticated ? ( // Vérifiez si l'utilisateur est authentifié
                 <Stack.Screen name="TabNavigator" component={TabNavigator} />
+            ) : (
+                <> 
+                    <Stack.Screen name="SignIn" component={SignInScreen} />
+                    <Stack.Screen name="SignUp" component={SignUpScreen} />
+                    <Stack.Screen name="Spotify" component={SpotifyAuthScreen} />
+                </>
             )}
         </Stack.Navigator>
     );

@@ -3,7 +3,7 @@ import { ScrollView, View } from 'react-native';
 import { SafeAreaView } from 'react-native';
 import commonStyles from '../style/commonStyle';
 
-function HomeScreen() {
+function ActivityScreen() {
     return (
         <SafeAreaView style={[commonStyles.safeAreaContainer ]}>
             <ScrollView >
@@ -13,4 +13,4 @@ function HomeScreen() {
     )
 }
 
-export default HomeScreen;
+export default ActivityScreen;
