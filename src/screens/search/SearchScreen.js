@@ -6,32 +6,16 @@ import SearchResult from "../../components/search/SearchResult";
 import {Colors} from "../../style/color";
 import { SafeAreaView } from 'react-native-safe-area-context';
 import commonStyles from '../../style/commonStyle';
-
-
+import searchStyle from '../../style/searchStyle';
 
 function SearchScreen() {
-    const {height, width} = useWindowDimensions()
-    const searchStyle = StyleSheet.create({
-        container: {
-            width: "100%",
-            height: "100%",
-            minHeight: "100%",
-            backgroundColor: Colors.Licorice,
-            margin: 'auto',
-        },
+    const {width} = useWindowDimensions()
+
+    const searchStyleWidth = StyleSheet.create({
         subContainer: {
             width: width> 1200 ? 1200 : "100%",
             height: "100%",
             margin: "auto"
-        },
-        searchContainer: {
-            paddingBottom: 10,
-            paddingTop: 10,
-            paddingLeft: 10,
-            position: "sticky",
-            top: 0,
-            backgroundColor: Colors.Licorice,
-            zIndex: 1,
         },
         resultContainer: {
             display: "flex",
@@ -39,17 +23,6 @@ function SearchScreen() {
             gap: 10,
 
             width: width> 1200 ? 1200 : "100vw",
-        },
-        resultItemContainer: {
-            width: "95%",
-            margin: "auto"
-        },
-        messageText: {
-            fontSize: 50,
-            fontWeight: "500",
-            color: Colors.Celadon,
-            paddingLeft: 15,
-            paddingRight: 15,
         }
     });
 
@@ -85,14 +58,13 @@ function SearchScreen() {
         })
     }
 
-
     return (
         <SafeAreaView style={[commonStyles.safeAreaContainer ]}>
             <ScrollView
                 style={[searchStyle.container]}
             >
                 <View
-                    style={searchStyle.subContainer}
+                    style={searchStyleWidth.subContainer}
                 >
                     <View
                         style={searchStyle.searchContainer}
@@ -106,7 +78,7 @@ function SearchScreen() {
                             {messsageText}
                         </Text> : null
                     }
-                        <View style={[searchStyle.resultContainer]}>
+                        <View style={[searchStyleWidth.resultContainer]}>
 
                             {
                                 items.map((item, index) => (
@@ -128,7 +100,6 @@ function SearchScreen() {
             </ScrollView>
         </SafeAreaView>
     );
-
 
 }
 
