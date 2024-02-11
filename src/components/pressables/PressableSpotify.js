@@ -5,6 +5,8 @@ import * as WebBrowser from 'expo-web-browser';
 import { makeRedirectUri, useAuthRequest } from 'expo-auth-session';
 import authStyle from '../../style/authStyle';
 import axiosInstance from '../../api/axiosInstance';
+import { useAuth } from '../../contexts/AuthContext';
+
 WebBrowser.maybeCompleteAuthSession();
 const scopes = [
     'user-read-private',
@@ -32,10 +34,14 @@ const discovery = {
 };
 
 const PressableSpotify = ({ ...props }) => {
+
+    const { signInViaToken } = useAuth();
+
     const redirectUri = makeRedirectUri({
-            scheme: 'solimbo://',
+            scheme: 'solimbo',
             preferLocalhost: true,
     })
+    
     const [request, response, promptAsync] = useAuthRequest(
         {
             clientId: process.env.CLIENT_ID,
@@ -48,7 +54,6 @@ const PressableSpotify = ({ ...props }) => {
         discovery
     );
 
-
     const [isPressed, setIsPressed] = useState(false);
     useEffect(() => {
         if (response?.type === 'success') {
@@ -60,11 +65,10 @@ const PressableSpotify = ({ ...props }) => {
                 console.log(response.data)
                 console.log(response.data.confirmToken)
                 if(response.data.confirmToken) {
-                    //confirm
+                    signInViaToken(response.data.confirmToken)
                 }
                 else {
-                    //response.data.token
-                    //login
+                    console.log("Connection failed, confirmToken not found in response.")
                 }
             }).catch(error => console.log("error /users/authWithSpotify",JSON.stringify(error)))
         }

@@ -9,9 +9,14 @@ const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
+  const signInViaToken = (token) => {
+    Tokenizer.setToken(token);
+    setIsAuthenticated(true); // Marquer l'utilisateur comme authentifié
+  }
+
   const signIn = (email, password) => {
     const postData = {
-      email: 'alban.talagrand@gmail.com',
+      email: 'alban.talagrand2@gmail.com',
       password: 'testpassword'
     };
     
@@ -44,7 +49,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, signIn, logout }}>
+    <AuthContext.Provider value={{ isAuthenticated, signIn, logout , signInViaToken }}>
       {children}
     </AuthContext.Provider>
   );

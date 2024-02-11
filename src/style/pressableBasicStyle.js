@@ -20,7 +20,7 @@ const pressableBasicStyle = StyleSheet.create({
         fontFamily: "inter-semi-bold",
     },
     buttonPressed: {
-        backgroundColor: Colors.Licorice,
+        backgroundColor: Colors.CalPolyGreen,
     }
 });
 
