@@ -2,13 +2,10 @@ import * as React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { AuthProvider } from './src/contexts/AuthContext';
 import MainNavigator from './src/navigation/MainNavigator';
-import { shutdownServer, makeServer } from './src/mirage/config';
-import axiosInstance from './src/api/axiosInstance';
 import { useEffect, useState } from 'react';
 import * as Font from 'expo-font';
 import * as Linking from 'expo-linking';
 import { Text } from 'react-native';
-
 const prefix = Linking.createURL('/');
 
 export default function App() {
@@ -23,7 +20,7 @@ export default function App() {
   // }, []);
 
   const linking = {
-    prefixes: [prefix],
+    prefixes: ["solimbo://"],
     config: {
       screens: {
         Spotify: 'spotify',

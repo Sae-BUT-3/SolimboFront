@@ -1,6 +1,6 @@
 {
   "expo": {
-    "scheme" : "solimbo",
+    "scheme": "solimbo",
     "name": "Solimbo",
     "slug": "Solimbo",
     "version": "1.0.0",
@@ -17,12 +17,18 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.solimbo.app",
+      "bundleIdentifier": "com.solimbo.app"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
+      },
+      "package": "com.solimbo.app"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "99fd1334-56da-4b89-a868-0da4ee287c7d"
       }
     }
   }
