@@ -7,14 +7,13 @@ import TabNavigator from "./TabNavigator";
 import { Colors } from "../style/color";
 import { SafeAreaView, StyleSheet } from "react-native";
 import Tokenizer from '../utils/Tokenizer';
+import SpotifyAuthScreen from "../screens/auth/SpotifyAuthScreen";
 
 const Stack = createNativeStackNavigator();
 
 const MainNavigator = () => {
     
-    const { user } = useAuth();
-
-    
+    const { isAuthenticated } = useAuth();
 
     return (
         <Stack.Navigator
@@ -22,13 +21,14 @@ const MainNavigator = () => {
                 headerShown: false
             }}
         >
-        {user == null ? (
-            <>
-                <Stack.Screen name="SignIn" component={SignInScreen} />
-                <Stack.Screen name="SignUp" component={SignUpScreen} />
-            </>
-            ) : (
+            {isAuthenticated ? ( // Vérifiez si l'utilisateur est authentifié
                 <Stack.Screen name="TabNavigator" component={TabNavigator} />
+            ) : (
+                <> 
+                    <Stack.Screen name="SignIn" component={SignInScreen} />
+                    <Stack.Screen name="SignUp" component={SignUpScreen} />
+                    <Stack.Screen name="Spotify" component={SpotifyAuthScreen} />
+                </>
             )}
         </Stack.Navigator>
     );
