@@ -5,7 +5,6 @@ import * as WebBrowser from 'expo-web-browser';
 import { makeRedirectUri, useAuthRequest } from 'expo-auth-session';
 import authStyle from '../../style/authStyle';
 import axiosInstance from '../../api/axiosInstance';
-
 WebBrowser.maybeCompleteAuthSession();
 const scopes = [
     'user-read-private',
@@ -33,6 +32,10 @@ const discovery = {
 };
 
 const PressableSpotify = ({ ...props }) => {
+    const redirectUri = makeRedirectUri({
+            scheme: 'solimbo://',
+            preferLocalhost: true,
+    })
     const [request, response, promptAsync] = useAuthRequest(
         {
             clientId: process.env.CLIENT_ID,
@@ -40,10 +43,7 @@ const PressableSpotify = ({ ...props }) => {
             // To follow the "Authorization Code Flow" to fetch token after authorizationEndpoint
             // this must be set to false
             usePKCE: false,
-            redirectUri: makeRedirectUri({
-                scheme: 'exp',
-                preferLocalhost: true,
-            }),
+            redirectUri
         },
         discovery
     );
@@ -55,7 +55,7 @@ const PressableSpotify = ({ ...props }) => {
             const { code } = response.params;
             axiosInstance.post("/users/authWithSpotify", {
                 spotify_code: code,
-                mobile: Platform.OS !== 'web'
+                callback: redirectUri
             }).then(response => {
                 console.log(response.data)
                 console.log(response.data.confirmToken)
