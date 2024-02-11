@@ -4,7 +4,8 @@ import axiosInstance from '../../api/axiosInstance';
 import Searchbar from "../../components/search/Searchbar";
 import SearchResult from "../../components/search/SearchResult";
 import {Colors} from "../../style/color";
-
+import { SafeAreaView } from 'react-native-safe-area-context';
+import commonStyles from '../../style/commonStyle';
 
 
 
@@ -86,44 +87,46 @@ function SearchScreen() {
 
 
     return (
-        <ScrollView
-            style={[searchStyle.container]}
-        >
-            <View
-                style={searchStyle.subContainer}
+        <SafeAreaView style={[commonStyles.safeAreaContainer ]}>
+            <ScrollView
+                style={[searchStyle.container]}
             >
                 <View
-                    style={searchStyle.searchContainer}
+                    style={searchStyle.subContainer}
                 >
-                    <Searchbar filters={filter} keyPressHandler={query => handleSerch(query)}/>
-                </View>
-                {messsageText ?
-                    <Text
-                        style={searchStyle.messageText}
+                    <View
+                        style={searchStyle.searchContainer}
                     >
-                        {messsageText}
-                    </Text> : null
-                }
-                    <View style={[searchStyle.resultContainer]}>
-
-                        {
-                            items.map((item, index) => (
-                                <View
-                                    key={index}
-                                    style={searchStyle.resultItemContainer}>
-                                    <SearchResult
-                                        key={index}
-                                        imageURL={item.imageURL}
-                                        title={item.title}
-                                        subtitle={item.subtitle}
-                                        rounded={item.type === 'user' || item.type === 'artist'}
-                                    />
-                                </View>
-                        ))
-                        }
+                        <Searchbar filters={filter} keyPressHandler={query => handleSerch(query)}/>
                     </View>
-            </View>
-        </ScrollView>
+                    {messsageText ?
+                        <Text
+                            style={searchStyle.messageText}
+                        >
+                            {messsageText}
+                        </Text> : null
+                    }
+                        <View style={[searchStyle.resultContainer]}>
+
+                            {
+                                items.map((item, index) => (
+                                    <View
+                                        key={index}
+                                        style={searchStyle.resultItemContainer}>
+                                        <SearchResult
+                                            key={index}
+                                            imageURL={item.imageURL}
+                                            title={item.title}
+                                            subtitle={item.subtitle}
+                                            rounded={item.type === 'user' || item.type === 'artist'}
+                                        />
+                                    </View>
+                            ))
+                            }
+                        </View>
+                </View>
+            </ScrollView>
+        </SafeAreaView>
     );
 
 
