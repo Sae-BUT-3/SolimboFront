@@ -2,20 +2,33 @@ import { StyleSheet } from 'react-native';
 import { Colors } from './color';
 
 const commonStyles = StyleSheet.create({
-    container: {
+    safeAreaContainer: {
         minHeight: "100%",
         backgroundColor: Colors.Licorice,
         display: "flex",
         flexDirection: "column",
-        maxWidth: "100vw",
         alignItems: "center",
-        // justifyContent: "center",
+        justifyContent: "space-between",
+        height: "100%",
         paddingTop: "20%",
+        width: "100%",
+    },
+    row :{
+        display: "flex",
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "center",
+        width: "100%",
     },
     text: {
         fontSize: 16,
         color: Colors.White,
         fontFamily : "inter-regular",
+    },
+    textLink: {
+        fontSize: 16,
+        color: Colors.SeaGreen,
+        fontFamily : "inter-semi-bold",
     },
     pressable: {
         padding: 10,
@@ -30,18 +43,22 @@ const commonStyles = StyleSheet.create({
     input : {
         borderRadius: 10,
         padding: 10,
-        width: 300,
+        width: 270,
         margin: 10,
         backgroundColor: Colors.Jet,
         color: Colors.BattleShipGray,
         height: 40,
-        fontFamily : "inter-regular",
+        fontFamily : "inter-semi-bold",
+        borderWidth: 2,
+        borderColor: "transparent",
         // outlineStyle: "none",
     },
     inputFocused: {
         color : Colors.White,
+        borderColor: Colors.Onyx,
+        borderWidth: 2,
     },
-    inputsContainer: {
+    columnCenterContainer: {
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
@@ -63,7 +80,7 @@ const commonStyles = StyleSheet.create({
     logo: {
         width: 150,
         height: 150,
-        margin: 20,
+        margin: 30,
     },
 });
 

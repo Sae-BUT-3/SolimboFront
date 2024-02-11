@@ -6,6 +6,10 @@ import { shutdownServer, makeServer } from './src/mirage/config';
 import axiosInstance from './src/api/axiosInstance';
 import { useEffect, useState } from 'react';
 import * as Font from 'expo-font';
+import * as Linking from 'expo-linking';
+import { Text } from 'react-native';
+
+const prefix = Linking.createURL('/');
 
 export default function App() {
   const [fontsLoaded, setFontsLoaded] = useState(false);
@@ -18,19 +22,14 @@ export default function App() {
   //   };
   // }, []);
 
-  useEffect(() => {
-    
-    axiosInstance.get('/spotify/getAuthURL')
-      .then((response) => {
-        console.log(response.data)
-        return response.data
-      })
-      .catch(error => {
-        console.log("🚀 ~ file: App.js:33 ~ axios.get ~ error", error)
-      });
-      
-
-  }, []);
+  const linking = {
+    prefixes: [prefix],
+    config: {
+      screens: {
+        Spotify: 'spotify',
+      },
+    },
+  };
 
   useEffect(() => {
     const loadFonts = async () => {
@@ -59,7 +58,7 @@ export default function App() {
 
   return (
     <AuthProvider>
-      <NavigationContainer>
+      <NavigationContainer linking={linking} fallback={<Text>Loading...</Text>}>
         <MainNavigator />
       </NavigationContainer>
     </AuthProvider>

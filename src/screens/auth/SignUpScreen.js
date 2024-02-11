@@ -1,13 +1,16 @@
 import React from 'react';
 import { View, Button } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import commonStyles from '../../style/commonStyle';
 
 function SignUpScreen({ navigation }) {
 
-    return <View>
+    return (
+        <SafeAreaView style={[commonStyles.safeAreaContainer ]}>
 
-        <Button title="Sign In" onPress={() => navigation.navigate('SignIn')} />
-        <Button title="Sign Up" onPress={() => alert('todo!')} />
-    </View>
+            <Button title="Connexion" onPress={() => navigation.navigate('SignIn')} />
+        </SafeAreaView>
+    );
 }
 
 export default SignUpScreen;
