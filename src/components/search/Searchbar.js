@@ -1,48 +1,50 @@
 import React, {useState} from 'react';
-import {View, Text, TextInput, StyleSheet} from 'react-native';
+import {View, Text, TextInput, StyleSheet, useWindowDimensions, Platform} from 'react-native';
 import Filter from "./Filter";
 import Svg, { Path } from 'react-native-svg';
+import {Colors} from "../../style/color";
+import {breakpoint} from "../../style/breakpoint";
 
-const styles = StyleSheet.create({
-    diplayContainer: {
-        display: "flex",
-        flexDirection: "row",
-        width: "100%",
-        gap: "10px",
-        alignItems: "center"
-    },
-    SearchBarContainer: {
-        paddingBottom: "10px",
-        display:"flex",
-        justifyContent: "space-between"
-    },
-    SearchBar: {
-        display: "flex",
-        flexDirection: "row",
-        width: "70%",
-        backgroundColor: "#2B2B2B",
-        paddingTop: "10px",
-        paddingBottom: "10px",
-        borderRadius:"10",
-        color: "#FFFFFF",
-        boxSizing:" border-box",
-        paddingLeft: "15px",
-        outlineStyle: 'none',
-    },
-    filters: {
-        gap: "5px",
-        overflowY: "scroll"
-    },
-    cancelText: {
-        color:"#B3B3B3",
-
-    },
-
-})
 function SearchBar({keyPressHandler, filters}) {
+    const {height, width} = useWindowDimensions();
     const allFilters = filters.map(item => item.id)
     const [filterArray, setFilterArray] = useState([])
     const [inputValue, setInputValue] = useState('');
+
+    const styles = StyleSheet.create({
+        diplayContainer: {
+            display: "flex",
+            flexDirection: "row",
+            width: "100%",
+            alignItems: "center"
+        },
+        SearchBarContainer: {
+            paddingBottom: 10,
+            display:"flex",
+            justifyContent: width < breakpoint.medium && Platform.OS === "web" ? "space-around" : "space-between"
+        },
+        SearchBar: {
+            display: "flex",
+            flexDirection: "row",
+            width: "70%",
+            backgroundColor: "#2B2B2B",
+            paddingTop: 10,
+            paddingLeft: 10,
+            paddingBottom: 10,
+            borderRadius:10,
+            color: Colors.Silver,
+        },
+        filters: {
+            gap: 10,
+            overflowY: width < breakpoint.mobile && Platform.OS !== "web" ? "scroll" : "none",
+            flexWrap: Platform.OS === "web" ? "wrap" : "nowrap"
+        },
+        cancelText: {
+            color:Colors.Silver,
+
+        },
+
+    })
 
     function triggerSearch(text,filter){
         const query =  {}
@@ -82,13 +84,14 @@ function SearchBar({keyPressHandler, filters}) {
                     height="20"
                     width="20"
                 >
-                    <Path fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="#B3B3B3" className="w-6 h-6" strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+                    <Path fill="none" viewBox="0 0 20 20" strokeWidth="2" stroke={Colors.Silver} className="w-6 h-6" strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
                 </Svg>
 
                 <TextInput
                     style={styles.SearchBar}
                     placeholder="Chercher"
                     value={inputValue}
+                    placeholderTextColor="#B3B3B3"
                     onChangeText={text => handleInputKeypress(text)}
                 />
                 <Text
