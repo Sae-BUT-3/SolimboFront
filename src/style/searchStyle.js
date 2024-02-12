@@ -8,6 +8,7 @@ const searchStyle = StyleSheet.create({
         minHeight: "100%",
         backgroundColor: Colors.Licorice,
         margin: 'auto',
+        padding : 10
     },
     searchContainer: {
         paddingBottom: 10,

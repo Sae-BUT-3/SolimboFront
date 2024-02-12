@@ -25,7 +25,7 @@ function TabNavigator() {
                 tabBarInactiveTintColor: Colors.CalPolyGreen,
                 tabBarShowLabel: false,
             })}
-            initialRouteName='Home'
+            initialRouteName='Search'
         >
             <Tab.Screen 
                 name="Search" 
