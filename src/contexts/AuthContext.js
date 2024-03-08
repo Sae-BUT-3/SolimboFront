@@ -15,9 +15,14 @@ export const AuthProvider = ({ children }) => {
   }
 
   const signIn = (email, password) => {
+    // const postData = {
+    //   email: 'alban.talagrand2@gmail.com',
+    //   password: 'testpassword'
+    // };
+
     const postData = {
-      email: 'alban.talagrand2@gmail.com',
-      password: 'testpassword'
+      email: email,
+      password: password
     };
     
     axiosInstance.post("/users/signin", postData)
