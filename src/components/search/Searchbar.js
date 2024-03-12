@@ -12,6 +12,9 @@ function SearchBar({keyPressHandler, filters}) {
     const [inputValue, setInputValue] = useState('');
 
     const styles = StyleSheet.create({
+        container : {
+
+        },
         diplayContainer: {
             display: "flex",
             flexDirection: "row",
@@ -21,18 +24,19 @@ function SearchBar({keyPressHandler, filters}) {
         SearchBarContainer: {
             paddingBottom: 10,
             display:"flex",
-            justifyContent: width < breakpoint.medium && Platform.OS === "web" ? "space-around" : "space-between"
+            justifyContent : "center"
         },
         SearchBar: {
             display: "flex",
             flexDirection: "row",
-            width: "70%",
-            backgroundColor: "#2B2B2B",
+            width: Platform.OS === "web" ? "90%" : "75%",
+            backgroundColor: Colors.Jet,
             paddingTop: 10,
             paddingLeft: 10,
             paddingBottom: 10,
             borderRadius:10,
             color: Colors.Silver,
+            marginHorizontal : 10
         },
         filters: {
             gap: 10,
@@ -41,9 +45,7 @@ function SearchBar({keyPressHandler, filters}) {
         },
         cancelText: {
             color:Colors.Silver,
-
         },
-
     })
 
     function triggerSearch(text,filter){
@@ -75,7 +77,7 @@ function SearchBar({keyPressHandler, filters}) {
     }
 
     return (
-        <View>
+        <View style={[styles.container]} > 
             <View
                 style={[styles.diplayContainer, styles.SearchBarContainer]}
             >
@@ -94,6 +96,7 @@ function SearchBar({keyPressHandler, filters}) {
                     placeholderTextColor="#B3B3B3"
                     onChangeText={text => handleInputKeypress(text)}
                 />
+
                 <Text
                     style={styles.cancelText}
                     onPress={handleCancel}
