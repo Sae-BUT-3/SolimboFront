@@ -1,26 +1,36 @@
-import React from 'react';
+import React, { useState, useEffect }from 'react';
 import { View, Text, Image } from 'react-native';
 import PressableBasic from '../../components/pressables/PressableBasic';
 import { useAuth } from '../../contexts/AuthContext';
 import commonStyles from '../../style/commonStyle';
 import authStyle from '../../style/authStyle';
-import { useState, useEffect } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import BasicInput from '../../components/form/BasicInput';
 import PressableSpotify from '../../components/pressables/PressableSpotify';
+import Alert from '@mui/material/Alert';
 import { useLinkTo } from '@react-navigation/native';
 
 function SignInScreen({ navigation }) {
   const { signIn } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState(null);
+  const [response, setResponse] = useState(null);
 
+  navigation.setOptions({ title: 'Solimbo - Connexion' })
   const linkTo = useLinkTo();
 
   console.log('linkTo', linkTo); 
-
+  const handleSignIn = () => {
+    const credentials = {
+      email: email,
+      password: password,
+    };
+    const res = signIn(credentials);
+    res.success ? setResponse(res.message) : setError(res.message)
+  };
   return (
-    <SafeAreaView style={[commonStyles.safeAreaContainer ]}>
+    <SafeAreaView style={[commonStyles.safeAreaContainer, {justifyContent : 'normal'} ]}>
         
         <View style={[commonStyles.columnCenterContainer, authStyle.formContainer]}>
           <View style={commonStyles.columnCenterContainer}>
@@ -32,25 +42,27 @@ function SignInScreen({ navigation }) {
           <View style={commonStyles.columnCenterContainer}>
 
             <BasicInput
-              placeholder="Email"
+              autoCapitalize="none"
+              autoCorrect={false}
+              placeholder="Entrez votre email"
               textContentType="emailAddress"
               keyboardType="email-address"
               value={email}
-              onChangeText={(text) => setEmail(text)}
+              onChangeText={setEmail}
             />
 
             <BasicInput
-              placeholder="Password"
+              placeholder="Entrez votre mot de passe"
               secureTextEntry
               value={password}
-              onChangeText={(text) => setPassword(text)}
+              onChangeText={setPassword}
             />
           </View>
           <View style={commonStyles.columnCenterContainer}>
             <PressableBasic
             text="Connexion"
 
-            onPress={() => signIn({ email, password })}
+            onPress={handleSignIn}
             />
             <Text style={authStyle.textPasswordForgot}>Mot de passe oublié ? </Text>
           </View>
@@ -76,7 +88,11 @@ function SignInScreen({ navigation }) {
           <Text style={commonStyles.textLink} 
             onPress={() => navigation.navigate('SignUp')}
           >S'inscire</Text>
-        </View> 
+        </View>
+        <View style={{ bottom: 0, padding: 2, position: 'fixed', margin:10, right:0 }}>
+        {response ? <Alert severity="success"  onClose={() => {setResponse(null)}}>{response}</Alert> : null}
+        {error ? <Alert severity="error"  onClose={() => {setError(null)}}>{error}</Alert> : null}
+      </View> 
     </SafeAreaView>
   );
 }

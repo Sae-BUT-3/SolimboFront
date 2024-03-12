@@ -8,28 +8,50 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-
+  const [response, setResponse] = useState({ success: false, message: "Erreur lors de l'authentification, veuillez réessayer plus tard" })
+  
   const signInViaToken = (token) => {
-    Tokenizer.setToken(token);
-    setIsAuthenticated(true); // Marquer l'utilisateur comme authentifié
+     axiosInstance.post("/users/confirmUser", {
+      pseudo: "youyou ",
+      alias: "yousrah",
+      bio: "testBio",
+      confirmToken: token
+    }).then(response => {
+        if(response.data.token) {
+          Tokenizer.setToken(response.data.token);
+          setIsAuthenticated(true); // Marquer l'utilisateur comme authentifié
+          console.log("🚀 ~ Spotify ~ authentification réussie")
+          setResponse({ success: true, message: "Authentification réussie" });
+        }
+        else {
+          console.log("Connection failed, Token not found in response.")
+          setResponse({success: false, message: "Échec de l'authentification, jeton non trouvé dans la réponse" });
+        }
+    }).catch(error => {
+      console.log("Error : /users/confirmUser",error)
+    })
+    return response
   }
 
-  const signIn = (email, password) => {
-    const postData = {
-      email: 'alban.talagrand2@gmail.com',
-      password: 'testpassword'
-    };
-    
-    axiosInstance.post("/users/signin", postData)
+  const signIn = (credentials) => {
+    axiosInstance.post("/users/signin",  credentials)
       .then(response => {
-        console.log("🚀 ~ signIn ~ response:", response.data)
-        const token = response.data.token;
-        Tokenizer.setToken(token);
-        setIsAuthenticated(true); // Marquer l'utilisateur comme authentifié
+        if(response.data.token) {
+          Tokenizer.setToken(response.data.token);
+          setIsAuthenticated(true); // Marquer l'utilisateur comme authentifié
+          console.log("🚀 ~ Spotify ~ authentification réussie")
+          setResponse({ success: true, message: "Authentification réussie" });
+        }
+        else {
+          console.log("Connection failed, Token not found in response.")
+          setResponse({ success: false, message: "Échec de l'authentification, jeton non trouvé dans la réponse" });
+        }
       })
       .catch(error => {
-        console.error(error);
+        console.log("Error : /users/signin",error)
+        setResponse({ success: false, message: "Erreur lors de l'authentification, veuillez réessayer plus tard" });
       });
+      return response
   };
 
   const autoSignIn = async () => {

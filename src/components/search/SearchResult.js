@@ -11,9 +11,9 @@ import {
 } from 'react-native';
 import commonStyles from "../../style/commonStyle";
 import {Colors} from "../../style/color";
-import platform from "react-native-web/src/exports/Platform";
+import {useNavigation} from '@react-navigation/native'
 
-function SearchResult({imageURL, title, subtitle, rounded, onPress}) {
+function SearchResult({_id, type, imageURL, title, subtitle, rounded, onPress}) {
     const baseImageURL = "https://merriam-webster.com/assets/mw/images/article/art-wap-article-main/egg-3442-e1f6463624338504cd021bf23aef8441@1x.jpg"
     const {height, width} = useWindowDimensions()
     const [isHovered,setIsHovered] = useState(false)
@@ -27,6 +27,22 @@ function SearchResult({imageURL, title, subtitle, rounded, onPress}) {
 
     const handleMouseLeave = () => {
         setIsHovered(false);
+    };
+
+    const navigation = useNavigation();
+    const handlePress = (_id, type) => {
+        if(_id && type){
+            switch(type){
+                case 'artist':
+                    navigation.navigate('Artist', {id: _id });
+                    break;
+                case 'user':
+                case 'album':
+                case 'single':
+                case 'compliation':
+                    break;
+            }
+        }
     };
     const styles = StyleSheet.create({
         diplayContainer: {
@@ -81,7 +97,8 @@ function SearchResult({imageURL, title, subtitle, rounded, onPress}) {
     const imageStyle = rounded ? styles.imageRound : styles.imageSquare
     return (
         <TouchableHighlight
-            onPressIn={() => {}} onPressOut={handlePressOut}
+            onPress={() => handlePress(_id, type)}
+            onPressOut={handlePressOut}
             onMouseEnter={handlePressIn} onMouseLeave={handleMouseLeave}
             underlayColor={Colors.Jet}
             style={[styles.searchResultContainer]}

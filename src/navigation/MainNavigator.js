@@ -1,13 +1,13 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useAuth } from "../contexts/AuthContext";
 import SignInScreen from "../screens/auth/SignInScreen";
 import SignUpScreen from "../screens/auth/SignUpScreen";
 import TabNavigator from "./TabNavigator";
 import { Colors } from "../style/color";
-import { SafeAreaView, StyleSheet } from "react-native";
-import Tokenizer from '../utils/Tokenizer';
+import {StyleSheet } from "react-native";
 import SpotifyAuthScreen from "../screens/auth/SpotifyAuthScreen";
+import ArtistScreen from "../screens/artist/ArtistScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -22,7 +22,10 @@ const MainNavigator = () => {
             }}
         >
             {isAuthenticated ? ( // Vérifiez si l'utilisateur est authentifié
-                <Stack.Screen name="TabNavigator" component={TabNavigator} />
+                <> 
+                    <Stack.Screen name="TabNavigator" component={TabNavigator} />
+                    <Stack.Screen name="Artist" component={ArtistScreen} />
+                </>
             ) : (
                 <> 
                     <Stack.Screen name="SignIn" component={SignInScreen} />

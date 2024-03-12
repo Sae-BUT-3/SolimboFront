@@ -7,6 +7,7 @@ import { useEffect } from 'react';
 import { Linking } from 'react-native';
 
 function SpotifyAuthScreen({ navigation }) {
+    navigation.setOptions({ title: 'Solimbo - Connexion avec Spotify' })
 
     useEffect(() => {
         const url = Linking.getInitialURL();
