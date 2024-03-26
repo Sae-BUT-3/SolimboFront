@@ -2,12 +2,13 @@ import React, {useState} from 'react';
 import { StyleSheet, View, Text, Pressable, Platform} from 'react-native';
 import { Colors } from '../../style/color';
 import Item from '../common/Item';
+import { useNavigation } from '@react-navigation/native';
 
 
 const Discography = ({ items, id}) => {
   const [filter, setFilter] = useState('popularity');
   const [isHovered, setIsHovered] = useState(false);
-
+  const navigation = useNavigation()
   const handleMouseEnter = () => {
     setIsHovered(true);
   };
@@ -36,7 +37,7 @@ const Discography = ({ items, id}) => {
           </Pressable>
       </View> : null}
       <View style={{marginBottom: 30}}> 
-        <View style={{display: 'flex', flexDirection: 'row', alignItems: 'flex-start'}}>
+        <View style={{display: 'flex', flexDirection: 'row', alignItems: 'flex-start', flexWrap: 'wrap'}}>
           {items.length > 0 ? items.filter(item => filter === 'popularity' || item.type.toLowerCase().includes(filter.toLowerCase())).sort((a, b) => {
               if(filter !== 'popularity'){
                 const dateA = new Date(a.date);
@@ -46,9 +47,10 @@ const Discography = ({ items, id}) => {
               return a.popularity > b.popularity ? 1 : -1;
             }).slice(0, 5).map(item => (
             <Item  key={item.id} data={item}/>)) : 
-            <View style={{display:'flex', alignItems: 'center', margin: 30}}>
-              <Text style={{color: Colors.White, fontSize:'large', fontWeight:'normal'}}>Discographie vide.</Text>
+            <View style={{display:'flex', margin: 30}}>
+              <Text style={{color: Colors.White, fontSize:'large', fontWeight:'normal'}}>Discographie vide pour le moment.</Text>
             </View>}
+            {Platform.OS !== 'web' && (<Pressable style={styles.btn} onPress={()=>{navigation.navigate('Dicographie', {id})}}><Text style={styles.filterText}>Voir la dicographie</Text></Pressable>)}
         </View>
       </View> 
     </>
@@ -82,6 +84,16 @@ const styles = StyleSheet.create({
   filterText: {
     fontWeight: 'bold',
     color: Colors.White,
-  }
+  },
+  btn: {
+    marginRight: 10,
+    paddingHorizontal: 15,
+    paddingVertical: 8,
+    borderRadius: 20,
+    borderColor: Colors.DarkSpringGreen,
+    borderWidth: 1,
+    backgroundColor: Colors.Jet,
+    boxShadow: '0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)' ,
+  },
 });
 export default Discography

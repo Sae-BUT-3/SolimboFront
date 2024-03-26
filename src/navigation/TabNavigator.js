@@ -29,22 +29,22 @@ function TabNavigator() {
             initialRouteName='Home'
         >
             <Tab.Screen 
-                name="Search" 
-                component={SearchScreen} 
-                options={{
-                    title: 'Solimbo - Rechercher',
-                    tabBarIcon: ({ focused, color, size }) => (
-                        <FontAwesome5 name={focused ? 'search' : 'search'} size={size} color={color} />
-                    ),
-                }}
-            />
-            <Tab.Screen 
                 name="Home" 
                 component={HomeScreen} 
                 options={{
                     title: 'Solimbo - Réseau social de partage de musique',
                     tabBarIcon: ({ focused, color, size }) => (
                         <FontAwesome5 name={focused ? 'home' : 'home'} size={size} color={color} />
+                    ),
+                }}
+            />
+            <Tab.Screen 
+                name="Search" 
+                component={SearchScreen} 
+                options={{
+                    title: 'Solimbo - Rechercher',
+                    tabBarIcon: ({ focused, color, size }) => (
+                        <FontAwesome5 name={focused ? 'search' : 'search'} size={size} color={color} />
                     ),
                 }}
             />

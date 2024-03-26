@@ -36,7 +36,7 @@ const DiscograpyPopup = ({onClose, _id}) => {
         }).catch(e => setError(e.response.data));
     },[]);
     if (error) {
-        return <ErrorRequest err={error} page={{url: 'Artist', params:  {id : _id}}} />;
+        return <ErrorRequest err={error} />;
     }
     return (
         isLoading ? <Loader/> : 

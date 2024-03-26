@@ -30,7 +30,7 @@ const Profil = ({ data, friends_followers, follow, followArtist }) => {
     >
       <View style={styles.overlay}>
         <View key={data.id} style={styles.profileContainer}>
-            <View style={styles.description}>
+            <View>
               <Pressable
                 activeOpacity={1}
                 onMouseEnter={handleImageMouseEnter}
@@ -52,7 +52,7 @@ const Profil = ({ data, friends_followers, follow, followArtist }) => {
             <View style={{ display: Platform.OS !== 'web'? 'flex': undefined, alignItems: Platform.OS !== 'web'? 'center' : undefined}}>
                 <Text style={styles.nameA}>{data.name}</Text>
                 <View style={styles.sectionFollower}>
-                  <Text style={{color: Colors.White, textShadow: '2px 2px 4px #000000', fontSize: 'medium', textAlign: Platform.OS !== 'web'? 'center' : undefined}}>{data.follower_count} followers  {friends_followers.count > 0 ? ' dont' + friends_followers.count + ' amis' : null} </Text>
+                  <Text style={{color: Colors.White, textShadow: '2px 2px 4px #000000', fontSize: 'medium', textAlign: Platform.OS !== 'web'? 'center' : undefined}}>{data.follower_count} followers  {friends_followers.count > 0 ? `dont ${friends_followers.count} amis` : null} </Text>
                 </View>
             </View>
         </View>

@@ -21,6 +21,7 @@ const Item = ({data}) => {
                 case 'single':
                 case 'album':
                 case 'compliation':
+                    navigation.navigate('Oeuvre', {type: 'album', id : data.id });
                     break;
             }
         }
@@ -51,7 +52,7 @@ const Item = ({data}) => {
                    <View>
                         <View><Text style={{color: Colors.White, maxWidth:  Platform.OS == 'web' ? 150 : null, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}>{toCapitalCase(data.name)}</Text></View>
                         <View style={{display: 'flex',flexDirection: 'row', alignItems: 'center', fontWeight: 'normal'}}>
-                            <Rating value={data.rating} precision={0.5}  style={{color: Colors.DarkSpringGreen}} emptyIcon={<StarIcon style={{ opacity: 0.5, color: Colors.Licorice }} fontSize="inherit" />} readOnly />
+                        <Rating value={data.rating} precision={0.5}  style={{color: Colors.DarkSpringGreen}} emptyIcon={<StarIcon style={{ opacity: 0.55, color: Colors.Licorice }} fontSize="inherit"/>}  max={5} readOnly />
                             <PointTrait point={true}/> <Text style={{color: Colors.White}}>{data.reviewCount}</Text> 
                         </View>
                         <View style={{display: 'flex', flexDirection: 'row',alignItems: 'center', fontWeight: 'normal', gap: 10}}>

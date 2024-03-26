@@ -2,24 +2,17 @@ import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Colors } from '../style/color';
 
-const ErrorRequest = (err, page) => {
+const ErrorRequest = ({err}) => {
   const navigation = useNavigation();
   const returnHome = () => {
-    if(page && page.params)
-      navigation.navigate(page.url, {params : page.params});
-    else if(page)
-      navigation.navigate(page.url);
-    else
-      navigation.navigate('TabNavigator');
-
+    navigation.goBack();
   };
-
   return( 
     <View style={styles.container}>
-      <Text style={styles.errorCode}>{err?.statusCode}</Text>
-      <Text style={styles.errorMessage}>{err?.message}</Text>
+      <Text style={styles.errorCode}>{err.statusCode}</Text>
+      <Text style={styles.errorMessage}>{err.message}</Text>
       <Pressable onPress={returnHome} style={styles.returnButton}>
-        <Text style={styles.returnButtonText}>Retour à l'accueil</Text>
+        <Text style={styles.returnButtonText}>Retour</Text>
       </Pressable>
     </View>
   );
@@ -38,7 +31,7 @@ const styles = StyleSheet.create({
   },
   errorCode: {
     color: Colors.DarkSpringGreen, 
-    fontSize: 24,
+    fontSize: 'xxx-large',
     marginBottom: 10,
     textAlign: 'center', 
   },

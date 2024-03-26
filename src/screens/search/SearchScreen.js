@@ -86,7 +86,7 @@ function SearchScreen() {
         }).catch(e => setError(e.response.data));
     }
     if (error) {
-        return <ErrorRequest err={error} page={null}/>;
+        return <ErrorRequest err={error} />;
     }
 
     return (

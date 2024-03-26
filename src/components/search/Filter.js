@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {View, Text, TextInput, StyleSheet} from 'react-native';
+import {View, Text, TextInput, StyleSheet, Pressable} from 'react-native';
 import Svg, {Path} from "react-native-svg";
 import {Colors} from "../../style/color";
 const styles = StyleSheet.create({
@@ -14,31 +14,48 @@ const styles = StyleSheet.create({
         paddingLeft: 10,
         paddingRight:  10,
         borderRadius:20,
-        borderColor: Colors.Onyx,
+        borderColor: Colors.Jet,
         borderWidth: 1,
+        boxShadow: '0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)' ,
     },
     text : {
         color:Colors.Silver,
+        fontSize: 'medium',
+        padding: 2
     },
     clicked: {
         backgroundColor: Colors.DarkSpringGreen
     },
     svgWrapper: {
        paddingLeft: 5
-    }
+    },
+    btnHovered: {
+        backgroundColor: Colors.Onyx,
+    },
 
 })
 function Filter({onPressHandler, text}) {
     const [isClicked, setIsClicked] = useState(false);
-    const clickedStyle = isClicked ? styles.clicked : {};
+    const [isHovered, setIsHovered] = useState(false);
+
+    const handleMouseEnter = () => {
+        setIsHovered(true);
+      };
+    
+      const handleMouseLeave = () => {
+        setIsHovered(false);
+      };
+
     function handleKeyPress(){
         setIsClicked(!isClicked);
         onPressHandler()
     }
     return (
-        <Text
-            style={[styles.textContainer, clickedStyle]}
+        <Pressable
+            style={[styles.textContainer, isClicked ? styles.clicked : null, isHovered ? styles.btnHovered : null]}
             onPress={handleKeyPress}
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
         >
             <Text
                 style={styles.text}
@@ -52,8 +69,8 @@ function Filter({onPressHandler, text}) {
                     <Svg
                         xmlns="http://www.w3.org/2000/svg"
                         fill="none"
-                        width={10}
-                        height={10}
+                        width={15}
+                        height={15}
                         viewBox="2 2 20 20"
                         strokeWidth={2}
                         stroke={Colors.Silver}
@@ -67,7 +84,7 @@ function Filter({onPressHandler, text}) {
                     </Svg>
                 </View> : null}
 
-        </Text>
+        </Pressable>
     );
 }
 

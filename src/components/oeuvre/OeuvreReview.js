@@ -3,7 +3,7 @@ import {Text, Pressable, Platform, View, StyleSheet} from 'react-native';
 import Review from '../common/Review';
 import { Colors } from '../../style/color';
 
-const ArtistReview = ({ items, id}) => {
+const OeuvreReview = ({ items, id}) => {
   return (
     items.length > 0 ? 
       <><View style={styles.container}> 
@@ -11,7 +11,7 @@ const ArtistReview = ({ items, id}) => {
         <Review key={item.id_review} data={item} />
       ))}
       </View>
-      {Platform.OS !== 'web' && (<Pressable style={styles.btn} onPress={()=>{navigation.navigate('Review', {id})}}><Text style={styles.filterText}>Voir les critiques</Text></Pressable>)}</>:
+      {Platform.OS !== 'web' && (<Pressable style={styles.btn} onPress={()=>{navigation.navigate('Review', {id})}}><Text style={styles.filterText}>Voir les reviews</Text></Pressable>)}</>:
       <View style={{display:'flex', margin: 30}}>
         <Text style={{color: Colors.White, fontSize:'large', fontWeight:'normal'}}>Aucune critique disponible pour le moment.</Text>
       </View>
@@ -25,4 +25,4 @@ const styles = StyleSheet.create({
     marginLeft: 30
   }
 })
-export default ArtistReview
+export default OeuvreReview

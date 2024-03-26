@@ -1,14 +1,11 @@
 import React from 'react';
-import { View, Button } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { Button, SafeAreaView} from 'react-native';
 import commonStyles from '../../style/commonStyle';
 import { Text } from 'react-native';
 import { useEffect } from 'react';
 import { Linking } from 'react-native';
 
 function SpotifyAuthScreen({ navigation }) {
-    navigation.setOptions({ title: 'Solimbo - Connexion avec Spotify' })
-
     useEffect(() => {
         const url = Linking.getInitialURL();
         handleOpenURL(url);

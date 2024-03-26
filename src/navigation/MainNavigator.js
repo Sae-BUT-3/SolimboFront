@@ -8,6 +8,9 @@ import { Colors } from "../style/color";
 import {StyleSheet } from "react-native";
 import SpotifyAuthScreen from "../screens/auth/SpotifyAuthScreen";
 import ArtistScreen from "../screens/artist/ArtistScreen";
+import CommentScreen from "../screens/comment/CommentScreen";
+import ReviewScreen from "../screens/review/ReviewScreen";
+import OeuvreScreen from "../screens/oeuvre/OeuvreScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -24,13 +27,16 @@ const MainNavigator = () => {
             {isAuthenticated ? ( // Vérifiez si l'utilisateur est authentifié
                 <> 
                     <Stack.Screen name="TabNavigator" component={TabNavigator} />
-                    <Stack.Screen name="Artist" component={ArtistScreen} />
+                    <Stack.Screen  name="Artist" component={ArtistScreen}  options={{ title:'Artiste | Solimbo'}}/>
+                    <Stack.Screen  name="Oeuvre" component={OeuvreScreen}  options={{ title:'Oeuvre | Solimbo'}}/>
+                    <Stack.Screen name="Review" component={ReviewScreen}  options={{ title:'Critique | Solimbo'}}/>
+                    <Stack.Screen name="Comment" component={CommentScreen}  options={{ title:'Commentaire | Solimbo'}} />
                 </>
             ) : (
                 <> 
-                    <Stack.Screen name="SignIn" component={SignInScreen} />
-                    <Stack.Screen name="SignUp" component={SignUpScreen} />
-                    <Stack.Screen name="Spotify" component={SpotifyAuthScreen} />
+                    <Stack.Screen name="SignIn" component={SignInScreen}  options={{ title:'Connexion | Solimbo'}}/>
+                    <Stack.Screen name="SignUp" component={SignUpScreen}  options={{ title:'Inscription | Solimbo'}}/>
+                    <Stack.Screen name="Spotify" component={SpotifyAuthScreen}  options={{ title: 'Connexion avec Spotify | Solimbo'}}/>
                 </>
             )}
         </Stack.Navigator>

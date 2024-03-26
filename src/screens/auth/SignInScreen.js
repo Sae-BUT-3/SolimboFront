@@ -1,5 +1,5 @@
-import React, { useState, useEffect }from 'react';
-import { View, Text, Image } from 'react-native';
+import React, { useState }from 'react';
+import { View, Text, Image, Platform, StyleSheet } from 'react-native';
 import PressableBasic from '../../components/pressables/PressableBasic';
 import { useAuth } from '../../contexts/AuthContext';
 import commonStyles from '../../style/commonStyle';
@@ -15,19 +15,15 @@ function SignInScreen({ navigation }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
-  const [response, setResponse] = useState(null);
-
-  navigation.setOptions({ title: 'Solimbo - Connexion' })
   const linkTo = useLinkTo();
 
-  console.log('linkTo', linkTo); 
   const handleSignIn = () => {
     const credentials = {
       email: email,
       password: password,
     };
     const res = signIn(credentials);
-    res.success ? setResponse(res.message) : setError(res.message)
+    setError(res)
   };
   return (
     <SafeAreaView style={[commonStyles.safeAreaContainer, {justifyContent : 'normal'} ]}>
@@ -89,12 +85,21 @@ function SignInScreen({ navigation }) {
             onPress={() => navigation.navigate('SignUp')}
           >S'inscire</Text>
         </View>
-        <View style={{ bottom: 0, padding: 2, position: 'fixed', margin:10, right:0 }}>
-        {response ? <Alert severity="success"  onClose={() => {setResponse(null)}}>{response}</Alert> : null}
-        {error ? <Alert severity="error"  onClose={() => {setError(null)}}>{error}</Alert> : null}
-      </View> 
+        { Platform.OS === 'web' &&  (<View style={styles.errorMessage}>
+          {error && (<Alert severity="error"  onClose={() => {setError(null)}}>{error}</Alert>)}
+        </View>)} 
     </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  errorMessage: {
+    position: 'absolute',
+    bottom: 0, 
+    padding: 2, 
+    margin:10, 
+    right:0
+  }
+})
 
 export default SignInScreen;
