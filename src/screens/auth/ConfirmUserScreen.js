@@ -13,6 +13,7 @@ function ConfirmUserScreen({ route, navigation }) {
     const [user, setUser] = useState({});
     const { code, redirectUri } = route.params;
     const [pseudo, setPseudo] = useState('');
+    
     const [isCheckingPseudo, setIsCheckingPseudo] = useState(false);
     const [isPseudoAvailable, setIsPseudoAvailable] = useState(true);
     const [pseudoCheckTimeout, setPseudoCheckTimeout] = useState(null);
@@ -57,7 +58,6 @@ function ConfirmUserScreen({ route, navigation }) {
     }, [confirmtoken]);
 
     const checkPseudoAvailability = async (pseudo) => {
-        console.log('checkPseudoAvailability', pseudo);
         setIsCheckingPseudo(true);
         try {
             const response = await axiosInstance.get(`/users/isUser?pseudo=${pseudo}`);

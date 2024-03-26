@@ -10,6 +10,7 @@ import commonStyles from '../../style/commonStyle';
  */
 const PressableBasic = ({ label, ...props }) => {
     const [isPressed, setIsPressed] = useState(false);
+    const disabled = props.disabled || false;
 
     const handlePressIn = () => {
         setIsPressed(true);
@@ -20,6 +21,9 @@ const PressableBasic = ({ label, ...props }) => {
     };
 
     const handlePress = () => {
+        if (disabled) {
+            return;
+        }
         props.onPress();
     }
 
@@ -28,6 +32,7 @@ const PressableBasic = ({ label, ...props }) => {
         style={[
             pressableBasicStyle.button,
             isPressed && pressableBasicStyle.buttonPressed,
+            disabled && pressableBasicStyle.buttonDisabled
         ]}
         onPress={handlePress}
         onPressIn={handlePressIn}

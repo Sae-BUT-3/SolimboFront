@@ -4,7 +4,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useAuth } from "../contexts/AuthContext";
 
 import SignInScreen from "../screens/auth/SignInScreen";
-import SignUpScreen from "../screens/auth/SignUpScreen";
+import SignUpScreen from "../screens/auth/signup/SignUpScreen";
 import SpotifyAuthScreen from "../screens/auth/SpotifyAuthScreen";
 import ConfirmUserScreen from "../screens/auth/ConfirmUserScreen";
 

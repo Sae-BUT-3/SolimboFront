@@ -15,10 +15,6 @@ export const AuthProvider = ({ children }) => {
   }
 
   const signIn = (email, password) => {
-    // const postData = {
-    //   email: 'alban.talagrand2@gmail.com',
-    //   password: 'testpassword'
-    // };
 
     const postData = {
       email: email,

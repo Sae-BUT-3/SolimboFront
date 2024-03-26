@@ -11,7 +11,7 @@ const authStyle = StyleSheet.create({
         alignItems: "center",
         justifyContent: "center",
         width: 140,
-        marginVertical: 5,
+        marginVertical: 2.5,
     },
     line :{
         width: "100%",
@@ -39,7 +39,7 @@ const authStyle = StyleSheet.create({
     noAccount: {
         color: Colors.Silver,
         fontFamily : "inter-semi-bold",
-    },
+    }
 });
 
 export default authStyle;

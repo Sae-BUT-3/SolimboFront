@@ -90,12 +90,9 @@ function SignInScreen({ navigation }) {
               value={password}
               onChangeText={(text) => setPassword(text)}
             />
-          </View>
-          <View style={commonStyles.columnCenterContainer}>
             <PressableBasic
-            text="Connexion"
-
-            onPress={() => signIn({ email, password })}
+            text="Se connecter"
+            onPress={() => signIn(email, password)}
             />
             <Text style={authStyle.textPasswordForgot}>Mot de passe oublié ? </Text>
           </View>

@@ -21,6 +21,9 @@ const pressableBasicStyle = StyleSheet.create({
     },
     buttonPressed: {
         backgroundColor: Colors.CalPolyGreen,
+    },
+    buttonDisabled: {
+        backgroundColor: Colors.Onyx,
     }
 });
 
