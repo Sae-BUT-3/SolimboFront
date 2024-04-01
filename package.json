@@ -47,6 +47,7 @@
     "react-native-screens": "~3.29.0",
     "react-native-svg": "14.1.0",
     "react-native-vector-icons": "^10.0.3",
+    "react-native-swipe-gestures": "^1.0.5",
     "react-native-web": "~0.19.6"
   },
   "devDependencies": {

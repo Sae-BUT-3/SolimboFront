@@ -35,6 +35,7 @@ function SearchScreen() {
     useEffect(() => {
         // Fetch search filters when the component mounts
         axiosInstance.get('/spotify/Searchfilters').then(response => {
+            console.log(response.data)
             setFilter(response.data);
         }).catch(e => setError(e.response.data));
     }, [])
