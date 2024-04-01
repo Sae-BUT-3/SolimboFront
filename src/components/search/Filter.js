@@ -20,7 +20,7 @@ const styles = StyleSheet.create({
     },
     text : {
         color:Colors.Silver,
-        fontSize: 'medium',
+        fontSize: 16,
         padding: 2
     },
     clicked: {

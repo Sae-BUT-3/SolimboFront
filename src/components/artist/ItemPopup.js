@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import { StyleSheet, View, Text, Pressable, Platform} from 'react-native';
+import { StyleSheet, View, Text, Pressable, Platform, Image} from 'react-native';
 import Avatar from '@mui/material/Avatar';
 import { Colors } from '../../style/color';
 import PointTrait from '../common/PointTrait';
@@ -45,8 +45,11 @@ const ItemPopup = ({data}) => {
             ]}
         >
             <View key={data.id} style={styles.item}>
-                <Avatar src={data.image} sx={{ width: 164, height: 164, borderRadius: 2, boxShadow: '0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)' }} variant='square' />
-                <View><Text style={{color: Colors.White, maxWidth: 150, overflow: 'hidden', textOverflow: 'ellipsis'}}>{toCapitalCase(data.name)}</Text></View>
+                <Image
+                  source={{ uri: data.image }}
+                  style={{ width: 164, height: 164, borderRadius: 9, boxShadow: '0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)' }}
+                />                
+                <Text style={{color: Colors.White, maxWidth: 150, overflow: 'hidden', textOverflow: 'ellipsis'}}>{toCapitalCase(data.name)}</Text>
                 <View style={{display: 'flex', flexDirection: 'row',alignItems: 'center', fontWeight: 'normal', gap: 10}}>
                     <Text style={{color: Colors.White}}>{data.release_date.substring(0, 4)}</Text>
                     <PointTrait point={true}/>

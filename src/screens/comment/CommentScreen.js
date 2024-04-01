@@ -1,11 +1,10 @@
-import React, {useState, useRef, useEffect} from 'react';
-import { StyleSheet, View, Text, Pressable, Animated, Platform} from 'react-native';
+import React, { useState, useRef, useEffect } from 'react';
+import { StyleSheet, View, Text, Pressable, Animated, Platform } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
+import { FontAwesome5 } from '@expo/vector-icons'; // Importation de FontAwesome5
+import { Provider as PaperProvider } from 'react-native-paper';
 import { Colors } from '../../style/color';
-import { SnackbarContent, Table, TableBody, TableCell, TableContainer,TablePagination, TableRow, TextField, IconButton, Avatar, InputAdornment, Divider} from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
-import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
-import SendIcon from '@mui/icons-material/Send';
+import { DataTable } from 'react-native-paper';
 import Comment from '../../components/common/Comment';
 import Tokenizer from '../../utils/Tokenizer';
 import axiosInstance from '../../api/axiosInstance';
@@ -13,57 +12,45 @@ import Review from '../../components/common/Review';
 import ErrorRequest from '../../components/ErrorRequest';
 import Loader from '../../components/Loader';
 
+const numberOfItemsPerPageList = [5, 10, 15 , 20, 25];
+
 const CommentScreen = () => {
     const route = useRoute();
     const id  = route.params?.id || null;
-    const [review, setReview] = useState(null);
-    const [comments, setComments] = useState([]);
-    const [page, setPage] = useState(0);
-    const [rowsPerPage, setRowsPerPage] = useState(5);
-    const [comment, addComment] = useState('');
-    const [userComment, setUserComment] = useState({data: null, type: 'review'});
-    const [currentUser, setCurrentUser] = useState(null);
-    const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState(null)
-
-    const handleSendPress = () =>{
-        if (userComment.type === "review"){
-            axiosInstance.put(`/review/${id}/comment`, {params: {description: comment}})
-            .then(response => {
-            console.log(response.data)
-            }).catch(e => setError(e.response.data));
-        } else {
-            
-        }
-        updateComments(rowsPerPage, page)
-    }
-
-    const handleClose = (event, reason) => {
-        if (reason === 'clickaway') {
-        return;
-        }
-        setUserComment({data: null, type: 'review'});
-    };
-
-    const handleExited = () => {
-        setUserComment({data: null, type: 'review'});
-    };
-
-    const updateComments = (limit, offset) => {
-    
-    }
-    const handleChangePage = (event, newPage) => {
-        setPage(newPage);
-        updateComments(rowsPerPage, page)
-    };
-
-    const handleChangeRowsPerPage = (event) => {
-        setRowsPerPage(parseInt(event.target.value));
-        setPage(0);
-        updateComments(rowsPerPage, page)
-    };
     const navigation = useNavigation();
     const scrollY = useRef(new Animated.Value(0)).current;
+    const [review, setReview] = useState(null);
+    const [comments, setComments] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState(null)
+    const [page, setPage] = useState(0);
+    const [itemsPerPage, onItemsPerPageChange] = useState(numberOfItemsPerPageList[0]);
+    const [count, setCount] = useState(0);
+
+    useEffect(() => {
+        axiosInstance.get(`/review/${id}`, {params: {page: page + 1, pageSize: itemsPerPage, orderByLike: false}})
+        .then(response => {
+          setReview(response.data);
+          setComments(response.data.comments);
+          setCount(response.data.countComment)
+          setIsLoading(false);
+        }).catch(e => setError(e.response.data));
+    }, []);  
+    
+    const updateComments = () => {
+        axiosInstance.get(`/review/${id}`, {params: {page: page + 1, pageSize: itemsPerPage, orderByLike: false}})
+        .then(response => {
+          setReview(response.data);
+          setComments(response.data.comments);
+          setIsLoading(false);
+        }).catch(e => setError(e.response.data));
+    }
+
+    const handleChangePage = (newPage) => {
+        setIsLoading(true);
+        setPage(newPage);
+        updateComments();
+    };
 
     const handleGoBack = () => {
         navigation.goBack();
@@ -75,126 +62,75 @@ const CommentScreen = () => {
         extrapolate: 'clamp',
         
     });
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                setCurrentUser(await Tokenizer.getCurrentUser());
-            } catch (error) {
-                console.error("Error fetching data:", error);
-            }
-        };
-        axiosInstance.get(`/review/${id}`)
-        .then(response => {
-          setReview(response.data);
-          setComments(response.data.comments);
-          setIsLoading(false);
-        }).catch(e => setError(e.response.data));
-        fetchData();
-    }, []);
 
     if (error) {
         return <ErrorRequest err={error}/>;
     }
 
-    return(
-        <View style={styles.container}> 
-            {isLoading ? (<Loader/>) : (
-            <>
-                <Animated.View>
-                    <View style={[styles.header, { opacity: headerOpacity }]}>
-                        <Pressable onPress= {handleGoBack}>
-                        <ArrowBackIosNewIcon sx={{color: Colors.White }}/>
-                        </Pressable>
-                        <Text style={styles.title}>Commentaires</Text>
-                        <Text></Text>
-                    </View>
-                </Animated.View>
-                <Animated.ScrollView 
-                    onScroll={Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }], { useNativeDriver: true })}
-                    scrollEventThrottle={16}
-                >   
-                    <Review data={review}/>
-                    <Divider component="div" sx={{borderColor: Colors.Silver}}/>
-                    {comments.length > 0 ? 
-                        <TableContainer>
-                            <Table>
-                                <TableBody>
-                                    {comments.map((item, index) => {
-                                        return (
-                                            <TableRow key={index} >
-                                            <TableCell component="div" sx={styles.comment}>
-                                                <Comment key={index} data={item} reply={setUserComment}/>
-                                            </TableCell>
-                                            </TableRow>
-                                        );
-                                    })}
-                                </TableBody>
-                            </Table>
-                        </TableContainer> : 
-                        <Text style={{color: Colors.White}}>Aucun commentaire, soyez le premier à rédiger un commentaire !</Text>
-                    }
-                    {comments.length > 0 &&
-                    <TablePagination
-                        component="div"
-                        count={comments.length}
-                        page={page}
-                        rowsPerPageOptions={[5, 10, 25, 30]}
-                        onPageChange={handleChangePage}
-                        rowsPerPage={rowsPerPage}
-                        onRowsPerPageChange={handleChangeRowsPerPage}
-                        labelRowsPerPage='Commentaire par page :'
-                        sx={{bgcolor: Colors.Jet, color: Colors.White}}
-                    />}
-                </Animated.ScrollView> 
-                {(userComment.data && comments.length > 0)  && (<SnackbarContent
-                    sx={{bgcolor: Colors.Jet, width: "100%"}}
-                    open={()=>{userComment.data ? true : false}}
-                    onClose={handleClose}
-                    TransitionComponent='SlideTransition'
-                    TransitionProps={{ onExited: handleExited }}
-                    message={userComment.data ? 'Réponse au commentaire de ' +  userComment.data.username : undefined}
-                    action={
-                        <React.Fragment>
-                            <IconButton
-                                aria-label="close"
-                                color={Colors.DarkSpringGreen}
-                                sx={{ p: 0.5 }}
-                                onClick={handleClose}
-                            >
-                                <CloseIcon />
-                            </IconButton>
-                        </React.Fragment>
-                    }
-                />)}
-                <View style={styles.sender}>
-                    <Avatar src={currentUser ? currentUser.photo : "../.../assets/profil.png"} sx={{boxShadow: '0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)', width: 64, height:64}}/>
-                    <TextField fullWidth
-                        onChange={(event) => {
-                            addComment(event.target.value);
-                        }} 
-                        id="input-with-icon-textfield"
-                        sx={{color: Colors.White, boxShadow: '0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)'}} 
-                        variant="filled"
-                        placeholder={`Ajouter un commentaire à la review de ${review.utilisateur.pseudo} ...`}
-                        multiline
-                        type='text'
-                        value={comment}
-                        maxRows={9}
-                    /> 
-                    <SendIcon sx={{color: Colors.DarkSpringGreen, fontSize: 'xx-large'}}/>
-
-                </View>
-            </>)}    
+    return (
+        <View style={styles.container}>
+            {isLoading ? (<Loader />) : (
+                <PaperProvider>
+                    <Animated.View>
+                        <View style={[styles.header, { opacity: headerOpacity }]}>
+                            <Pressable onPress={handleGoBack}>
+                                <FontAwesome5 name="arrow-left" size={30} color={Colors.SeaGreen}/>
+                            </Pressable>
+                            <Text style={styles.title}>Commentaires</Text>
+                            <Text/>
+                        </View>
+                    </Animated.View>
+                    <Animated.ScrollView
+                        onScroll={Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }], { useNativeDriver: true })}
+                        scrollEventThrottle={16}
+                    >                        
+                        <DataTable>
+                            <DataTable.Header  style={{margin: 'auto', borderBottomColor: Colors.Silver}}>
+                                <Review data={review} />
+                            </DataTable.Header>
+                            {comments.length > 0 ?<>
+                                {comments.map((item, index) => (
+                                    <DataTable.Row key={index}  style={{margin: 'auto', borderBottom: 'none'}}>
+                                        <DataTable.Cell>
+                                            <Comment key={index} data={item} /> 
+                                        </DataTable.Cell>
+                                    </DataTable.Row>
+                                )) }
+                                <DataTable.Pagination
+                                    page={page}
+                                    numberOfPages={Math.ceil(count / itemsPerPage)}
+                                    onPageChange={(page) => handleChangePage(page)}
+                                    label={`${page * itemsPerPage + 1}-${Math.min((page + 1) * itemsPerPage, count)} à ${count}`}
+                                    numberOfItemsPerPageList={numberOfItemsPerPageList}
+                                    numberOfItemsPerPage={itemsPerPage}
+                                    onItemsPerPageChange={onItemsPerPageChange}
+                                    selectPageDropdownLabel={'Commentaire par page'}
+                                    showFastPaginationControls
+                                    paginationControlRippleColor={Colors.White}
+                                    dropdownItemRippleColor={Colors.White}
+                                    selectPageDropdownRippleColor={Colors.Jet}
+                                    style={{backgroundColor: Colors.Jet, color: Colors.White}}
+                                /></>
+                                : <DataTable.Row  style={{margin: 'auto', borderBottom: 'none'}}>
+                                    <DataTable.Cell>
+                                        <Text style={{ color: Colors.White, fontSize: 20, textAlign: 'center'  }}>Aucun commentaire, soyez le premier à rédiger un commentaire !</Text>
+                                    </DataTable.Cell>
+                                </DataTable.Row>
+                            }
+                        </DataTable>
+                    </Animated.ScrollView>
+                </PaperProvider>
+            )}
         </View>
-       
-    )
+    ) 
 }
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        backgroundColor: Colors.Onyx,
     },
-    header:{
+    header: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
@@ -204,28 +140,21 @@ const styles = StyleSheet.create({
         top: 0,
         left: 0,
         right: 0,
-        zIndex: 1, 
+        zIndex: 1,
+        marginBottom: 30
     },
-    title:{
-        fontSize: 'xx-large',
-        color: Colors.White,
-        fontWeight:'bold'
+    title: {
+        fontSize: Platform.OS === "web" ? 35 : 25,
+        color: Colors.SeaGreen,
+        fontWeight: 'bold'
     },
-    comment: {
-        maxWidth: Platform.OS == 'web' ? 950 : 300,
-        backgroundColor: Colors.Onyx,
-        borderBottom: 'none',
-        margin: 'auto'
-     },
-    sender:{
-        display: 'flex',
+    sender: {
         flexDirection: 'row',
-        gap: 2, 
-        alignItems: 'flex-end',
         justifyContent: 'space-between',
+        alignItems: 'flex-end',
         backgroundColor: Colors.Silver,
         padding: 10
     }
-})
+});
 
-export default CommentScreen
+export default CommentScreen;

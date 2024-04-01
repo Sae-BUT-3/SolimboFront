@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Pressable, Animated } from 'react-native';
-import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
+import { FontAwesome5 } from '@expo/vector-icons'; // Importation de FontAwesome5
 import axiosInstance from '../../api/axiosInstance';
 import { Colors } from '../../style/color';
 import ItemPopup from '../../components/artist/ItemPopup';
@@ -46,7 +46,7 @@ const DiscograpyScreen = () => {
             <>
                 <Animated.View style={[styles.header, headerOpacity]}>
                     <Pressable onPress={() => { navigation.goBack() }}>
-                        <ArrowBackIosNewIcon sx={{ color: Colors.White }} />
+                        <FontAwesome5 name="arrow-left" size={30} color={Colors.SeaGreen}/>
                     </Pressable>
                     <Text style={styles.title}>Discographie détaillée</Text>
                     <Text></Text>
@@ -93,10 +93,23 @@ const styles = StyleSheet.create({
    padding: 30,
    position: 'relative',
  },
+ header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 20,
+    backgroundColor: Colors.Jet,
+    position: 'relative',
+    top: 0,
+    left: 0,
+    right: 0,
+    zIndex: 1,
+    marginBottom: 30
+},
  title: {
-   fontSize: 'x-large',
+   fontSize: 35,
    fontWeight: 'bold',
-   color: Colors.White
+   color: Colors.SeaGreen
  },
  item: {
     display: 'flex',
@@ -111,7 +124,7 @@ const styles = StyleSheet.create({
     position: 'relative',
     top: 0,
     right: 0,
-    fontSize:'large'
+    fontSize: 30
  },
  sectionTitle: {
     color: Colors.DarkSpringGreen,

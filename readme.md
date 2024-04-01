@@ -8,9 +8,12 @@
 # Pour que la page artiste fontionne
 
 ```
-> npm install @mui/material @emotion/react @emotion/styled 
-> npm install @mui/icons-material
+> npm install react-native-elements 
+> npm install @fortawesome/fontawesome-free 
+> npm install react-native-vector-icons
 > npm install react-native-modal
-
+> npm install react-native-ratings 
+> npm install react-native-paper
+> npm install react-native-pagination
 ```
 

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import {StyleSheet,View, Text, Pressable, Platform, ImageBackground} from 'react-native';
-import Avatar from '@mui/material/Avatar';
+import {StyleSheet,View, Text, Pressable, Platform, ImageBackground, Image} from 'react-native';
 import { Colors } from '../../style/color';
+import AvatarGroup from '../common/AvatarGroup';
 
 const Profil = ({ data, friends_followers, follow, followArtist }) => {
   const [isHovered, setIsHovered] = useState(false);
@@ -39,7 +39,10 @@ const Profil = ({ data, friends_followers, follow, followArtist }) => {
                 isImageHovered && styles.imageContainerHovered
                 ]}
               >     
-                <Avatar src={data.image} sx={{ width: 164, height: 164, boxShadow: '0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)' }}/>
+                <Image
+                  source={{ uri: data.image }}
+                  style={{ width: 164, height: 164, borderRadius: 82}}
+                />              
               </Pressable>
               <Pressable style={[styles.followButton, isHovered ? styles.btnHovered : null]}
                 activeOpacity={1}
@@ -49,10 +52,13 @@ const Profil = ({ data, friends_followers, follow, followArtist }) => {
                 {!follow ? <Text style={styles.buttonText}>+ Suivre</Text> : <Text style={styles.buttonText}>Suivi</Text>}
               </Pressable >
             </View>
-            <View style={{ display: Platform.OS !== 'web'? 'flex': undefined, alignItems: Platform.OS !== 'web'? 'center' : undefined}}>
+            <View style={{ display: Platform.OS !== 'web'? 'flex': undefined, alignItems: Platform.OS !== 'web'? 'center' : null}}>
                 <Text style={styles.nameA}>{data.name}</Text>
                 <View style={styles.sectionFollower}>
-                  <Text style={{color: Colors.White, textShadow: '2px 2px 4px #000000', fontSize: 'medium', textAlign: Platform.OS !== 'web'? 'center' : undefined}}>{data.follower_count} followers  {friends_followers.count > 0 ? `dont ${friends_followers.count} amis` : null} </Text>
+                  <Text style={{color: Colors.White, fontSize: 17, textAlign: Platform.OS !== 'web'? 'center' : null, margin: 5,textShadow: '2px 2px 4px #000000'}}>
+                    {data.follower_count} followers {friends_followers.count > 0 ? `dont ${friends_followers.count} amis` : null}
+                  </Text>
+                  <AvatarGroup avatars={friends_followers.users}/>
                 </View>
             </View>
         </View>
@@ -95,20 +101,20 @@ const styles = StyleSheet.create({
     color: Colors.White,
     fontWeight: 'bold',
     textAlign: 'center',
+    fontSize: 15
   },
   sectionFollower: {
     display: 'flex',
     justifyContent: 'flex-end',
     backgroundColor: Colors.BattleShipGray,
     fontWeight: 'normal',
-    fontSize: 'medium',
+    fontSize: 12,
     borderRadius: 10,
     padding: 10,
-    height: 'auto',
     boxShadow: '0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)' 
   },
   nameA:{
-    fontSize: Platform.OS === 'web'? 'xxx-large' : 'xx-large',
+    fontSize: 30,
     color: Colors.SeaGreen,
     fontWeight: 'bold',
     marginBottom: 10,

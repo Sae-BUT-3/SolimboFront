@@ -1,11 +1,9 @@
 import React, {useState} from 'react';
-import { StyleSheet, View, Text, Pressable, TouchableOpacity, Platform} from 'react-native';
-import Avatar from '@mui/material/Avatar';
-import Rating from '@mui/material/Rating';
-import StarIcon from '@mui/icons-material/Star';
+import { StyleSheet, View, Text, Pressable, Platform, Image} from 'react-native';
 import { Colors } from '../../style/color';
 import PointTrait from './PointTrait';
 import {useNavigation} from '@react-navigation/native'
+import {Rating} from 'react-native-ratings';
 
 const toCapitalCase = (mot) => {
     return mot.charAt(0).toUpperCase() + mot.slice(1);
@@ -47,32 +45,54 @@ const Item = ({data}) => {
             ]}
         >
             <View key={data.id} style={styles.item}>
-                <Avatar src={data.image} sx={{ width: 164, height: 164, borderRadius: 2, boxShadow: '0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)' }} variant='square' />
+                <Image
+                  source={{ uri: data.image }}
+                  style={{ width: 164, height: 164, borderRadius: 9, boxShadow: '0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)' }}
+                />
                 { Platform.OS == 'web' ?
                    <View>
                         <View><Text style={{color: Colors.White, maxWidth:  Platform.OS == 'web' ? 150 : null, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap'}}>{toCapitalCase(data.name)}</Text></View>
                         <View style={{display: 'flex',flexDirection: 'row', alignItems: 'center', fontWeight: 'normal'}}>
-                        <Rating value={data.rating} precision={0.5}  style={{color: Colors.DarkSpringGreen}} emptyIcon={<StarIcon style={{ opacity: 0.55, color: Colors.Licorice }} fontSize="inherit"/>}  max={5} readOnly />
-                            <PointTrait point={true}/> <Text style={{color: Colors.White}}>{data.reviewCount}</Text> 
+                            <Rating
+                                type="custom"
+                                ratingCount={5}
+                                imageSize={25}
+                                ratingColor={Colors.DarkSpringGreen}
+                                tintColor={Colors.Jet}
+                                ratingBackgroundColor={Colors.Licorice}
+                                startingValue={data.rating}
+                                readonly
+                            />
+                            <PointTrait point={true}/> 
+                            <Text style={{color: Colors.White}}>{data.reviewCount > 0 ? data.reviewCount : 0}</Text>
                         </View>
                         <View style={{display: 'flex', flexDirection: 'row',alignItems: 'center', fontWeight: 'normal', gap: 10}}>
                             <Text style={{color: Colors.White}}>{data.release_date.substring(0, 4)}</Text>
                             <PointTrait point={true}/>
                             <Text style={{color: Colors.White}}>{toCapitalCase(data.type)}</Text>
-                        </View> 
+                        </View>
                     </View> :
                     <View style={{display: 'flex', flexDirection: 'row',alignItems: 'center', fontWeight: 'normal', gap: 5}}>
                         <View><Text style={{color: Colors.White, maxHeight: 25, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',}}>{toCapitalCase(data.name)}</Text></View>
                         <View style={{display: 'flex',flexDirection: 'row', alignItems: 'center', fontWeight: 'normal'}}>
-                            <Rating value={data.rating} precision={0.5}  style={{color: Colors.DarkSpringGreen}} emptyIcon={<StarIcon style={{ opacity: 0.5, color: Colors.Licorice }} fontSize="inherit" />} readOnly />
-                            <PointTrait point={true}/> <Text style={{color: Colors.White}}>{data.reviewCount ? data.reviewCount : 0}</Text> 
+                            <Rating
+                                type="custom"
+                                ratingCount={5}
+                                imageSize={15}
+                                ratingColor={Colors.DarkSpringGreen}
+                                tintColor={Colors.Jet}
+                                ratingBackgroundColor={Colors.Licorice}
+                                startingValue={data.rating}
+                                readonly
+                            />
+                            <PointTrait point={true}/> <Text style={{color: Colors.White}}>{data.reviewCount ? data.reviewCount : 0}</Text>
                         </View>
                         <View style={{display: 'flex', flexDirection: 'row',alignItems: 'center', fontWeight: 'normal', gap: 10}}>
                             <Text style={{color: Colors.White}}>{data.release_date.substring(0, 4)}</Text>
                             <PointTrait point={true}/>
                             <Text style={{color: Colors.White}}>{toCapitalCase(data.type)}</Text>
                         </View>
-                    </View> 
+                    </View>
                 }
             </View>
         </Pressable>
@@ -99,11 +119,11 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         color: Colors.White,
         fontWeight: 'normal',
-        
+
     },
     itemHovered: {
         backgroundColor: Colors.Onyx, // Fond avec effet de fondu
     },
- 
 });
+
 export default Item

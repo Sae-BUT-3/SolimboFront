@@ -7,8 +7,8 @@ import authStyle from '../../style/authStyle';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import BasicInput from '../../components/form/BasicInput';
 import PressableSpotify from '../../components/pressables/PressableSpotify';
-import Alert from '@mui/material/Alert';
 import { useLinkTo } from '@react-navigation/native';
+import { Snackbar } from 'react-native-paper';
 
 function SignInScreen({ navigation }) {
   const { signIn } = useAuth();
@@ -25,6 +25,10 @@ function SignInScreen({ navigation }) {
     const res = signIn(credentials);
     setError(res)
   };
+  const handleClose = () => {
+    setError(null);
+  };
+
   return (
     <SafeAreaView style={[commonStyles.safeAreaContainer, {justifyContent : 'normal'} ]}>
         
@@ -85,21 +89,23 @@ function SignInScreen({ navigation }) {
             onPress={() => navigation.navigate('SignUp')}
           >S'inscire</Text>
         </View>
-        { Platform.OS === 'web' &&  (<View style={styles.errorMessage}>
-          {error && (<Alert severity="error"  onClose={() => {setError(null)}}>{error}</Alert>)}
-        </View>)} 
+        {error && (
+            <Snackbar
+              visible={error !== null}
+              onDismiss={handleClose}
+              action={{
+                  label: 'Fermer',
+                  onPress: handleClose
+              }}
+              duration={Snackbar.DURATION_LONG}
+              elevation={3}
+              style={{width: Platform.OS == 'web' ? 500 : 400}}
+            >
+              {error}
+            </Snackbar>
+        )}
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  errorMessage: {
-    position: 'absolute',
-    bottom: 0, 
-    padding: 2, 
-    margin:10, 
-    right:0
-  }
-})
 
 export default SignInScreen;

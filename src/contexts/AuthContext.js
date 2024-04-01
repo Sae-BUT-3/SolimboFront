@@ -30,6 +30,7 @@ export const AuthProvider = ({ children }) => {
       })
       .catch(error => {
         console.log("Error : /users/signin " + error)
+        setError("Échec de l'authentification, email ou mot de passe invalide !" );
       });
       return response
   };
