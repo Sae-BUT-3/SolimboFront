@@ -5,7 +5,7 @@ import Svg, { Path } from 'react-native-svg';
 import {Colors} from "../../style/color";
 import {breakpoint} from "../../style/breakpoint";
 
-function SearchBar({keyPressHandler, filters}) {
+function SearchBar({keyPressHandler, filters, includeCancelButton = true}) {
     const {height, width} = useWindowDimensions();
     const allFilters = filters.map(item => item.id)
     const [filterArray, setFilterArray] = useState([])
@@ -97,10 +97,12 @@ function SearchBar({keyPressHandler, filters}) {
                     onChangeText={text => handleInputKeypress(text)}
                 />
 
-                <Text
-                    style={styles.cancelText}
-                    onPress={handleCancel}
-                >Annuler</Text>
+                {includeCancelButton && inputValue.length > 0 && (
+                    <Text
+                        style={styles.cancelText}
+                        onPress={handleCancel}
+                    >Annuler</Text>
+                )}
             </View>
 
             <View

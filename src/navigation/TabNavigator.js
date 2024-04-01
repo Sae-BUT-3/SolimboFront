@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { FontAwesome5 } from '@expo/vector-icons'; // Importation de FontAwesome5
 import HomeScreen from '../screens/HomeScreen';
@@ -8,11 +8,16 @@ import { Colors } from '../style/color';
 import { TouchableOpacity } from 'react-native';
 import ActivityScreen from '../screens/AcvityScreen';
 import AddButtonScreen from '../screens/AddButtonScreen';
+import ModalPostReview from '../components/ModalPostReview';
+import GestureRecognizer from 'react-native-swipe-gestures';
 
 const Tab = createBottomTabNavigator();
 
 function TabNavigator() {
+    const [modalVisible, setModalVisible] = useState(false);
+
     return (
+        <>
         <Tab.Navigator
             screenOptions={({ route }) => ({
                 headerShown: false,
@@ -41,24 +46,18 @@ function TabNavigator() {
                 component={HomeScreen} 
                 options={{
                     tabBarIcon: ({ focused, color, size }) => (
-                        <FontAwesome5 name={focused ? 'home' : 'home'} size={size} color={color} />
+                    <FontAwesome5 name={focused ? 'home' : 'home'} size={size} color={color} />
                     ),
                 }}
             />
             <Tab.Screen 
                 name="AddButton" 
                 component={AddButtonScreen}
-                listeners={({ navigation }) => ({
-                    tabPress: e => {
-                        e.preventDefault(); // Empêche le changement de route par défaut
-                        // Ajoutez ici votre logique pour le bouton central
-                    },
-                })}
                 options={{
                     tabBarIcon: ({ color, size }) => (
                         <TouchableOpacity
                             onPress={() => {
-                                // Ajoutez ici votre logique pour le bouton central
+                                setModalVisible(true);
                             }}
                             style={{
                                 width: 56,
@@ -93,6 +92,16 @@ function TabNavigator() {
                 }}
             />
         </Tab.Navigator>
+
+        <GestureRecognizer
+        // style={{flex: 1}}
+        // onSwipeUp={ () => setModalVisible(true) }
+        onSwipeDown={ () => setModalVisible(false) }
+        >
+            <ModalPostReview visible={modalVisible} onClose={() => setModalVisible(false)} />
+        </GestureRecognizer>
+
+        </>
     );
 }
 
