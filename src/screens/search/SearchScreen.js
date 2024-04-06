@@ -8,13 +8,13 @@ import ErrorRequest from '../../components/ErrorRequest';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import commonStyles from '../../style/commonStyle';
 import searchStyle from '../../style/searchStyle';
-
+import { breakpoint } from '../../style/breakpoint';
 function SearchScreen() {
     const {width} = useWindowDimensions()
 
     const searchStyleWidth = StyleSheet.create({
         subContainer: {
-            width: width> 1200 ? 1200 : "100%",
+            width: width> breakpoint.medium ? 1200 : "100%",
             height: "100%",
             margin: "auto"
         },
@@ -23,7 +23,7 @@ function SearchScreen() {
             flexDirection: "column",
             gap: 10,
 
-            width: width> 1200 ? 1200 : "100vw",
+            width: width> breakpoint.medium ? 1200 : "100vw",
         }
     });
 
