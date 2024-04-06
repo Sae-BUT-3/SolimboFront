@@ -13,6 +13,14 @@ const commonStyles = StyleSheet.create({
         paddingTop: "20%",
         width: "100%",
     },
+    centerW50percent : {
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "space-evenly",
+        width: "100%",
+        height: "50%",
+    },
     row :{
         display: "flex",
         flexDirection: "row",
@@ -22,12 +30,17 @@ const commonStyles = StyleSheet.create({
     },
     text: {
         fontSize: 16,
-        color: Colors.White,
-        fontFamily : "inter-regular",
+        color: Colors.GreyWhite,
+        fontFamily : "inter-semi-bold",
     },
     textLink: {
         fontSize: 16,
         color: Colors.SeaGreen,
+        fontFamily : "inter-semi-bold",
+    },
+    textError: {
+        fontSize: 16,
+        color: Colors.CalPolyGreen,
         fontFamily : "inter-semi-bold",
     },
     pressable: {
