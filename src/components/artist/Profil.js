@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import {StyleSheet,View, Text, Pressable, Platform, ImageBackground, Image} from 'react-native';
 import { Colors } from '../../style/color';
 import AvatarGroup from '../common/AvatarGroup';
+import { Divider } from 'react-native-paper';
 
 const Profil = ({ data, friends_followers, follow, followArtist }) => {
   const [isHovered, setIsHovered] = useState(false);
@@ -25,7 +26,7 @@ const Profil = ({ data, friends_followers, follow, followArtist }) => {
 
   return (
     <ImageBackground
-      source={data.image}
+      source={{ uri:data.image}}
       style={styles.backgroundImage}
     >
       <View style={styles.overlay}>
@@ -49,16 +50,23 @@ const Profil = ({ data, friends_followers, follow, followArtist }) => {
                 onMouseEnter={handleMouseEnter}
                 onMouseLeave={handleMouseLeave}
                 onPress={followArtist}>
-                {!follow ? <Text style={styles.buttonText}>+ Suivre</Text> : <Text style={styles.buttonText}>Suivi</Text>}
+                {!follow ? <Text style={styles.buttonText}>+ Suivre</Text> : <Text style={styles.buttonText}>Suivi(e)</Text>}
               </Pressable >
             </View>
             <View style={{ display: Platform.OS !== 'web'? 'flex': undefined, alignItems: Platform.OS !== 'web'? 'center' : null}}>
                 <Text style={styles.nameA}>{data.name}</Text>
                 <View style={styles.sectionFollower}>
-                  <Text style={{color: Colors.White, fontSize: 17, textAlign: Platform.OS !== 'web'? 'center' : null, margin: 5,textShadow: '2px 2px 4px #000000'}}>
-                    {data.follower_count} followers {friends_followers.count > 0 ? `dont ${friends_followers.count} amis` : null}
-                  </Text>
-                  <AvatarGroup avatars={friends_followers.users}/>
+                  <View>
+                    <Text style={{color: Colors.White, fontSize: 20, textAlign:  'center', margin: 5}}>
+                    {data.follower_count} 
+                    </Text>
+                    <Text style={{color: Colors.White, fontSize: 16, textAlign: 'center', margin: 5}}>Followers</Text> 
+                  </View>
+                  {friends_followers.count > 0 &&( <Divider  style={{ height: '100%', width: 1, backgroundColor:Colors.White}}/>) }
+                  <View style={{display: 'flex', alignItems: "center"}}>
+                    <AvatarGroup avatars={friends_followers.users} size={34} type='user'/>
+                    {friends_followers.count > 0 ? <Text style={{color: Colors.White, fontSize: 16, textAlign: 'center', margin: 5}}>{`Dont ${friends_followers.count} amis`}</Text>  : null}
+                  </View>
                 </View>
             </View>
         </View>
@@ -91,7 +99,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     borderRadius: 20,
     marginTop: 10,
-    boxShadow: '0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)' , 
+    shadowColor: Colors.Onyx,
+    shadowOpacity: 0.3,
+    shadowRadius: 3,
+    elevation: Platform.OS === 'android' ? 4 : 0, 
     transition: 'background-color 0.3s ease'
   },
   btnHovered: {
@@ -105,21 +116,27 @@ const styles = StyleSheet.create({
   },
   sectionFollower: {
     display: 'flex',
-    justifyContent: 'flex-end',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    flexDirection: 'row',
     backgroundColor: Colors.BattleShipGray,
-    fontWeight: 'normal',
-    fontSize: 12,
-    borderRadius: 10,
+    borderRadius: 9,
     padding: 10,
-    boxShadow: '0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)' 
+    gap: 8,
+    shadowColor: Colors.Onyx,
+    shadowOpacity: 0.3,
+    shadowRadius: 3,
+    elevation: Platform.OS === 'android' ? 4 : 0, 
   },
   nameA:{
     fontSize: 30,
     color: Colors.SeaGreen,
     fontWeight: 'bold',
     marginBottom: 10,
-    textShadow: '2px 2px 4px #000000',
-    textTransform: 'uppercase'
+    textTransform: 'uppercase',
+    textShadowColor: 'rgba(0, 0, 0, 0.75)',
+    textShadowOffset: {width: -1, height: 1},
+    textShadowRadius: 10,
   },
   backgroundImage: {
     flex: 1,
@@ -132,8 +149,7 @@ const styles = StyleSheet.create({
     shadowColor: Colors.Onyx,
     shadowOpacity: 0.3,
     shadowRadius: 3,
-    elevation: 7,
-    boxShadow: '0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)' 
+    elevation: Platform.OS === 'android' ? 3 : 0, 
   },
   imageContainerHovered: {
     transform: [{ scale: 1.2 }], 

@@ -1,21 +1,51 @@
-import React from 'react';
-import { View } from 'react-native';
+import React, { useState } from 'react';
+import { View, Pressable } from 'react-native';
 import { Avatar } from 'react-native-paper';
 
-const AvatarGroup = ({ avatars }) => {
+const maxAvatars = 5;
+
+const AvatarGroup = ({ avatars, size, type }) => {
+  const [showAll, setShowAll] = useState(false);
+
+  const handleShowAll = () => {
+    setShowAll(true);
+  };
+
   return (
-    avatars && avatars.length > 0 ? 
-      <View style={{ flexDirection: 'row' }}>
-        {avatars.map((avatar, index) => (
+    <View style={{ flexDirection: 'row' }}>
+      {!showAll && avatars ? (
+        <>
+          {avatars.slice(0, maxAvatars).map((avatar, index) => (
+            <Avatar.Image
+              key={index}
+              source={{ uri: type === 'user' ? avatar.photo : avatar.image }}
+              size={size}
+              style={{ marginRight: 10 }}
+              accessibilityLabel={type === 'user' ? avatar.pseudo : avatar.name}
+            />
+          ))}
+          {avatars.length > maxAvatars && (
+            <Pressable onPress={handleShowAll}>
+              <Avatar.Text
+                label={`+${avatars.length - maxAvatars}`}
+                size={size}
+                style={{ marginRight: 10 }}
+              />
+            </Pressable>
+          )}
+        </>
+      ) : avatars && (
+          avatars.map((avatar, index) => (
           <Avatar.Image
             key={index}
-            source={avatar.photo}
-            size={34}
-            style={{ marginRight: 10 }}
+            source={{ uri:  type === 'user' ? avatar.photo : avatar.image }}
+            size={size}
+            style={{ marginRight: 10, zIndex: avatars.length - index }}
+            accessibilityLabel={type === 'user' ? avatar.pseudo : avatar.name}
           />
-        ))}
-      </View>
-    : null
+        ))
+      )}
+    </View>
   );
 };
 

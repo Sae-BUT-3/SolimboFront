@@ -8,7 +8,6 @@ import { Colors } from '../style/color';
 import { TouchableOpacity } from 'react-native';
 import ActivityScreen from '../screens/AcvityScreen';
 import AddButtonScreen from '../screens/AddButtonScreen';
-import ArtistScreen from '../screens/artist/ArtistScreen';
 
 const Tab = createBottomTabNavigator();
 

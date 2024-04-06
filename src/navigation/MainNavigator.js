@@ -11,6 +11,7 @@ import ArtistScreen from "../screens/artist/ArtistScreen";
 import CommentScreen from "../screens/comment/CommentScreen";
 import ReviewScreen from "../screens/review/ReviewScreen";
 import OeuvreScreen from "../screens/oeuvre/OeuvreScreen";
+import DiscograpyScreen from "../screens/artist/DicographyScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -31,6 +32,7 @@ const MainNavigator = () => {
                     <Stack.Screen  name="Oeuvre" component={OeuvreScreen}  options={{ title:'Oeuvre | Solimbo'}}/>
                     <Stack.Screen name="Review" component={ReviewScreen}  options={{ title:'Critique | Solimbo'}}/>
                     <Stack.Screen name="Comment" component={CommentScreen}  options={{ title:'Commentaire | Solimbo'}} />
+                    <Stack.Screen name="Discographie" component={DiscograpyScreen} options={{ title:'Discographie | Solimbo'}}/>
                 </>
             ) : (
                 <> 

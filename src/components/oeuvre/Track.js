@@ -1,10 +1,6 @@
 import React, {useState} from 'react';
-import { StyleSheet, View, Text, Pressable, TouchableOpacity, Platform} from 'react-native';
-import Avatar from '@mui/material/Avatar';
-import Rating from '@mui/material/Rating';
-import StarIcon from '@mui/icons-material/Star';
+import { StyleSheet, View, Text, Pressable, Platform} from 'react-native';
 import { Colors } from '../../style/color';
-import PointTrait from './PointTrait';
 import {useNavigation} from '@react-navigation/native'
 
 const toCapitalCase = (mot) => {
@@ -44,7 +40,10 @@ const styles = StyleSheet.create({
         marginRight: Platform.OS == 'web' ? 0 : 20,
         borderRadius: 15,
         maxWidth: 200,
-        boxShadow: '0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)' ,
+        shadowColor: Colors.Onyx,
+        shadowOpacity: 0.3,
+        shadowRadius: 3,
+        elevation: Platform.OS === 'android' ? 3 : 0, 
         transition: 'background-color 0.3s ease',
         marginBottom: 30
     },

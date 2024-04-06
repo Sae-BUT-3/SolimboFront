@@ -1,18 +1,33 @@
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, View, Text, Pressable, Platform } from 'react-native';
-import { FontAwesome } from '@expo/vector-icons'; // Importation de FontAwesome depuis react-native-vector-icons
+import { FontAwesome5 } from '@expo/vector-icons'; // Importation de FontAwesome depuis react-native-vector-icons
 import { Divider, Avatar, List } from 'react-native-paper'; // Importation des composants de react-native-paper
 import { Colors } from '../../style/color';
-import PointTrait from './PointTrait';
+import ReadMore from 'react-native-read-more-text';
 import axiosInstance from '../../api/axiosInstance';
 import Date from './DateT';
 
-const CommentResponse = ({items}) => {
+const CommentResponse = ({items, onToggleSnackBar, response }) => {
     const [replies, setReplies] = useState(null);
     const [like, setLike] = useState(false)
+    const [countlike, setCountLike] = useState(0)
+    const [isExpanded, setIsExpanded] = useState(false);
 
-    useEffect( ()=>{
+    const renderTruncatedFooter = (handlePress) => (
+        <Text onPress={handlePress} style={{ color: Colors.SeaGreen, fontSize: Platform.OS == 'web' ? 20 : 19, fontWeight: 'normal' }}>
+        Voir plus
+        </Text>
+    );
+
+    const renderRevealedFooter = (handlePress) => (
+        <Text onPress={handlePress} style={{ color: Colors.SeaGreen, fontSize: Platform.OS == 'web' ? 20 : 19, fontWeight: 'normal' }}>
+        Voir moins
+        </Text>
+    );
+
+    useEffect(()=>{
       setLike(data.doesUserLike)
+      setCountLike(data.countLike)
     },[data]);
   
     const handlePress = () =>{
@@ -20,23 +35,20 @@ const CommentResponse = ({items}) => {
         .then(res => {
           if(!like){
             setLike(true)
-            data.doesUserLike = true;
-            data.countlikes++;
+            setCountLike(countlike++)
           }else{
             setLike(false)
-            data.doesUserLike = false;
-            data.countlikes--;
+            setCountLike(countlike--)
           }
         }).catch(e => console.log(`comment/${data.id_com}/like : ${e.response.data}`));
     }
 
-    const displayReply = () => {
+    const displayReply = (id) => {
         axiosInstance.get(`/review/${id}`)
         .then(response => {
-          setReplies(response.data.comments);
+          setReplies(response.comments);
         }).catch(e => console.log(e.response.data));
     }
-
     return (
         <List.Section style={styles.list}>
             {items.map((data, index) => (
@@ -44,44 +56,62 @@ const CommentResponse = ({items}) => {
                     <List.Item
                         title={
                             <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                    <Avatar.Image source={{ uri: data?.utilisateur.photo }} size={Platform.OS === 'web' ? 75 : 64} />
-                                    <View style={{ marginLeft: 10 }}>
-                                        <Text style={{ color: Colors.DarkSpringGreen, fontSize: Platform.OS === "web" ? 18 : 16, fontWeight: 'bold' }}>{data.utilisateur.pseudo}</Text>
-                                        <PointTrait />
-                                        <Pressable onPress={() => reply({ data: data, type: 'comment' })}>
-                                            <Text style={{ color: Colors.DarkSpringGreen, fontSize: Platform.OS === "web" ? 18 : 16, fontWeight: 'normal' }}>{'@' + data.utilisateur.alias}</Text>
-                                        </Pressable>
-                                    </View>
-                                </View>
-                                <Date dateString={data?.createdAt} />
+                                <Avatar.Image source={{ uri: data?.utilisateur.photo }} size={Platform.OS === 'web' ? 75 : 64} />
+                                <Pressable>
+                                    <Text style={{ color: Colors.DarkSpringGreen, fontSize: Platform.OS === "web" ? 18 : 16, fontWeight: 'normal' }}>{'@' + data.utilisateur.alias}</Text>
+                                </Pressable>
                             </View>
                         }
                         description={
                             <View style={{ marginVertical: 20 }}>
-                                <Text style={{ color: Colors.White, padding: 10, fontSize: 18, fontWeight: 'normal', textIndent: 20 }}>{data.text}</Text>
+                                <ReadMore
+                                    numberOfLines={5}
+                                    renderTruncatedFooter={renderTruncatedFooter}
+                                    renderRevealedFooter={renderRevealedFooter}
+                                    onReady={() => setIsExpanded(false)}
+                                    onExpand={() => setIsExpanded(true)}
+                                >
+                                    <Text style={{color: Colors.White, padding:10, fontSize: Platform.OS == 'web' ? 20 : 19, fontWeight: 'normal' }}>{toCapitalCase(data.description)}</Text>
+                                </ReadMore>                                
                                 <View style={styles.commentInfo}>
-                                    {data.countComment > 0 ?
-                                        <Pressable onPress={displayReply}>
-                                            <Text style={{ color: Colors.DarkSpringGreen, fontSize: Platform.OS === "web" ? 18 : 16, fontWeight: 'normal' }}>{replies ? ' Voir les réponses ' : "Masquer les réponses"}</Text>
-                                        </Pressable>
-                                        :
-                                        <Pressable onPress={() => reply({ data: data, type: 'comment' })}>
-                                            <Text style={{ color: Colors.DarkSpringGreen, fontSize: Platform.OS === "web" ? 18 : 16, fontWeight: 'normal' }}> Répondre</Text>
-                                        </Pressable>
-                                    }
-                                    <View style={{ flexDirection: 'row', gap: 10, alignItems: 'center' }}>
-                                    <Pressable>{like ? <FontAwesome name="heart" size={Platform.OS  == "web" ? 30 : 20} color={Colors.DarkSpringGreen} solid/> : <FontAwesome name="heart" size={Platform.OS  == "web" ? 30 : 20} color={Colors.DarkSpringGreen} regular/>}</Pressable>
-                                    {data.countLike}
-                                    <FontAwesome name="comments" size={Platform.OS  == "web" ? 30 : 20} color={Colors.DarkSpringGreen} />
-                                    {data.countComment}
+                                    <View style={{display: 'flex', flexDirection: 'row', gap: 10, justifyContent: 'space-between', alignItems: 'center', marginTop: 10}}> 
+                                    <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}><View style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
+                                        <Pressable onPress={handlePress}>{like ? <FontAwesome5 name="heart" size={30} color={Colors.DarkSpringGreen} solid/> : <FontAwesome5 name="heart" size={30} color={Colors.DarkSpringGreen} regular/>}</Pressable>
+                                        <Text style={{color: Colors.White, padding:10, fontSize: Platform.OS == 'web' ? 20 : 19, fontWeight: 'normal' }}>{countlike}</Text>
+                                    </View> 
+                                    <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
+                                        <FontAwesome5 name="comments" size={30} color={Colors.DarkSpringGreen} regular/>
+                                        <Text style={{color: Colors.White, padding:10, fontSize: Platform.OS == 'web' ? 20 : 19, fontWeight: 'normal' }}>{data?.countComment}</Text>
                                     </View>
+                                    </View>
+                                    <Date dateString={data?.createdAt}/>
+                                    </View>
+                                    {data.countComment > 0 ? 
+                                        <>
+                                        <Divider  style={styles.divider}/>
+                                        <View style={{display: 'flex', flexDirection:'row', gap: 10, alignItems: 'center', marginTop: 9}}>
+                                            <Pressable onPress={()=>{displayReply(data.id_com)}}>
+                                            <Text style={{color: Colors.DarkSpringGreen, fontSize: Platform.OS  === "web" ? 30 : 19, fontWeight: 'normal'}}>{ replies ? ' Voir les réponses ' : "Masquer les réponses"}</Text>
+                                            </Pressable>
+                                            <Divider style={{ height: '100%', width: 1, backgroundColor: Colors.Silver }} bold/>
+                                            <Pressable onPress={()=>{response(data)}}>
+                                            <Text style={{color: Colors.DarkSpringGreen, fontSize: Platform.OS  === "web" ? 30 : 19, fontWeight: 'normal'}}> Répondre</Text>
+                                            </Pressable>
+                                        </View>
+                                        </> : 
+                                        <>
+                                        <Divider  style={styles.divider}/>
+                                        <View style={{marginTop: 9, alignItems: 'flex-end'}}>
+                                            <Pressable onPress={()=>{response(data)}}><Text style={{color: Colors.DarkSpringGreen, fontSize: Platform.OS  === "web" ? 30 : 19, fontWeight: 'normal'}}> Répondre</Text></Pressable>
+                                        </View>
+                                        </>
+                                    }
                                 </View>
                             </View>
                         }
                     />
                     {index < items.length - 1 ? <Divider style={styles.divider} leftInset={true}  /> : null}
-                    {replies && (<><Divider style={styles.divider} /><CommentResponse items={replies} /></>)}
+                    {replies && (<><Divider style={styles.divider} /><CommentResponse items={replies} onToggleSnackBar={onToggleSnackBar} /></>)}
                 </React.Fragment>
             ))}
         </List.Section>

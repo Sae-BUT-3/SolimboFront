@@ -1,17 +1,13 @@
 import React, { useState, useEffect } from 'react';
+import { FontAwesome5 } from '@expo/vector-icons'; // Importation de FontAwesome5
 import {StyleSheet,View, Text, Pressable, Platform, ImageBackground} from 'react-native';
-import Avatar from '@mui/material/Avatar';
-import AvatarGroup from '@mui/material/AvatarGroup';
 import { Colors } from '../../style/color';
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
-import DriveFileRenameOutlineOutlinedIcon from '@mui/icons-material/DriveFileRenameOutlineOutlined';
-import Rating from '@mui/material/Rating';
-import StarIcon from '@mui/icons-material/Star';
 import PointTrait from '../common/PointTrait';
 import axiosInstance from '../../api/axiosInstance';
+import AvatarGroup from '../common/AvatarGroup';
+import { Image } from 'react-native';
 
-const Oeuvre = ({ data, like, likeOeuvre }) => {
+const Oeuvre = ({ data, artists, favoris, like, likeOeuvre }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [isImageHovered, setIsImageHovered] = useState(false);
 
@@ -31,76 +27,73 @@ const Oeuvre = ({ data, like, likeOeuvre }) => {
     setIsImageHovered(false);
   };
 
-  const setImage = (id) => {
-    axiosInstance.get('spotify/fetchArtist' , {params: {query: id, }})
-    .then(response => {
-      return response.data.image;
-    }).catch(e => console.log(e.response.data));
-  }
   return (
     <ImageBackground
-      source={data.image}
+      source={{uri: data.image}}
       style={styles.backgroundImage}
     >
       <View style={styles.overlay}>
         <View key={data.id} style={styles.profileContainer}>
           <View style={[styles.section, {flexDirection: 'row', alignItems: 'flex-end'}]}>
-            <Pressable
-                activeOpacity={1}
-                onMouseEnter={handleImageMouseEnter}
-                onMouseLeave={handleImageMouseLeave}
-                style={[
-                isImageHovered && styles.imageContainerHovered
-                ]}
-              >    
-              <Avatar src={data.image} sx={{ width: 164, height: 164, boxShadow: '0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)' }} variant='square'/>
-            </Pressable>
-            <View style={styles.section}>
-              <View style={[styles.section, {flexDirection: 'row', alignItems: 'center'}]}>
-                <Text style={{color: Colors.White, textShadow: '2px 2px 4px #000000', fontSize: 'medium', textAlign: Platform.OS !== 'web'? 'center' : undefined}}>{data.type}</Text>
-                <PointTrait point={true}/>
-                <Text>{data.release_date.substring(0, 4)}</Text>
+            <View>
+              <Pressable
+                  activeOpacity={1}
+                  onMouseEnter={handleImageMouseEnter}
+                  onMouseLeave={handleImageMouseLeave}
+                  style={[
+                  isImageHovered && styles.imageContainerHovered
+                  ]}
+              > 
+                <Image
+                  source={{ uri: data.image }}
+                  style={{ width: 164, height: 164, borderRadius: 5}}
+                />    
+              </Pressable>
+              <View style={styles.section}>
+                <Text style={{color: Colors.White, fontSize: 20, textAlign: Platform.OS !== 'web'? 'center' : undefined}}>{data.type}</Text>
+                <Text style={styles.nameA}>{data.name}</Text>
+                <Rating
+                  type="custom"
+                  ratingCount={5}
+                  imageSize={30}
+                  tintColor='transparent'
+                  ratingColor={Colors.SeaGreen}
+                  ratingBackgroundColor={Colors.Licorice}
+                  startingValue={data.rating}
+                  readonly
+                />
+                <View style={[styles.section, {flexDirection: 'row', alignItems: 'center'}]}>
+                  {artists.length == 1  ? (
+                    <View style={styles.sectionIcon}> 
+                      <Pressable onPress={() => navigation.navigate('Artist', { id : artists[0].id })}>  
+                        <Image
+                          source={{ uri: artists[0].image }}
+                          style={{ width: 64, height: 64, borderRadius: 82}}
+                        />    
+                      </Pressable> 
+                      <Text style={{color: Colors.White, fontSize: 20, textAlign: Platform.OS !== 'web'? 'center' : undefined}}>{artists[0].name}</Text>
+                    </View> ) : <AvatarGroup avatars={artists} size={64} type={data.type}/>
+                  }
+                  <PointTrait point={true}/>
+                  <Text>{data.release_date.substring(0, 4)}</Text>
+                  {data.total_tracks > 0 && <><PointTrait point={true}/><Text>{data.total_tracks + ' titres'}</Text></>}
+                </View>
               </View>
-              <Text style={styles.nameA}>{data.name}</Text>
+            </View>
+            <View style={[styles.section, {flexDirection: 'row', alignItems: 'center'}]}>
+              <View style={styles.sectionIcon}>
+                  <Pressable onPress={likeOeuvre}>{like ?  <FontAwesome5 name="heart" size={30} color={Colors.DarkSpringGreen} solid  />: <FontAwesome5 name="heart" size={Platform.OS  == "web" ? 30 : 20} color={Colors.DarkSpringGreen} regular/>}</Pressable>
+                <Text style={{color: Colors.White, fontSize: 20, textAlign: Platform.OS !== 'web'? 'center' : undefined}}>{data.likeCount}</Text>
+              </View>
+              <View style={styles.sectionIcon}>
+                <FontAwesome5  name="pencil-square-o" size={30} color={Colors.DarkSpringGreen} regular/>
+                <Text style={{color: Colors.White, fontSize: 20, textAlign: Platform.OS !== 'web'? 'center' : undefined}}>{data.reviewCount ? data.reviewCount : 0}</Text>
+              </View>
+              <Pressable>
+                {favoris ?  <FontAwesome5 name="favorite" size={30} color={Colors.DarkSpringGreen} solid  />: <FontAwesome5 name="favorite" size={Platform.OS  == "web" ? 30 : 20} color={Colors.DarkSpringGreen} regular/>}
+              </Pressable>
             </View>
           </View>
-          <View style={styles.section}>
-            {data.artists.length == 1  ? (
-             <View style={styles.sectionIcon}> 
-                <Pressable onPress={() => navigation.navigate('Artist', { id : data.artists[0].id })}>     
-                  <Avatar alt={data.artists[0].name} src={setImage(data.artists[0].id)} sx={{ width: 64, height: 64, boxShadow: '0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)' }}/>
-                </Pressable> 
-                <Text style={{color: Colors.White, textShadow: '2px 2px 4px #000000', fontSize: 'medium', textAlign: Platform.OS !== 'web'? 'center' : undefined}}>{data.artists[0].name}</Text>
-              </View>
-            ) :
-            <Pressable>     
-              <AvatarGroup total={data.artists.length}>
-                {data.artists.map((artist) => (
-                  <Avatar alt={artist.name} src={setImage(artist.id)} sx={{ width: 64, height: 64, boxShadow: '0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)' }}/>
-                ))}
-              </AvatarGroup>
-            </Pressable>
-            }
-                
-                <View style={[styles.section, {flexDirection: 'row', alignItems: 'center'}]}>
-                  <View style={styles.sectionIcon}>
-                    <Rating value={2} precision={0.5}  style={{color: Colors.DarkSpringGreen}} emptyIcon={<StarIcon style={{ opacity: 0.55, color: Colors.Licorice }} fontSize="inherit"  />} size="large" max={5} readOnly />
-                    <Text style={{color: Colors.White, textShadow: '2px 2px 4px #000000', fontSize: 'medium', textAlign: Platform.OS !== 'web'? 'center' : undefined}}>2</Text>
-                  </View>
-                  <PointTrait point={true}/>
-                  <View style={styles.sectionIcon}>
-                    <DriveFileRenameOutlineOutlinedIcon style={styles.icon}/>
-                    <Text style={{color: Colors.White, textShadow: '2px 2px 4px #000000', fontSize: 'medium', textAlign: Platform.OS !== 'web'? 'center' : undefined}}>{data.reviewCount ? data.reviewCount : 0}</Text>
-                  </View>
-                  <PointTrait point={true}/>
-                  <View style={styles.sectionIcon}>
-                    <Pressable onPress={likeOeuvre}>
-                        {like ? <FavoriteIcon style={styles.icon}/> : <FavoriteBorderIcon style={styles.icon}/> }
-                    </Pressable >
-                    <Text style={{color: Colors.White, textShadow: '2px 2px 4px #000000', fontSize: 'medium', textAlign: Platform.OS !== 'web'? 'center' : undefined}}>2</Text>
-                  </View>
-              </View>
-            </View>
         </View>
       </View>
     </ImageBackground>
@@ -134,14 +127,17 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   like: {
-    boxShadow: '0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)' , 
+    shadowColor: Colors.Onyx,
+    shadowOpacity: 0.3,
+    shadowRadius: 3,
+    elevation: Platform.OS === 'android' ? 3 : 0, 
     transition: 'background-color 0.3s ease'
   },
   btnHovered: {
     backgroundColor: Colors.DarkSpringGreen, 
   },
   nameA:{
-    fontSize: Platform.OS === 'web'? 'xxx-large' : 'xx-large',
+    fontSize: Platform.OS === 'web'? 40 : 35,
     color: Colors.SeaGreen,
     fontWeight: 'bold',
     marginBottom: 10,
@@ -158,7 +154,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 3,
     elevation: 7,
-    boxShadow: '0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)' 
   },
   imageContainerHovered: {
     transform: [{ scale: 1.2 }], 
@@ -170,7 +165,7 @@ const styles = StyleSheet.create({
   },
   icon: {
     color: Colors.DarkSpringGreen,
-    fontSize: Platform.OS  == "web" ? "xx-large" : "x-large",
+    fontSize: Platform.OS  == "web" ? 35 : 30,
   },
 });
 

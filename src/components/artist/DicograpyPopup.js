@@ -85,7 +85,7 @@ const styles = StyleSheet.create({
    position: 'relative',
  },
  title: {
-   fontSize: 'x-large',
+   fontSize: 30,
    fontWeight: 'bold',
    color: Colors.White
  },
@@ -102,7 +102,7 @@ const styles = StyleSheet.create({
     position: 'relative',
     top: 0,
     right: 0,
-    fontSize:'large'
+    fontSize: 40
  },
  sectionTitle: {
     color: Colors.DarkSpringGreen,

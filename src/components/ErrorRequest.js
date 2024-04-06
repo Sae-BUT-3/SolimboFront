@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
   },
   errorCode: {
     color: Colors.DarkSpringGreen, 
-    fontSize: 'xxx-large',
+    fontSize: 40,
     marginBottom: 10,
     textAlign: 'center', 
   },

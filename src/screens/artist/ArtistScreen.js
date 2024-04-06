@@ -92,7 +92,7 @@ const ArtistScreen = () => {
                         onScroll={handleScroll}
                         scrollEventThrottle={16}
                     >
-                        <View style={{ height: showTitle ? 200 : 500 }}>
+                        <View style={{ height: showTitle ? 300 : 500 }}>
                             <Profil data={artistProfile} friends_followers={friendsFollowers} follow={follow} followArtist={onfollowArtist} />
                         </View>
                         <ScrollView
@@ -119,13 +119,11 @@ const ArtistScreen = () => {
                                 </Pressable> : null}
                             </View>
                             <ArtistReview items={reviews} id={id} />
-                            {Platform.OS === 'web' ?
-                                <>
-                                    <View style={styles.sectionFilter}>
-                                        <Text style={styles.sectionTitle}>Apparaît sur</Text>
-                                    </View>
-                                    <ArtistAppearsOn items={appearsOn} />
-                                </> : null}
+                           
+                            <View style={styles.sectionFilter}>
+                                <Text style={styles.sectionTitle}>Apparaît sur</Text>
+                            </View>
+                            <ArtistAppearsOn items={appearsOn} />
                             {response && (<Snackbar
                                 visible={response !== null}
                                 onDismiss={handleClose}
@@ -133,7 +131,7 @@ const ArtistScreen = () => {
                                     label: 'Fermer',
                                     onPress: handleClose
                                 }}
-                                duration={Snackbar.DURATION_SHORT}
+                                duration={Snackbar.DURATION_MEDIUM}
                                 style={{width: Platform.OS == 'web' ? 500 : 400, position: 'absolute'}}
                             >
                                 {response}
@@ -143,7 +141,7 @@ const ArtistScreen = () => {
                     {showTitle && (
                         <View style={styles.titleHeader}>
                             <Pressable onPress={() => { navigation.goBack() }}>
-                                <FontAwesome5 name="arrow-circle-left" size={30} color={Colors.SeaGreen} />
+                                <FontAwesome5 name="arrow-left" size={35} color={Colors.DarkSpringGreen} />
                             </Pressable>
                         </View>
                     )}
@@ -162,7 +160,8 @@ const styles = StyleSheet.create({
     sectionTitle: {
         color: Colors.DarkSpringGreen,
         fontWeight: 'bold',
-        fontSize: 27,
+        fontSize: 35,
+        elevation: Platform.OS === 'android' ? 3 : 0
     },
     sectionFilter: {
         display: 'flex',
@@ -186,9 +185,11 @@ const styles = StyleSheet.create({
         right: 0,
         alignItems: 'center',
         justifyContent: 'space-between',
-        backgroundColor: 'rgba(43, 43, 43, 0.5)',
-        padding: 10,
+        backgroundColor: 'rgba(43, 43, 43, 0.3)',
         zIndex: 1,
+        paddingTop: 30,
+        paddingLeft: 20,
+        paddingBottom: 10,
     },
 });
 

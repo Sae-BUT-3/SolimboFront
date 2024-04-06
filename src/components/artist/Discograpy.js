@@ -45,12 +45,17 @@ const Discography = ({ items, id}) => {
                 return dateA - dateB;
               }
               return a.popularity > b.popularity ? 1 : -1;
-            }).slice(0, 5).map(item => (
+            }).slice(0, Platform.OS == 'web' ? 5 : 3).map(item => (
             <Item  key={item.id} data={item}/>)) : 
             <View style={{display:'flex', margin: 30}}>
-              <Text style={{color: Colors.White, fontSize:'large', fontWeight:'normal'}}>Discographie vide pour le moment.</Text>
+              <Text style={{color: Colors.White, fontSize:20, fontWeight:'normal'}}>Discographie vide pour le moment.</Text>
             </View>}
-            {Platform.OS !== 'web' && (<Pressable style={styles.btn} onPress={()=>{navigation.navigate('Dicographie', {id})}}><Text style={styles.filterText}>Voir la dicographie</Text></Pressable>)}
+            {Platform.OS !== 'web' && (
+            <View style={[styles.sectionFilter, {alignItems: 'center'}]}>
+              <Pressable style={styles.btn} onPress={()=>{navigation.navigate('Discographie', {id})}}>
+                <Text style={styles.filterText}>Voir toute la discographie</Text>
+              </Pressable>
+            </View>)}
         </View>
       </View> 
     </>
@@ -75,7 +80,10 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     borderRadius: 20,
     backgroundColor: Colors.Jet,
-    boxShadow: '0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)' ,
+    shadowColor: Colors.Onyx,
+    shadowOpacity: 0.3,
+    shadowRadius: 3,
+    elevation: Platform.OS === 'android' ? 3 : 0, 
     transition: 'background-color 0.3s ease'
   },
   btnHovered: {
@@ -84,16 +92,20 @@ const styles = StyleSheet.create({
   filterText: {
     fontWeight: 'bold',
     color: Colors.White,
+    fontSize: 17
   },
   btn: {
     marginRight: 10,
     paddingHorizontal: 15,
     paddingVertical: 8,
-    borderRadius: 20,
-    borderColor: Colors.DarkSpringGreen,
+    borderRadius: 9,
+    borderColor: Colors.SeaGreen,
     borderWidth: 1,
-    backgroundColor: Colors.Jet,
-    boxShadow: '0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)' ,
+    backgroundColor:  'transparent',
+    shadowColor: Colors.Onyx,
+    shadowOpacity: 0.3,
+    shadowRadius: 3,
+    elevation: Platform.OS === 'android' ? 3 : 0, 
   },
 });
 export default Discography

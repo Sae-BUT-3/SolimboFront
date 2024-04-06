@@ -18,8 +18,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   point: {
-    fontSize: 30,
-    opacity: 0.1,
+    fontSize: 40,
+    opacity: 0.3,
     marginRight: 5,
     color: Colors.White
   },
@@ -27,7 +27,7 @@ const styles = StyleSheet.create({
     flex: 1,
     opacity: 0.5,
     color: Colors.DarkSpringGreen,
-    fontSize: Platform.OS  === "web" ? 'large' : 'medium'
+    fontSize: Platform.OS  === "web" ? 30 : 20
   },
 });
 

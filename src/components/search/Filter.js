@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {View, Text, TextInput, StyleSheet, Pressable} from 'react-native';
+import {View, Text, TextInput, StyleSheet, Pressable, Platform} from 'react-native';
 import Svg, {Path} from "react-native-svg";
 import {Colors} from "../../style/color";
 const styles = StyleSheet.create({
@@ -16,7 +16,10 @@ const styles = StyleSheet.create({
         borderRadius:20,
         borderColor: Colors.Jet,
         borderWidth: 1,
-        boxShadow: '0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)' ,
+        shadowColor: Colors.Onyx,
+        shadowOpacity: 0.3,
+        shadowRadius: 3,
+        elevation: Platform.OS === 'android' ? 3 : 0, 
     },
     text : {
         color:Colors.Silver,

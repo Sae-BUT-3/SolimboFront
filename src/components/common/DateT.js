@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Text } from 'react-native';
+import { Platform, Text } from 'react-native';
 import { Colors } from '../../style/color';
 
 const DateT = ({ dateString }) => {
@@ -46,7 +46,7 @@ const DateT = ({ dateString }) => {
   }, [dateString]);
 
   return (
-    <Text style={{ color: Colors.White, fontSize: 20, fontWeight: 'normal' }}>
+    <Text style={{ color: Colors.White, fontSize: Platform.OS == 'web' ? 20 : 19, fontWeight: 'normal' }}>
       {date}
     </Text>
   );

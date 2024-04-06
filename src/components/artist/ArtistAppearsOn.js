@@ -17,13 +17,13 @@ const ArtistAppearsOn = ({ items}) => {
       </View> : null}
     <View style={{marginBottom: 30}}> 
       <View style={{display: 'flex', flexWrap: 'wrap',flexDirection: 'row', alignItems: 'flex-start'}}>
-        { items.length > 0 ? items.filter(item => item.type.toLowerCase().includes(filter.toLowerCase())).slice(0, 6).sort((a, b) => {
+        { items.length > 0 ? items.filter(item => item.type.toLowerCase().includes(filter.toLowerCase())).slice(0, Platform.OS === 'web' ? 6 : 4).sort((a, b) => {
             const dateA = new Date(a.date);
             const dateB = new Date(b.date);
             return dateA - dateB;}).map(item => (
           <Item  key={item.id} data={item}/>)) :
           <View style={{display:'flex', alignItems: 'center', margin: 30}}>
-          <Text style={{color: Colors.White, fontSize:'large', fontWeight:'normal'}}>Aucune apparution.</Text>
+          <Text style={{color: Colors.White, fontSize:20, fontWeight:'normal'}}>Aucune apparution.</Text>
           </View>}
       </View>
     </View> 
@@ -49,7 +49,10 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     borderRadius: 20,
     backgroundColor: Colors.Jet,
-    boxShadow: '0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)' ,
+    shadowColor: Colors.Onyx,
+    shadowOpacity: 0.3,
+    shadowRadius: 3,
+    elevation: Platform.OS === 'android' ? 3 : 0, 
   },
   filterText: {
     fontWeight: 'bold',

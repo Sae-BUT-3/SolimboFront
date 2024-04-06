@@ -7,6 +7,8 @@ import { Colors } from '../../style/color';
 import { useNavigation } from '@react-navigation/native';
 import axiosInstance from '../../api/axiosInstance';
 import Date from './DateT';
+import PointTrait from './PointTrait';
+import ReadMore from 'react-native-read-more-text';
 
 const toCapitalCase = (mot) => {
     if(mot == 'artist') mot =  mot + 'e'
@@ -16,9 +18,24 @@ const toCapitalCase = (mot) => {
 const Review = ({ data}) => {
   const navigation = useNavigation();
   const [like, setLike] = useState(false)
-  
+  const [countlikes, setCountLikes] = useState(0)
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  const renderTruncatedFooter = (handlePress) => (
+    <Text onPress={handlePress} style={{ color: Colors.SeaGreen, fontSize: Platform.OS == 'web' ? 20 : 19, fontWeight: 'normal' }}>
+      Voir plus
+    </Text>
+  );
+
+  const renderRevealedFooter = (handlePress) => (
+    <Text onPress={handlePress} style={{ color: Colors.SeaGreen, fontSize: Platform.OS == 'web' ? 20 : 19, fontWeight: 'normal' }}>
+      Voir moins
+    </Text>
+  );
+
   useEffect( ()=>{
     setLike(data.doesUserLike)
+    setCountLikes(data.countlike)
   },[data]);
 
   const handlePress = () =>{
@@ -26,12 +43,10 @@ const Review = ({ data}) => {
       .then(res => {
         if(!like){
           setLike(true)
-          data.doesUserLike = true;
-          data.countlikes++;
+          setCountLikes(countlikes + 1);
         }else{
           setLike(false)
-          data.doesUserLike = false;
-          data.countlikes--;
+          setCountLikes(countlikes - 1);
         }
       }).catch(e => console.log(`review/${data.id_review}/like : ${e.response.data}`));
   }
@@ -55,44 +70,55 @@ const Review = ({ data}) => {
   return (
     <><View key={data.id_review} style={styles.reviewContainer}>
         <View style={styles.reviewerInfo}>
-          <View style={{display: 'flex', flexDirection: 'row', gap: 5,}}>
-            <Pressable onPress={() => goTo(data.id, data.type)}>
-              <Avatar source={{ uri: data.oeuvre.image }} size={Platform.OS === 'web'? 90 : 64} containerStyle={{  borderRadius: 10,boxShadow: '0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)' }} />
+          <View style={{display: 'flex', flexDirection: 'row', gap: 5}}>
+            <Pressable onPress={() => goTo(data.oeuvre.id, data.oeuvre.type)}>
+              <Avatar source={{ uri: data.oeuvre.image }} size={Platform.OS === 'web'? 90 : 74} containerStyle={{  borderRadius: 10,shadowColor: Colors.Onyx,
+                shadowOpacity: 0.3,
+                shadowRadius: 3,
+                elevation: Platform.OS === 'android' ? 3 : 0, }} />
             </Pressable>
-            <View style={{display: 'flex', gap: 5, paddingLeft: 10}}>
-              <Text style={{color: Colors.White, fontSize: 20, fontWeight: 'bolder'}}>{toCapitalCase(data.oeuvre.name)}</Text>
-              {data.type != 'artist' ?
-                <Text style={{color: Colors.White, fontSize: 20, fontWeight: 'normal' }}>{toCapitalCase(data.oeuvre.artiste)}</Text> : null
-              }
-              <Text style={{color: Colors.White, fontSize: 20, fontWeight: 'normal' }}>{toCapitalCase(data.oeuvre.type)}</Text>
+            <View style={{display: 'flex', paddingLeft: 10}}>
+              <Text style={{color: Colors.White, fontSize: Platform.OS == 'web' ? 20 : 19, fontWeight: 'bold'}}>{toCapitalCase(data.oeuvre.name)}</Text>
+              <Text style={{color: Colors.White, fontSize: Platform.OS == 'web' ? 20 : 19, fontWeight: 'normal' }}>{toCapitalCase(data.oeuvre.type)}</Text>
             </View>
           </View>
-          <View style={{display: 'flex', gap: 5,}}>
+          <View style={{display: 'flex', gap: 9, flexDirection: Platform.OS == 'web' ? 'column' : 'row', alignItems: Platform.OS != 'web' ? 'center' : null}}>
             <Rating
               type="custom"
               ratingCount={5}
-              imageSize={Platform.OS === 'web'? 30 : 25}
+              imageSize={30}
               tintColor={Colors.Jet}
               ratingColor={Colors.DarkSpringGreen}
               ratingBackgroundColor={Colors.Licorice}
               startingValue={data.note}
               readonly
             />
-            <Pressable><Text style={{color: Colors.DarkSpringGreen, fontSize: 20, fontWeight: 'normal', textAlign: 'right' }}>{'@' + data.utilisateur.pseudo}</Text></Pressable>
+            {Platform.OS != 'web' && <PointTrait point={true}/>}
+            <Pressable><Text style={{color: Colors.DarkSpringGreen, fontSize: 20 , fontWeight: 'normal', textAlign: 'right' }}>{'@' + data.utilisateur.alias}</Text></Pressable>
           </View>
         </View>
-        <View style={{margin: 20}}><Text style={{color: Colors.White, padding:10, fontSize: 20, fontWeight: 'normal',  textIndent: 20 }}>{toCapitalCase(data.description)}</Text></View>
-        <View style={styles.reviewerInfo}>
-          <View style={{display: 'flex', flexDirection: 'row', gap: 10, fontSize: 30, alignItems: 'flex-end'}}>
+        <View style={{margin: Platform.OS == 'web' ? 20: 5}}>
+          <ReadMore
+              numberOfLines={5}
+              renderTruncatedFooter={renderTruncatedFooter}
+              renderRevealedFooter={renderRevealedFooter}
+              onReady={() => setIsExpanded(false)}
+              onExpand={() => setIsExpanded(true)}
+            >
+            <Text style={{color: Colors.White, padding:10, fontSize: Platform.OS == 'web' ? 20 : 19, fontWeight: 'normal' }}>{toCapitalCase(data.description)}</Text>
+          </ReadMore>
+        </View>
+        <View style={[styles.reviewerInfo, {flexDirection: Platform.OS != 'web' ? 'row' : null, marginTop: 10}]}>
+          <View style={{display: 'flex', flexDirection: 'row', gap: 10, alignItems: 'flex-end'}}>
             <View style={{display: 'flex', flexDirection: 'row', alignItems: 'flex-end', gap: 10}}>
               <Pressable onPress={handlePress}>
-                {like ?  <FontAwesome5 name="heart" size={Platform.OS  == "web" ? 30 : 20} color={Colors.DarkSpringGreen} solid  />: <FontAwesome5 name="heart" size={Platform.OS  == "web" ? 30 : 20} color={Colors.DarkSpringGreen} regular/>}
+                {like ?  <FontAwesome5 name="heart" size={30} color={Colors.DarkSpringGreen} solid  />: <FontAwesome5 name="heart" size={30} color={Colors.DarkSpringGreen} regular/>}
               </Pressable>
-              <Text style={{color: Colors.White, fontSize: 20}}>{data.countlike}</Text>
+              <Text style={{color: Colors.White, fontSize: 20}}>{countlikes}</Text>
             </View>
             <View  style={{display: 'flex', flexDirection: 'row', alignItems: 'flex-end', gap: 10}}>
               <Pressable onPress={() => handleCommentButtonClick()}>
-                <FontAwesome5  name="comment-dots" size={Platform.OS  == "web" ? 30 : 20} color={Colors.DarkSpringGreen} regular/>
+                <FontAwesome5  name="comment-dots" size={30} color={Colors.DarkSpringGreen} regular/>
               </Pressable>
               <Text style={{color: Colors.White, fontSize: 20}}>{data.countComment}</Text>
             </View>
@@ -106,15 +132,18 @@ const styles = StyleSheet.create({
   reviewContainer: {
     backgroundColor: Colors.Jet,
     display: 'flex',
-    flexDirection: Platform.OS  == "web" ? 'columns' : 'row',
-    marginBottom: 20,
-    marginLeft: Platform.OS  == "web" ? 20 : 10,
-    marginRight: Platform.OS  == "web" ? 20 : 10,
+    marginBottom: Platform.OS == 'web' ? 30 : 20,
+    marginLeft: Platform.OS  == "web" ? 20 : 0,
+    marginRight: Platform.OS  == "web" ? 20 : 0,
     borderRadius: 15,
     padding: 20,
     justifyContent: 'space-between',
-    maxWidth: Platform.OS === 'web' ? 950 : 300,
-    boxShadow: '0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)' 
+    maxWidth: Platform.OS === 'web' ? 950 : null,
+    width: Platform.OS != 'web' ? 386 : null,
+    shadowColor: Colors.Onyx,
+    shadowOpacity: 0.3,
+    shadowRadius: 3,
+    elevation: Platform.OS === 'android' ? 3 : 0, 
   },
   reviewerInfo: {
     display: 'flex',

@@ -1,5 +1,5 @@
 import { Colors } from "./color";
-import { StyleSheet } from "react-native";
+import { Platform, StyleSheet } from "react-native";
 
 const pressableBasicStyle = StyleSheet.create({
     button: {
@@ -13,7 +13,10 @@ const pressableBasicStyle = StyleSheet.create({
         margin: 10,
         width: 270,
         position: 'relative',
-        boxShadow: '0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)' , 
+        shadowColor: Colors.Onyx,
+        shadowOpacity: 0.3,
+        shadowRadius: 3,
+        elevation: Platform.OS === 'android' ? 3 : 0, 
         transition: 'background-color 0.3s ease'
     },
     button_text: {
