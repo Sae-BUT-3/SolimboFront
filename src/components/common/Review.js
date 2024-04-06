@@ -108,7 +108,7 @@ const Review = ({ data}) => {
             <Text style={{color: Colors.White, padding:10, fontSize: Platform.OS == 'web' ? 20 : 19, fontWeight: 'normal' }}>{toCapitalCase(data.description)}</Text>
           </ReadMore>
         </View>
-        <View style={[styles.reviewerInfo, {flexDirection: Platform.OS != 'web' ? 'row' : null, marginTop: 10}]}>
+        <View style={[styles.reviewerInfo, {flexDirection: 'row', marginTop: 10}]}>
           <View style={{display: 'flex', flexDirection: 'row', gap: 10, alignItems: 'flex-end'}}>
             <View style={{display: 'flex', flexDirection: 'row', alignItems: 'flex-end', gap: 10}}>
               <Pressable onPress={handlePress}>

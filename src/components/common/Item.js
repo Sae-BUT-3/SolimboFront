@@ -107,7 +107,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
         paddingVertical: 20,
         marginLeft: Platform.OS == 'web' ? 30 : 20,
-        marginRight: Platform.OS == 'web' ? 30 : 20,
+        marginRight: Platform.OS == 'web' ? 0 : 20,
         borderRadius: 15,
         maxWidth: Platform.OS == 'web' ? 200 : 395,
         transition: 'background-color 0.3s ease',
