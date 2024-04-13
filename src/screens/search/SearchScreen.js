@@ -94,6 +94,8 @@ function SearchScreen() {
                                         style={searchStyle.resultItemContainer}>
                                         <SearchResult
                                             key={index}
+                                            _id={item.id}
+                                            type={item.type}
                                             imageURL={item.imageURL}
                                             title={item.title}
                                             subtitle={item.subtitle}
