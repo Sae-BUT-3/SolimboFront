@@ -1,4 +1,4 @@
-import React, { useState }from 'react';
+import React, { useEffect, useState }from 'react';
 import { View, Text, Image, Platform, StyleSheet } from 'react-native';
 import PressableBasic from '../../components/pressables/PressableBasic';
 import { useAuth } from '../../contexts/AuthContext';
