@@ -4,6 +4,7 @@ import axiosInstance from '../../api/axiosInstance';
 import Searchbar from "../../components/search/Searchbar";
 import SearchResult from "../../components/search/SearchResult";
 import {Colors} from "../../style/color";
+import ErrorRequest from '../../components/ErrorRequest';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import commonStyles from '../../style/commonStyle';
 import searchStyle from '../../style/searchStyle';
@@ -29,12 +30,13 @@ function SearchScreen() {
     const [filter, setFilter] = useState([]);
     const [items, setItems] = useState([]);
     const [messsageText, setMesssageText] = useState("Recherchez vos artistes, musiques ou amis");
+    const [error, setError] = useState(null);
 
     useEffect(() => {
         // Fetch search filters when the component mounts
         axiosInstance.get('/spotify/Searchfilters').then(response => {
             setFilter(response.data);
-        });
+        }).catch(e => setError(e.response.data));
     }, [])
     function handleSerch(query){
         if(!query.text.length) {
@@ -55,7 +57,10 @@ function SearchScreen() {
                 return
             }
             setMesssageText('Pas de résulat pour cette recherche')
-        })
+        }).catch(e => setError(e.response.data));
+    }
+    if (error) {
+        return <ErrorRequest err={error} />;
     }
 
     return (
@@ -81,12 +86,16 @@ function SearchScreen() {
                         <View style={[searchStyleWidth.resultContainer]}>
 
                             {
-                                items.map((item, index) => (
+                               items.sort((a, b) => {
+                        return a.title.localeCompare(b.title);
+                    }).map((item, index) => (
                                     <View
                                         key={index}
                                         style={searchStyle.resultItemContainer}>
                                         <SearchResult
                                             key={index}
+                                            _id={item.id}
+                                            type={item.type}
                                             imageURL={item.imageURL}
                                             title={item.title}
                                             subtitle={item.subtitle}

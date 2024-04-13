@@ -6,7 +6,7 @@ import PressableBasic from '../../components/pressables/PressableBasic';
 import BasicInput from '../../components/form/BasicInput';
 import { useAuth } from '../../contexts/AuthContext';
 import { Colors } from '../../style/color';
-import FontAwsome5 from 'react-native-vector-icons/FontAwesome5';
+import FontAwsome5 from '@expo/vector-icons';
 
 function ConfirmUserScreen({ route, navigation }) {
     const [confirmtoken, setConfirmtoken] = useState('');

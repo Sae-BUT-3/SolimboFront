@@ -22,6 +22,25 @@ export default class Tokenizer {
     };
 
     /**
+     * Enregistre les donnes de l'utilisateur connecté dans l'AsyncStorage.
+     * @param {Object} user - Les donnees utilisateur à enregistrer.
+     * @returns {Promise<void>}
+     */
+    static setUser = async (user) => {
+        await AsyncStorage.setItem('user', JSON.stringify(user));
+    };
+
+     /**
+     * Récupère un token valide de l'AsyncStorage.
+     * Si aucun token n'est trouvé, retourne null.
+     * @returns {Promise<Object|null>} Le token récupéré ou null.
+     */
+     static getCurrentUser = async () => {
+        const user = JSON.parse(await AsyncStorage.getItem('user'));
+        return user || null;
+    };
+
+    /**
      * Récupère un token valide de l'AsyncStorage.
      * Si aucun token n'est trouvé, retourne null.
      * @returns {Promise<Object|null>} Le token récupéré ou null.
