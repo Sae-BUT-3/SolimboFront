@@ -1,8 +1,8 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { StyleSheet, View, Text, Pressable, Animated, Platform, ScrollView } from 'react-native';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { useNavigation, useRoute, useFocusEffect } from '@react-navigation/native';
 import { FontAwesome5 } from '@expo/vector-icons'; // Importation de FontAwesome5
-import { Avatar, Provider as PaperProvider, Snackbar, TextInput } from 'react-native-paper';
+import {Provider as PaperProvider} from 'react-native-paper';
 import { Colors } from '../../style/color';
 import { DataTable } from 'react-native-paper';
 import Comment from '../../components/common/Comment';
@@ -19,25 +19,24 @@ const CommentScreen = () => {
     const id  = route.params?.id || null;
     const navigation = useNavigation();
     const scrollY = useRef(new Animated.Value(0)).current;
-    const [currentUser, setUser] =  useState({});
     const [review, setReview] = useState(null);
     const [comments, setComments] = useState([]);
-    const [comment, setText] = useState('');
-    const [response, setInfoResponse] = useState(null)
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null)
     const [page, setPage] = useState(0);
     const [itemsPerPage, onItemsPerPageChange] = useState(numberOfItemsPerPageList[0]);
     const [count, setCount] = useState(0);
-    const [visible, setVisible] = useState(false);
-
-    const onToggleSnackBar = () => setVisible(!visible);
-
-    const onDismissSnackBar = () => setVisible(false);
 
     const getData = async ()=>{
         setUser(await Tokenizer.getCurrentUser());
     }
+
+    useFocusEffect(
+        useCallback(() => {
+          updateComments(page, itemsPerPage);
+        }, [])
+    );
+
    useEffect(() => {
         handleChangePage(0);
      }, [itemsPerPage]);
@@ -92,22 +91,8 @@ const CommentScreen = () => {
         event.useNativeDriver= true 
     };
 
-    const addComment = () =>{
-        if(comment !== ''){
-            if(response == null){
-                axiosInstance.put(`/review/${id}/comment`, {description: comment})
-                .then(response => {
-                    updateComments();
-                    setText('')
-                }).catch(e => setError(e.response.data));
-            }else{
-            axiosInstance.put(`/comment/${response.id_com}`, {description: comment})
-            .then(response => {
-                updateComments();
-                setText('')
-            }).catch(e => setError(e.response.data));
-        }
-        }
+    const handleResponse = () =>{
+        navigation.navigate("Response", {type: 'review', id: id});
     }
 
     if (error) {
@@ -116,7 +101,7 @@ const CommentScreen = () => {
 
     return (
         <View style={styles.container}>
-            {isLoading ? (<Loader />) : (
+            {isLoading ? <Loader /> : (
                 <PaperProvider>
                     <Animated.View>
                         <View style={[styles.header, headerOpacity ]}>
@@ -139,7 +124,7 @@ const CommentScreen = () => {
                             {comments.map((item, index) => (
                                 <DataTable.Row key={index} style={{borderBottomWidth: 0, marginBottom: 20}}>
                                     <DataTable.Cell>
-                                        <Comment key={index} data={item} onToggleSnackBar={onToggleSnackBar} responseHandler={setInfoResponse} /> 
+                                        <Comment key={index} data={item} /> 
                                     </DataTable.Cell>
                                 </DataTable.Row>
                             )) }
@@ -153,47 +138,15 @@ const CommentScreen = () => {
                                 onItemsPerPageChange={handleonItemsPerPageChange}
                                 selectPageDropdownLabel={'Commentaire par page'}
                                 showFastPaginationControls
-                                paginationControlRippleColor={Colors.White}
-                                dropdownItemRippleColor={Colors.White}
-                                selectPageDropdownRippleColor={Colors.White}
-                                style={{backgroundColor: Colors.Jet, color: Colors.White}}
                             /></DataTable> 
                          :  <Text style={{ color: Colors.White, fontSize: 20, textAlign: 'center'  }}>Aucun commentaire, soyez le premier à rédiger un commentaire !</Text> 
                         }
                     </ScrollView>
-                    <Snackbar
-                        visible={response ?  true : false}
-                        onDismiss={onDismissSnackBar}
-                        duration={Snackbar.DURATION_LONG}
-                        action={{
-                        label: 'Fermer',
-                        onPress: onDismissSnackBar
-                    }}>{`Réponse au commentaire de  ${response?.utilisateur.alias}`}
-                    </Snackbar>
-                    <TextInput
-                        multiline
-                        maxLength={1500}
-                        placeholder={`Ajouter un commentaire...`}
-                        value={comment}
-                        onChangeText={(text) => setText(text)}
-                        underlineColor={Colors.Silver}
-                        activeUnderlineColor={Colors.Silver}
-                        textColor={Colors.White}
-                        color={Colors.White}
-                        selectionColor={Colors.SeaGreen}
-                        style={{ backgroundColor: Colors.Silver, color: Colors.White, fontSize: 18, paddingHorizontal: 10,  paddingVertical: 5, borderRadius: 0  }}
-                        left={
-                            <TextInput.Affix text={
-                                <Avatar.Image source={{ uri: currentUser.photo || require('../../assets/images/profil.png') }} size={64} accessibilityLabel={currentUser.pseudo} />
-                            } />
-                        }
-                        right={
-                            <TextInput.Icon icon="send" 
-                                onPress={addComment}
-                                style={{ fontSize: 30, color: Colors.SeaGreen, backgroundColor: 'transparent' }} 
-                            />
-                        }
-                    />
+                    <View style={styles.response}>
+                        <Pressable onPress={handleResponse}>
+                            <FontAwesome5 name="comment-medical" size={30} color={Colors.DarkSpringGreen} regular/>
+                        </Pressable> 
+                    </View>
                 </PaperProvider>
             )}
         </View>
@@ -224,13 +177,20 @@ const styles = StyleSheet.create({
         color: Colors.SeaGreen,
         fontWeight: 'bold'
     },
-    sender: {
+    response: {
         flexDirection: 'row',
+        position: 'absolute',
+        bottom: 20,
+        left: 20,
+        alignItems: 'center',
         justifyContent: 'space-between',
-        alignItems: 'flex-end',
-        backgroundColor: Colors.Silver,
-        padding: 10
+        backgroundColor: 'rgba(43, 43, 43, 0.5)', 
+        width: 50,
+        height: 50,
+        borderRadius: 25, 
+        padding: 10, 
     }
+    
 });
 
 export default CommentScreen;

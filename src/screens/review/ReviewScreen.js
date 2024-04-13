@@ -1,47 +1,64 @@
-import React, { useEffect, useState, useRef } from 'react';
-import { StyleSheet, View, Text, Pressable, Animated, Platform, ScrollView } from 'react-native'; // Remplacement des composants de MUI par ceux de React Native
+import React, { useEffect, useState, useRef, useCallback } from 'react';
+import { StyleSheet, View, Text, Pressable, Animated, Platform, ScrollView } from 'react-native'; 
 import { Provider as PaperProvider } from 'react-native-paper';
 import { Colors } from '../../style/color';
 import { FontAwesome5 } from '@expo/vector-icons'; // Importation de FontAwesome5
 import { DataTable } from 'react-native-paper';
-import { useRoute, useNavigation } from '@react-navigation/native';
+import { useRoute, useNavigation, useFocusEffect } from '@react-navigation/native';
 import Review from '../../components/common/Review';
 import axiosInstance from '../../api/axiosInstance';
 import Loader from '../../components/Loader';
 import ErrorRequest from '../../components/ErrorRequest';
+import Filter from '../../components/search/Filter';
 
-const numberOfItemsPerPageList = [5, 10, 15 , 20, 25];
-
+const numberOfItemsPerPageList = [15, 25 , 55, 100, 250];
+const sorts =  ["Date", "Like", "Amis uniquement"];
 const ReviewScreen = () => {
     const navigation = useNavigation();
     const route = useRoute();
-    const id = route.params?.id || null;
+    const {id, type }= route.params || null;
+    const [filtre, setFiltre] = useState([]);
     const [reviews, setReviews] = useState([]);
+    const [reviewsArtist, setReviewsArtist] = useState([]);
     const [count, setCount] = useState(0);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     const [page, setPage] = useState(0);
     const [itemsPerPage, onItemsPerPageChange] = useState(numberOfItemsPerPageList[0]);
 
-    const changeReviews = (newPage, newItemsPerPage, orderByLike=false) => {
+    useCallback(() => {
+        updateReviews(page, itemsPerPage);
+    }, []);
+    
+    const updateReviews = (newPage, newItemsPerPage, orderByLike=false) => {
         axiosInstance.get(`/reviews/oeuvre/${id}`, { params: { page: newPage + 1, pageSize: newItemsPerPage, orderByLike: orderByLike } })
         .then(response => {
             setReviews(response.data.data);
+            setCount(response.data.count)
             setIsLoading(false);
         }).catch(e => setError(e.response.data));
+
+        if(type === 'artist'){
+            axiosInstance.get(`/reviews/artist/${id}`, { params: { page: newPage + 1, pageSize: newItemsPerPage, orderByLike: orderByLike } })
+            .then(response => {
+                setReviewsArtist(response.data);
+                setCount(count + reviewsArtist.length);
+                setIsLoading(false);
+            }).catch(e => setError(e.response.data));
+        }
     }
 
     const handleChangePage = (newPage) => {
         setIsLoading(true);
         setPage(newPage);
-        changeReviews(newPage, itemsPerPage);
+        updateReviews(newPage, itemsPerPage);
     };
 
     const handleonItemsPerPageChange = (item) => {
         setIsLoading(true);
         onItemsPerPageChange(item);
         setPage(0); 
-        changeReviews(0, item);
+        updateReviews(0, item);
     }
 
     useEffect(() => {
@@ -51,6 +68,14 @@ const ReviewScreen = () => {
             setCount(response.data.count);
             setIsLoading(false);
         }).catch(e => setError(e.response.data));
+
+        if(type === 'artist'){
+            axiosInstance.get(`/reviews/artist/${id}`, { params: { page: page + 1, pageSize: itemsPerPage, orderByLike: false } })
+            .then(response => {
+                setReviewsArtist(response.data);
+                setIsLoading(false);
+            }).catch(e => setError(e.response.data));
+        }
     }, [])
 
     const scrollY = useRef(new Animated.Value(0)).current;
@@ -64,6 +89,10 @@ const ReviewScreen = () => {
         event.nativeEvent.contentOffset.y = scrollY
         event.useNativeDriver= true 
     };
+
+    const handleSort = (like) => {
+        updateReviews(page, itemsPerPage, like);
+    }
 
     if (error) {
         return <ErrorRequest err={error} />;
@@ -79,14 +108,34 @@ const ReviewScreen = () => {
                             <Text style={styles.title}>Reviews</Text>
                             <Text/>
                         </Animated.View>
-
                         <ScrollView
                             onScroll={handleScroll}
                             scrollEventThrottle={16}
                         >
+                            <View style={styles.diplayContainer}>
+                                <View style={{display: 'flex', flexDirection: 'row', gap: 10, alignItems: 'center', marginBottom: 10, flexWrap: 'wrap'}}>
+                                    <FontAwesome5 name="filter" size={20} color={Colors.SeaGreen} regular/>
+                                    {sorts.map((item, index) => (
+                                        <Filter
+                                            key={index}
+                                            onPressHandler={()=>handleSort(item === 'Like')}
+                                            text={item}
+                                        />
+                                    ))}
+                                
+                                </View>
+                        </View>
                         {count > 0 ?
                             <DataTable>
-                                {reviews.map((item, index) => (
+                               {reviews.map((item, index) => (
+                                    <DataTable.Row key={index} style={{marginTop: 20, marginLeft: 0, borderBottomColor: Colors.Onyx}}>
+                                        <DataTable.Cell>
+                                            <Review data={item}/>
+                                        </DataTable.Cell>
+                                    </DataTable.Row>
+                                ))
+                                }
+                                {reviewsArtist?.map((item, index) => (
                                     <DataTable.Row key={index} style={{marginTop: 20, marginLeft: 0, borderBottomColor: Colors.Onyx}}>
                                         <DataTable.Cell>
                                             <Review data={item}/>
@@ -106,7 +155,7 @@ const ReviewScreen = () => {
                                     paginationControlRippleColor={Colors.White}
                                     dropdownItemRippleColor={Colors.White}
                                     selectPageDropdownRippleColor={Colors.Jet}
-                                    style={{backgroundColor: Colors.Jet, color: Colors.White}}
+                                    style={{backgroundColor: Colors.Licorice, color: Colors.White}}
                                 />
                             </DataTable>
                             : <Text style={{ color: Colors.White, fontSize: 20, textAlign: 'center' }}>Aucune critique, soyez le premier à rédiger une critique !</Text>
@@ -142,6 +191,29 @@ const styles = StyleSheet.create({
         color: Colors.SeaGreen,
         fontWeight: 'bold'
     },
+    diplayContainer: {
+        display: "flex",
+        alignItems: "flex-start",
+        padding: 15,
+    },
+    filterButton: {
+        marginRight: 10,
+        paddingHorizontal: 15,
+        paddingVertical: 8,
+        borderRadius: 20,
+
+        backgroundColor: 'transparent',
+        shadowColor: Colors.Onyx,
+        shadowOpacity: 0.3,
+        shadowRadius: 3,
+        elevation: Platform.OS === 'android' ? 3 : 0, 
+        transition: 'background-color 0.3s ease'
+      },
+      filterText: {
+        fontWeight: 'bold',
+        color: Colors.White,
+        fontSize: 17
+      },
 })
 
 export default ReviewScreen;

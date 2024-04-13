@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import axiosInstance from '../../api/axiosInstance';
 import { StyleSheet, ScrollView, Text, View, Pressable, Platform, Animated } from 'react-native';
 import Discography from '../../components/artist/Discograpy';
@@ -7,7 +7,7 @@ import Loader from '../../components/Loader';
 import ErrorRequest from '../../components/ErrorRequest';
 import ArtistReview from '../../components/artist/ArtistReview';
 import { Colors } from '../../style/color';
-import { useRoute, useNavigation } from '@react-navigation/native';
+import { useRoute, useNavigation, useFocusEffect } from '@react-navigation/native';
 import ArtistAppearsOn from '../../components/artist/ArtistAppearsOn';
 import DiscograpyPopup from '../../components/artist/DicograpyPopup';
 import { Snackbar } from 'react-native-paper';
@@ -49,6 +49,33 @@ const ArtistScreen = () => {
                 }
             }).catch(e => setResponse('Une erreur interne à notre serveur est survenue. Réessayer plus tard !'));
     };
+
+    useFocusEffect(
+        useCallback(() => {
+            updateData();
+        }, [])
+    );
+
+    const updateData = () => {
+        axiosInstance.get('/artist/' + id)
+        .then(response => {
+            setArtistProfile(response.data.artist);
+            setDiscography(response.data.albums);
+            setFriendsFollowers(response.data.friends_followers);
+            setReviews(response.data.reviewsByTime);
+            setFollow(response.data.doesUserFollow);
+        }).catch(e => console.log(e.response.data));
+
+        axiosInstance.get('/spotify/fetchArtistSongs', {
+            params: {
+                id: id,
+                filter: 'appears_on'
+            },
+        })
+        .then(response => {
+            setAppearsOn(response.data);
+        }).catch(e => console.log(e.response.data));
+    }
 
     useEffect(() => {
         axiosInstance.get('/artist/' + id)

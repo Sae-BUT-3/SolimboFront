@@ -15,5 +15,6 @@
 > npm install react-native-ratings 
 > npm install react-native-paper
 > npm install react-native-pagination
+> npm install react-native-read-more-text
 ```
 

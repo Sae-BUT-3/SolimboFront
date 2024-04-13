@@ -7,26 +7,27 @@ import CommentResponse from './CommentResponse';
 import axiosInstance from '../../api/axiosInstance';
 import Date from './DateT';
 import ReadMore from 'react-native-read-more-text';
+import { useNavigation} from '@react-navigation/native';
 
 const toCapitalCase = (mot) => {
   return mot ? mot.charAt(0).toUpperCase() + mot.slice(1) : mot;
 }
 
-const Comment = ({ data, onToggleSnackBar, responseHandler }) => {
+const Comment = ({ data }) => {
   const [replies, setReplies] = useState(null);
   const [like, setLike] = useState(false)
   const [countlike, setCountLike] = useState(0)
   const [isExpanded, setIsExpanded] = useState(false);
-
+  const navigation = useNavigation();
   const renderTruncatedFooter = (handlePress) => (
     <Text onPress={handlePress} style={{ color: Colors.SeaGreen, fontSize: Platform.OS == 'web' ? 20 : 19, fontWeight: 'normal' }}>
-      Voir plus
+      Lire plus
     </Text>
   );
 
   const renderRevealedFooter = (handlePress) => (
     <Text onPress={handlePress} style={{ color: Colors.SeaGreen, fontSize: Platform.OS == 'web' ? 20 : 19, fontWeight: 'normal' }}>
-      Voir moins
+      Lire moins
     </Text>
   );
 
@@ -49,18 +50,13 @@ const Comment = ({ data, onToggleSnackBar, responseHandler }) => {
   }
 
   const displayReply = () => {
-    axiosInstance.get(`/comment/${data.id_com}`)
+    axiosInstance.get(`/comment/${data.id_com}`, {params: {page: 1, pageSize: data.countComment, orderByLike: false}})
     .then(response => {
-      setReplies(response.comments);
-    }).catch(e => console.log(e.response.data));
+      setReplies(response.data.comments);
+    }).catch(e =>  console.log(`comment/${id} : ${e.response.data}`));
   }
-
-  const onPress = () => {
-    responseHandler(data);
-  }
-
   return (
-    <View key={data?.id_com} style={styles.commentContainer}>
+    <View style={styles.commentContainer}>
       <View style={{display: 'flex', flexDirection:'row', justifyContent: 'space-between', alignItems: 'center'}}>
         <Pressable>
           <Avatar.Image source={{ uri: data.utilisateur.photo}} size={Platform.OS === 'web'? 75 : 64}/>
@@ -97,28 +93,27 @@ const Comment = ({ data, onToggleSnackBar, responseHandler }) => {
         {data.countComment > 0 ? 
             <>
               <Divider  style={styles.divider}/>
-              <View style={{display: 'flex', flexDirection:'row', gap: 10, alignItems: 'center', marginTop: 10}}>
+              <View style={{display: 'flex', flexDirection:'row', gap: 10, alignItems: 'center', justifyContent: 'space-between',marginTop: 10}}>
                 <Pressable onPress={displayReply}>
-                  <Text style={{color: Colors.DarkSpringGreen, fontSize: Platform.OS  === "web" ? 30 : 19, fontWeight: 'normal'}}>{ replies ? ' Voir les réponses ' : "Masquer les réponses"}</Text>
+                  <Text style={{color: Colors.DarkSpringGreen, fontSize: Platform.OS  === "web" ? 30 : 19, fontWeight: 'normal'}}>{ replies ? "Masquer" : 'Voir les réponses '}</Text>
                 </Pressable>
-                <Divider style={{ height: '100%', width: 1, backgroundColor: Colors.Silver }} bold/>
-                <Pressable onPress={onPress}>
+                <Pressable onPress={()=>{navigation.navigate('Response',{type: 'comment', id: data.id_com})}}>
                   <Text style={{color: Colors.DarkSpringGreen, fontSize: Platform.OS  === "web" ? 30 : 19, fontWeight: 'normal'}}> Répondre</Text>
                 </Pressable>
               </View>
             </> : 
             <>
-              <Divider  style={styles.divider} bold/>
+              <Divider  style={styles.divider}/>
               <View style={{marginTop: 10, alignItems: 'flex-end'}}>
-                <Pressable onPress={onPress}><Text style={{color: Colors.DarkSpringGreen, fontSize: Platform.OS  === "web" ? 30 : 19, fontWeight: 'normal'}}> Répondre</Text></Pressable>
+                <Pressable onPress={()=>{navigation.navigate('Response',{type: 'comment', id: data.id_com})}}><Text style={{color: Colors.DarkSpringGreen, fontSize: Platform.OS  === "web" ? 30 : 19, fontWeight: 'normal'}}> Répondre</Text></Pressable>
               </View>
             </>
           }
       </View>
       {replies && (
         <>
-          <Divider style={styles.divider} bold/>          
-          <CommentResponse items={replies} onToggleSnackBar={onToggleSnackBar} response={responseHandler}/>
+          <Divider style={styles.divider}/>          
+          <CommentResponse items={replies}/>
         </>
       )}
     </View> 

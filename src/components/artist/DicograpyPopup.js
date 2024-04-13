@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Pressable, ScrollView } from 'react-native';
 import Modal from 'react-native-modal';
-import CloseIcon from '@mui/icons-material/Close';
+import { FontAwesome } from '@expo/vector-icons'; // Importation de FontAwesome depuis react-native-vector-icons
 import axiosInstance from '../../api/axiosInstance';
 import { Colors } from '../../style/color';
 import ItemPopup from './ItemPopup';
@@ -45,7 +45,7 @@ const DiscograpyPopup = ({onClose, _id}) => {
             transparent={true}
             ><ScrollView style={styles.container}>
                 <Pressable style={styles.closeButton} onPress={() => setModalVisible(onClose)}>
-                    <CloseIcon style={{color: 'white'}}/>
+                    <FontAwesome name="close" size={30} color={Colors.White} solid/>
                 </Pressable>
                 <View style={{display: 'flex', alignItems: 'center', marginBottom: 30}}>
                     <Text style={styles.title}>Discographie détaillée</Text>

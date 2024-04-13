@@ -2,26 +2,28 @@ import React, { useEffect, useState } from 'react';
 import { StyleSheet, View, Text, Pressable, Platform } from 'react-native';
 import { FontAwesome5 } from '@expo/vector-icons'; // Importation de FontAwesome depuis react-native-vector-icons
 import { Divider, Avatar, List } from 'react-native-paper'; // Importation des composants de react-native-paper
+import { useNavigation} from '@react-navigation/native';
 import { Colors } from '../../style/color';
 import ReadMore from 'react-native-read-more-text';
 import axiosInstance from '../../api/axiosInstance';
 import Date from './DateT';
 
-const CommentResponse = ({items, onToggleSnackBar, response }) => {
+const CommentResponse = ({items}) => {
     const [replies, setReplies] = useState(null);
     const [like, setLike] = useState(false)
     const [countlike, setCountLike] = useState(0)
     const [isExpanded, setIsExpanded] = useState(false);
+    const navigation = useNavigation();
 
     const renderTruncatedFooter = (handlePress) => (
         <Text onPress={handlePress} style={{ color: Colors.SeaGreen, fontSize: Platform.OS == 'web' ? 20 : 19, fontWeight: 'normal' }}>
-        Voir plus
+        Lire plus
         </Text>
     );
 
     const renderRevealedFooter = (handlePress) => (
         <Text onPress={handlePress} style={{ color: Colors.SeaGreen, fontSize: Platform.OS == 'web' ? 20 : 19, fontWeight: 'normal' }}>
-        Voir moins
+            Lire moins
         </Text>
     );
 
@@ -43,16 +45,16 @@ const CommentResponse = ({items, onToggleSnackBar, response }) => {
         }).catch(e => console.log(`comment/${data.id_com}/like : ${e.response.data}`));
     }
 
-    const displayReply = (id) => {
-        axiosInstance.get(`/review/${id}`)
+    const displayReply = (id, count) => {
+        axiosInstance.get(`/comment/${id}`, {params: {page: 1, pageSize: count, orderByLike: false}})
         .then(response => {
           setReplies(response.comments);
-        }).catch(e => console.log(e.response.data));
+        }).catch(e =>  console.log(`comment/${id} : ${e.response.data}`));
     }
     return (
         <List.Section style={styles.list}>
             {items.map((data, index) => (
-                <React.Fragment key={data?.id_com}>
+                <React.Fragment>
                     <List.Item
                         title={
                             <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
@@ -89,20 +91,20 @@ const CommentResponse = ({items, onToggleSnackBar, response }) => {
                                     {data.countComment > 0 ? 
                                         <>
                                         <Divider  style={styles.divider}/>
-                                        <View style={{display: 'flex', flexDirection:'row', gap: 10, alignItems: 'center', marginTop: 9}}>
-                                            <Pressable onPress={()=>{displayReply(data.id_com)}}>
-                                            <Text style={{color: Colors.DarkSpringGreen, fontSize: Platform.OS  === "web" ? 30 : 19, fontWeight: 'normal'}}>{ replies ? ' Voir les réponses ' : "Masquer les réponses"}</Text>
+                                        <View style={{display: 'flex', flexDirection:'row', gap: 10, alignItems: 'center', justifyContent: 'space-between', marginTop: 9}}>
+                                            <Pressable onPress={()=>{displayReply(data.id_com, data.countComment)}}>
+                                            <Text style={{color: Colors.DarkSpringGreen, fontSize: Platform.OS  === "web" ? 25 : 19, fontWeight: 'normal'}}>{ replies ? ' Voir les réponses ' : "Masquer les réponses"}</Text>
                                             </Pressable>
                                             <Divider style={{ height: '100%', width: 1, backgroundColor: Colors.Silver }} bold/>
-                                            <Pressable onPress={()=>{response(data)}}>
-                                            <Text style={{color: Colors.DarkSpringGreen, fontSize: Platform.OS  === "web" ? 30 : 19, fontWeight: 'normal'}}> Répondre</Text>
+                                            <Pressable onPress={()=>{navigation.navigate('Response',{type: 'comment', id: data.id_com})}}>
+                                            <Text style={{color: Colors.DarkSpringGreen, fontSize: Platform.OS  === "web" ? 25 : 19, fontWeight: 'normal'}}> Répondre</Text>
                                             </Pressable>
                                         </View>
                                         </> : 
                                         <>
                                         <Divider  style={styles.divider}/>
                                         <View style={{marginTop: 9, alignItems: 'flex-end'}}>
-                                            <Pressable onPress={()=>{response(data)}}><Text style={{color: Colors.DarkSpringGreen, fontSize: Platform.OS  === "web" ? 30 : 19, fontWeight: 'normal'}}> Répondre</Text></Pressable>
+                                            <Pressable onPress={()=>{navigation.navigate('Response',{type: 'comment', id: data.id_com})}}><Text style={{color: Colors.DarkSpringGreen, fontSize: Platform.OS  === "web" ? 30 : 19, fontWeight: 'normal'}}> Répondre</Text></Pressable>
                                         </View>
                                         </>
                                     }
@@ -111,7 +113,7 @@ const CommentResponse = ({items, onToggleSnackBar, response }) => {
                         }
                     />
                     {index < items.length - 1 ? <Divider style={styles.divider} leftInset={true}  /> : null}
-                    {replies && (<><Divider style={styles.divider} /><CommentResponse items={replies} onToggleSnackBar={onToggleSnackBar} /></>)}
+                    {replies && (<><Divider style={styles.divider} /><CommentResponse items={replies}/></>)}
                 </React.Fragment>
             ))}
         </List.Section>

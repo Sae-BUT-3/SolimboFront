@@ -23,13 +23,13 @@ const Review = ({ data}) => {
 
   const renderTruncatedFooter = (handlePress) => (
     <Text onPress={handlePress} style={{ color: Colors.SeaGreen, fontSize: Platform.OS == 'web' ? 20 : 19, fontWeight: 'normal' }}>
-      Voir plus
+      Lire plus
     </Text>
   );
 
   const renderRevealedFooter = (handlePress) => (
     <Text onPress={handlePress} style={{ color: Colors.SeaGreen, fontSize: Platform.OS == 'web' ? 20 : 19, fontWeight: 'normal' }}>
-      Voir moins
+      Lire moins
     </Text>
   );
 

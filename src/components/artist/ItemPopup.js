@@ -1,6 +1,5 @@
 import React, {useState} from 'react';
 import { StyleSheet, View, Text, Pressable, Platform, Image} from 'react-native';
-import Avatar from '@mui/material/Avatar';
 import { Colors } from '../../style/color';
 import PointTrait from '../common/PointTrait';
 import {useNavigation} from '@react-navigation/native'
