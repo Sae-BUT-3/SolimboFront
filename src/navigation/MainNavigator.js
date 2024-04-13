@@ -5,7 +5,6 @@ import { useAuth } from "../contexts/AuthContext";
 
 import SignInScreen from "../screens/auth/SignInScreen";
 import SignUpScreen from "../screens/auth/SignUpScreen";
-import SpotifyAuthScreen from "../screens/auth/SpotifyAuthScreen";
 import ConfirmUserScreen from "../screens/auth/ConfirmUserScreen";
 
 import TabNavigator from "./TabNavigator";
