@@ -1,5 +1,6 @@
 import React from 'react';
-import { Button, SafeAreaView} from 'react-native';
+import { Button } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import commonStyles from '../../style/commonStyle';
 import { Text } from 'react-native';
 import { useEffect } from 'react';
@@ -19,7 +20,7 @@ function SpotifyAuthScreen({ navigation }) {
             const code = params.split('=')[1];
             // Votre logique pour gérer le code Spotify ici
             // Naviguer vers l'écran approprié en fonction de la logique
-            navigation.navigate('Spotify', { code });
+            navigation.navigate('ConfirmUser', { code });
         }
     };
 

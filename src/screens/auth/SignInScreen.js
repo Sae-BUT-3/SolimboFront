@@ -9,6 +9,34 @@ import BasicInput from '../../components/form/BasicInput';
 import PressableSpotify from '../../components/pressables/PressableSpotify';
 import { useLinkTo } from '@react-navigation/native';
 import { Snackbar } from 'react-native-paper';
+import { makeRedirectUri, useAuthRequest } from 'expo-auth-session';
+import * as WebBrowser from 'expo-web-browser';
+
+WebBrowser.maybeCompleteAuthSession();
+const scopes = [
+    'user-read-private',
+    'user-read-email',
+    'user-library-read',
+    'playlist-read-private',
+    'playlist-read-collaborative',
+    'playlist-modify-public',
+    'playlist-modify-private',
+    'user-read-playback-state',
+    'user-modify-playback-state',
+    'user-read-currently-playing',
+    'user-follow-read',
+    'user-follow-modify',
+    'user-library-read',
+    'user-library-modify',
+    'user-top-read',
+    'user-read-recently-played',
+    'ugc-image-upload'
+]
+// Endpoint
+const discovery = {
+    authorizationEndpoint: 'https://accounts.spotify.com/authorize',
+    tokenEndpoint: 'https://accounts.spotify.com/api/token',
+};
 
 function SignInScreen({ navigation }) {
   const { signIn } = useAuth();
@@ -28,6 +56,28 @@ function SignInScreen({ navigation }) {
   const handleClose = () => {
     setError(null);
   };
+
+  const redirectUri = makeRedirectUri({
+    scheme: 'solimbo',
+    preferLocalhost: true,
+  });
+  
+  const [request, response, promptAsync] = useAuthRequest(
+  {
+      clientId: process.env.CLIENT_ID,
+      scopes,
+      usePKCE: false, // To follow the "Authorization Code Flow" to fetch token after authorizationEndpoint
+      redirectUri,
+  },
+  discovery
+  );
+
+  useEffect(() => {
+    if (response?.type === 'success') {
+      const { code } = response.params;
+      navigation.navigate('ConfirmUser', { code, redirectUri });
+    }
+}, [response]);
 
   return (
     <SafeAreaView style={[commonStyles.safeAreaContainer, {justifyContent : 'normal'} ]}>
@@ -78,7 +128,9 @@ function SignInScreen({ navigation }) {
           </View>
 
           <View style={commonStyles.columnCenterContainer}>
-            <PressableSpotify />
+            <PressableSpotify 
+            actionOnClick={promptAsync}
+            />
           </View>
 
         </View>

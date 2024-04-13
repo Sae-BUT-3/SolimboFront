@@ -14,8 +14,18 @@ export const AuthProvider = ({ children }) => {
     return response
   }
 
-  const signIn = (credentials) => {
-    axiosInstance.post("/users/signin",  credentials)
+  const signIn = (email, password) => {
+    // const postData = {
+    //   email: 'alban.talagrand2@gmail.com',
+    //   password: 'testpassword'
+    // };
+
+    const postData = {
+      email: email,
+      password: password
+    };
+    
+    axiosInstance.post("/users/signin", postData)
       .then(response => {
         if(response.data) {
           Tokenizer.setToken(response.data.token);

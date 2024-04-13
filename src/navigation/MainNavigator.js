@@ -1,9 +1,15 @@
 import React, {useEffect, useState} from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+
 import { useAuth } from "../contexts/AuthContext";
+
 import SignInScreen from "../screens/auth/SignInScreen";
 import SignUpScreen from "../screens/auth/SignUpScreen";
+import SpotifyAuthScreen from "../screens/auth/SpotifyAuthScreen";
+import ConfirmUserScreen from "../screens/auth/ConfirmUserScreen";
+
 import TabNavigator from "./TabNavigator";
+
 import { Colors } from "../style/color";
 import {StyleSheet } from "react-native";
 import SpotifyAuthScreen from "../screens/auth/SpotifyAuthScreen";
@@ -41,6 +47,7 @@ const MainNavigator = () => {
                     <Stack.Screen name="SignIn" component={SignInScreen}  options={{ title:'Connexion | Solimbo'}}/>
                     <Stack.Screen name="SignUp" component={SignUpScreen}  options={{ title:'Inscription | Solimbo'}}/>
                     <Stack.Screen name="Spotify" component={SpotifyAuthScreen}  options={{ title: 'Connexion avec Spotify | Solimbo'}}/>
+                    <Stack.Screen name="ConfirmUser" component={ConfirmUserScreen} options={{ title: 'Confirmation inscription | Solimbo'}}/>
                 </>
             )}
         </Stack.Navigator>
