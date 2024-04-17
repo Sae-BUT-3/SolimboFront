@@ -75,7 +75,7 @@ const Item = ({data}) => {
                         </View>
                     </View> :
                     <View style={{display: 'flex', alignItems: 'flex-start', gap: 10}}>
-                         {data.name ? <Text style={{color: Colors.White, maxWidth: 180,  fontSize: 20, fontWeight: '600'}} numberOfLines={1}  ellipsizeMode='tail'>{toCapitalCase(data.name)}</Text> : null}
+                         {data.name ? <Text style={{color: Colors.White, maxWidth: 180, fontSize: Platform.OS  === 'web' ? 20 : 17 , fontWeight: '600'}} numberOfLines={1}  ellipsizeMode='tail'>{toCapitalCase(data.name)}</Text> : null}
                         <View style={{display: 'flex',flexDirection: 'row', alignItems: 'center', gap: 5}}>
                             <Rating
                                 type="custom"
@@ -91,9 +91,9 @@ const Item = ({data}) => {
                             <Text style={{color: Colors.White, fontSize: 18}}>{data.reviewCount ? data.reviewCount : 0}</Text>
                         </View>
                         <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 10}}>
-                            {data.release_date ? <Text style={{color: Colors.White, fontSize: 18}}>{data.release_date.substring(0, 4)}</Text> : null}
+                            {data.release_date ? <Text style={{color: Colors.White, fontSize: 17}}>{data.release_date.substring(0, 4)}</Text> : null}
                             <PointTrait point={true}/>
-                            {data.type ? <Text style={{color: Colors.White, fontSize: 18}}>{toCapitalCase(data.type)}</Text> : null}
+                            {data.type ? <Text style={{color: Colors.White, fontSize: 17}}>{toCapitalCase(data.type)}</Text> : null}
                         </View>
                     </View>
                 }

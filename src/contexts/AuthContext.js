@@ -3,6 +3,7 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import Tokenizer from '../utils/Tokenizer';
 import axiosInstance from '../api/axiosInstance';
+import { err } from 'react-native-svg';
 
 const AuthContext = createContext();
 
@@ -14,14 +15,8 @@ export const AuthProvider = ({ children }) => {
     return response
   }
 
-  const signIn = (email, password) => {
-
-    const postData = {
-      email: email,
-      password: password
-    };
-    
-    axiosInstance.post("/users/signin", postData)
+  const signIn = (credentials) => {
+    axiosInstance.post("/users/signin", credentials)
       .then(response => {
         if(response.data) {
           Tokenizer.setToken(response.data.token);
@@ -35,8 +30,8 @@ export const AuthProvider = ({ children }) => {
         }
       })
       .catch(error => {
-        console.log("Error : /users/signin " + error)
-        setError("Échec de l'authentification, email ou mot de passe invalide !" );
+        console.log("Error : /users/signin " + error.response.data)
+        setError("Une erreur interne est survenue, Veuillez ressayer plus tard !" );
       });
       return response
   };

@@ -12,7 +12,6 @@ import TabNavigator from "./TabNavigator";
 
 import { Colors } from "../style/color";
 import {StyleSheet } from "react-native";
-import SpotifyAuthScreen from "../screens/auth/SpotifyAuthScreen";
 import ArtistScreen from "../screens/artist/ArtistScreen";
 import CommentScreen from "../screens/comment/CommentScreen";
 import ReviewScreen from "../screens/review/ReviewScreen";

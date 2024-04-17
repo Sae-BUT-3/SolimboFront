@@ -11,6 +11,7 @@ import axiosInstance from '../../api/axiosInstance';
 import Review from '../../components/common/Review';
 import ErrorRequest from '../../components/ErrorRequest';
 import Loader from '../../components/Loader';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const ResponseScreen = () => {
     const route = useRoute();
@@ -55,13 +56,7 @@ const ResponseScreen = () => {
         
     });
 
-    const handleScroll =  (event) => { 
-        event.nativeEvent.contentOffset.y = scrollY
-        event.useNativeDriver= true 
-    };
-
     const addComment = () =>{
-        console.log(type)
         if(comment !== ''){
             if(type === 'review'){
                 axiosInstance.put(`/review/${id}/comment`, {description: comment})
@@ -92,12 +87,9 @@ const ResponseScreen = () => {
                         </Pressable>
                     </View>
                 </Animated.View>
-                <ScrollView
-                    onScroll={handleScroll}
-                    scrollEventThrottle={16}
-                >    
-                    <DataTable>
-                        <DataTable.Header  style={{marginBottom: 30, borderBottomColor: Colors.Onyx}}>
+                <ScrollView>    
+                    <DataTable >
+                        <DataTable.Header style={{marginBottom: 30, borderBottomColor: Colors.Onyx}}>
                             {type == "review" ?
                                 <Review data={data} /> : <Comment data={data}/>
                             }
@@ -114,8 +106,8 @@ const ResponseScreen = () => {
                             placeholder={type === 'review'? 'Ajouter un commentaire...' : `Réponse au commentaire de `}
                             value={comment}
                             onChangeText={(text) => setText(text)}
-                            underlineColor={Colors.Onyx}
-                            activeUnderlineColor={Colors.Onyx}
+                            underlineColor={Colors.BattleShipGray}
+                            activeUnderlineColor={Colors.BattleShipGray}
                             textColor={Colors.White}
                             color={Colors.White}
                             cursorColor={Colors.SeaGreen}
@@ -150,7 +142,9 @@ const styles = StyleSheet.create({
         left: 0,
         right: 0,
         zIndex: 1,
-        marginBottom: Platform.OS === 'web' ? 30 : 20
+        marginBottom: Platform.OS === 'web' ? 30 : 20,
+        marginTop: Platform.OS === 'web' ? 30 : 20
+
     },
     text: {
         fontWeight: 'bold',

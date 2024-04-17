@@ -10,6 +10,7 @@ import axiosInstance from '../../api/axiosInstance';
 import Loader from '../../components/Loader';
 import ErrorRequest from '../../components/ErrorRequest';
 import Filter from '../../components/search/Filter';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const numberOfItemsPerPageList = [15, 25 , 55, 100, 250];
 const sorts =  ["Date", "Like", "Amis uniquement"];
@@ -17,7 +18,6 @@ const ReviewScreen = () => {
     const navigation = useNavigation();
     const route = useRoute();
     const {id, type }= route.params || null;
-    const [filtre, setFiltre] = useState([]);
     const [reviews, setReviews] = useState([]);
     const [reviewsArtist, setReviewsArtist] = useState([]);
     const [count, setCount] = useState(0);
@@ -85,11 +85,6 @@ const ReviewScreen = () => {
         extrapolate: 'clamp',
     });
 
-    const handleScroll =  (event) => { 
-        event.nativeEvent.contentOffset.y = scrollY
-        event.useNativeDriver= true 
-    };
-
     const handleSort = (like) => {
         updateReviews(page, itemsPerPage, like);
     }
@@ -103,15 +98,12 @@ const ReviewScreen = () => {
                     <View style={styles.container}>
                         <Animated.View style={[styles.header, headerOpacity]}>
                             <Pressable onPress={() => { navigation.goBack() }}>
-                                <FontAwesome5 name="arrow-left" size={30} color={Colors.SeaGreen}/>
+                                <FontAwesome5 name="arrow-left" size={25} color={Colors.SeaGreen}/>
                             </Pressable>
                             <Text style={styles.title}>Reviews</Text>
                             <Text/>
                         </Animated.View>
-                        <ScrollView
-                            onScroll={handleScroll}
-                            scrollEventThrottle={16}
-                        >
+                        <ScrollView>
                             <View style={styles.diplayContainer}>
                                 <View style={{display: 'flex', flexDirection: 'row', gap: 10, alignItems: 'center', marginBottom: 10, flexWrap: 'wrap'}}>
                                     <FontAwesome5 name="filter" size={20} color={Colors.SeaGreen} regular/>
@@ -184,10 +176,12 @@ const styles = StyleSheet.create({
         left: 0,
         right: 0,
         zIndex: 1,
-        marginBottom: Platform.OS === 'web' ? 30 : 20
+        marginBottom: Platform.OS === 'web' ? 30 : 15,
+        marginTop: Platform.OS === 'web' ? 30 : 15
+
     },
     title: {
-        fontSize: Platform.OS === 'web' ? 35 : 30,
+        fontSize: Platform.OS === 'web' ? 35 : 25,
         color: Colors.SeaGreen,
         fontWeight: 'bold'
     },
@@ -212,7 +206,8 @@ const styles = StyleSheet.create({
       filterText: {
         fontWeight: 'bold',
         color: Colors.White,
-        fontSize: 17
+        fontSize: 17,
+        margin: 10
       },
 })
 

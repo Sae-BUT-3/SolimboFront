@@ -22,12 +22,12 @@ const Trackgraphy = ({ items, id}) => {
     <>
       <View style={{marginBottom: 30}}> 
         <View style={{display: 'flex', flexDirection: 'row', alignItems: 'flex-start', flexWrap: 'wrap'}}>
-          {items.length > 0 ? items.slice(0, Platform.OS == 'web' ? 5 : 3).map(item => (
+          {items && items.length > 0 ? items.slice(0, Platform.OS == 'web' ? 5 : 3).map(item => (
             <Track  key={item.id} data={item}/>)) : null}
             {Platform.OS !== 'web' && (
             <View style={[styles.sectionFilter, {alignItems: 'center'}]}>
-              <Pressable style={styles.btn} onPress={()=>{navigation.navigate('Discographie', {id})}}>
-                <Text style={styles.filterText}>Voir toute les titres</Text>
+              <Pressable style={styles.btn} onPress={()=>{navigation.navigate('Trackgraphie', {id})}}>
+                <Text style={styles.filterText}>Voir toutes les titres</Text>
               </Pressable>
             </View>)}
         </View>
@@ -41,7 +41,8 @@ const styles = StyleSheet.create({
     flexDirection:'row',
     justifyContent: 'flex-start',
     marginLeft: 30,
-    marginBottom: 30
+    marginBottom: 30,
+    marginTop: 10
   },
   buttonText: {
     color: Colors.White,
@@ -66,7 +67,7 @@ const styles = StyleSheet.create({
   filterText: {
     fontWeight: 'bold',
     color: Colors.White,
-    fontSize: 17
+    fontSize: 15
   },
   btn: {
     marginRight: 10,

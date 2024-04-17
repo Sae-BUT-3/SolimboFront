@@ -9,6 +9,9 @@ import axiosInstance from '../../api/axiosInstance';
 import Date from './DateT';
 import PointTrait from './PointTrait';
 import ReadMore from 'react-native-read-more-text';
+import { Divider } from 'react-native-paper';
+import Confirmation from './Confirmation';
+import Tokenizer from '../../utils/Tokenizer';
 
 const toCapitalCase = (mot) => {
     if(mot == 'artist') mot =  mot + 'e'
@@ -20,20 +23,25 @@ const Review = ({ data}) => {
   const [like, setLike] = useState(false)
   const [countlikes, setCountLikes] = useState(0)
   const [isExpanded, setIsExpanded] = useState(false);
+  const [confirm, setConfirm] = useState(false);
+  const [currentUser, setUser] =  useState({});
 
   const renderTruncatedFooter = (handlePress) => (
-    <Text onPress={handlePress} style={{ color: Colors.SeaGreen, fontSize: Platform.OS == 'web' ? 20 : 19, fontWeight: 'normal' }}>
+    <Text onPress={handlePress} style={{ color: Colors.SeaGreen, fontSize: Platform.OS == 'web' ? 20 : 17, fontWeight: 'normal' }}>
       Lire plus
     </Text>
   );
 
   const renderRevealedFooter = (handlePress) => (
-    <Text onPress={handlePress} style={{ color: Colors.SeaGreen, fontSize: Platform.OS == 'web' ? 20 : 19, fontWeight: 'normal' }}>
+    <Text onPress={handlePress} style={{ color: Colors.SeaGreen, fontSize: Platform.OS == 'web' ? 20 : 17, fontWeight: 'normal' }}>
       Lire moins
     </Text>
   );
-
-  useEffect( ()=>{
+  const getData = async ()=>{
+    setUser(await Tokenizer.getCurrentUser());
+  }  
+  useEffect( ()=>{  
+    getData()
     setLike(data.doesUserLike)
     setCountLikes(data.countlike)
   },[data]);
@@ -67,20 +75,27 @@ const Review = ({ data}) => {
     }
   }
 
+  const deleteReview = () =>{
+    axiosInstance.delete('review', {params : {idReview: data.id_review}})
+      .then(res => {
+        
+      }).catch(e => console.log(`delete review : ${e.response.data}`));
+  }
+
   return (
     <><View key={data.id_review} style={styles.reviewContainer}>
         <View style={styles.reviewerInfo}>
           <View style={{display: 'flex', flexDirection: 'row', gap: 5}}>
-            <Pressable onPress={() => goTo(data.oeuvre.id, data.oeuvre.type)}>
-              <Avatar source={{ uri: data.oeuvre.image }} size={Platform.OS === 'web'? 90 : 74} containerStyle={{  borderRadius: 10,shadowColor: Colors.Onyx,
-                shadowOpacity: 0.3,
-                shadowRadius: 3,
-                elevation: Platform.OS === 'android' ? 3 : 0, }} />
-            </Pressable>
-            <View style={{display: 'flex', paddingLeft: 10}}>
-              <Text style={{color: Colors.White, fontSize: Platform.OS == 'web' ? 20 : 19, fontWeight: 'bold'}}>{toCapitalCase(data.oeuvre.name)}</Text>
-              <Text style={{color: Colors.White, fontSize: Platform.OS == 'web' ? 20 : 19, fontWeight: 'normal' }}>{toCapitalCase(data.oeuvre.type)}</Text>
-            </View>
+                <Pressable onPress={() => goTo(data.oeuvre.id, data.oeuvre.type)}>
+                  <Avatar source={{ uri: data.oeuvre.image }} size={Platform.OS === 'web'? 90 : 74} containerStyle={{  borderRadius: 10,shadowColor: Colors.Onyx,
+                    shadowOpacity: 0.3,
+                    shadowRadius: 3,
+                    elevation: Platform.OS === 'android' ? 3 : 0, }} />
+                </Pressable>
+                <View style={{display: 'flex', paddingLeft: 10}}>
+                  <Text style={{color: Colors.White, fontSize: Platform.OS == 'web' ? 20 : 19, fontWeight: 'bold'}}>{toCapitalCase(data.oeuvre.name)}</Text>
+                  <Text style={{color: Colors.White, fontSize: Platform.OS == 'web' ? 20 : 19, fontWeight: 'normal' }}>{toCapitalCase(data.oeuvre.type)}</Text>
+                </View>
           </View>
           <View style={{display: 'flex', gap: 9, flexDirection: Platform.OS == 'web' ? 'column' : 'row', alignItems: Platform.OS != 'web' ? 'center' : null}}>
             <Rating
@@ -109,7 +124,7 @@ const Review = ({ data}) => {
           </ReadMore>
         </View>
         <View style={[styles.reviewerInfo, {flexDirection: 'row', marginTop: 10}]}>
-          <View style={{display: 'flex', flexDirection: 'row', gap: 10, alignItems: 'flex-end'}}>
+          <View style={{display: 'flex', flexDirection: 'row', gap: 10, alignItems: 'center'}}>
             <View style={{display: 'flex', flexDirection: 'row', alignItems: 'flex-end', gap: 10}}>
               <Pressable onPress={handlePress}>
                 {like ?  <FontAwesome5 name="heart" size={30} color={Colors.DarkSpringGreen} solid  />: <FontAwesome5 name="heart" size={30} color={Colors.DarkSpringGreen} regular/>}
@@ -122,11 +137,17 @@ const Review = ({ data}) => {
               </Pressable>
               <Text style={{color: Colors.White, fontSize: 20}}>{data.countComment}</Text>
             </View>
+            {currentUser.id_utilisateur === data.utilisateur.id_utilisateur && (<><Divider style={{ height: '100%', width: 1 , backgroundColor: Colors.Onyx}} />
+            <Pressable onPress={()=>{setConfirm(true)}}>
+                <FontAwesome5 name='trash-alt' size={25} color={Colors.DarkSpringGreen} regular />
+            </Pressable></>)}
           </View>
           <Date dateString={data.createdAt}/>
         </View>
     </View>
-    </>
+  {confirm && 
+    (<Confirmation handlePress={deleteReview} visible={true} message={"Etes vous sûr de vouloir supprimer cette critique ? L'action est irreversible."}/>)} 
+  </>
 )}
 const styles = StyleSheet.create({
   reviewContainer: {

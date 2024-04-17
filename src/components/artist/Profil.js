@@ -54,7 +54,9 @@ const Profil = ({ data, friends_followers, follow, followArtist }) => {
               </Pressable >
             </View>
             <View style={{ display: Platform.OS !== 'web'? 'flex': undefined, alignItems: Platform.OS !== 'web'? 'center' : null}}>
-                <Text style={styles.nameA}>{data.name}</Text>
+                <View style={styles.container}>
+                  <Text style={styles.nameA}>{data.name}</Text>
+                </View>
                 <View style={styles.sectionFollower}>
                   <View>
                     <Text style={{color: Colors.White, fontSize: 20, textAlign:  'center', margin: 5}}>
@@ -128,8 +130,13 @@ const styles = StyleSheet.create({
     shadowRadius: 3,
     elevation: Platform.OS === 'android' ? 4 : 0, 
   },
+  container: {
+    flexDirection: 'row', // Définit une disposition des éléments en ligne
+    flexWrap: 'wrap', // Permet le retour à la ligne automatique
+    alignItems: 'flex-start', // Aligne les éléments en haut
+  },
   nameA:{
-    fontSize: 30,
+    fontSize: Platform.OS === 'web' ? 30 : 25,
     color: Colors.SeaGreen,
     fontWeight: 'bold',
     marginBottom: 10,

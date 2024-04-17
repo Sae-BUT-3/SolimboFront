@@ -12,6 +12,7 @@ import ArtistAppearsOn from '../../components/artist/ArtistAppearsOn';
 import DiscograpyPopup from '../../components/artist/DicograpyPopup';
 import { Snackbar } from 'react-native-paper';
 import { FontAwesome5 } from '@expo/vector-icons'; // Importation de FontAwesome5
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const ArtistScreen = () => {
     const navigation = useNavigation();
@@ -112,9 +113,10 @@ const ArtistScreen = () => {
     }
 
     return (
+        
         <View style={styles.container}>
             {isLoading ? (<Loader />) : (
-                <>
+                <SafeAreaView>
                     <ScrollView
                         onScroll={handleScroll}
                         scrollEventThrottle={16}
@@ -168,11 +170,11 @@ const ArtistScreen = () => {
                     {showTitle && (
                         <View style={styles.titleHeader}>
                             <Pressable onPress={() => { navigation.goBack() }}>
-                                <FontAwesome5 name="arrow-left" size={35} color={Colors.DarkSpringGreen} />
+                                <FontAwesome5 name="arrow-left" size={30} color={Colors.DarkSpringGreen} />
                             </Pressable>
                         </View>
                     )}
-                </>
+                </SafeAreaView>
             )}
         </View>
     );
@@ -187,7 +189,7 @@ const styles = StyleSheet.create({
     sectionTitle: {
         color: Colors.DarkSpringGreen,
         fontWeight: 'bold',
-        fontSize: 35,
+        fontSize: Platform.OS === 'web' ? 35 : 25,
         elevation: Platform.OS === 'android' ? 3 : 0
     },
     sectionFilter: {

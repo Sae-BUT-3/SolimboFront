@@ -27,10 +27,6 @@ const CommentScreen = () => {
     const [itemsPerPage, onItemsPerPageChange] = useState(numberOfItemsPerPageList[0]);
     const [count, setCount] = useState(0);
 
-    const getData = async ()=>{
-        setUser(await Tokenizer.getCurrentUser());
-    }
-
     useFocusEffect(
         useCallback(() => {
           updateComments(page, itemsPerPage);
@@ -42,7 +38,6 @@ const CommentScreen = () => {
      }, [itemsPerPage]);
 
     useEffect(() => {
-        getData()
         axiosInstance.get(`/review/${id}`, {params: {page: page + 1, pageSize: itemsPerPage, orderByLike: false}})
         .then(response => {
           setReview(response.data);
@@ -86,11 +81,6 @@ const CommentScreen = () => {
         
     });
 
-    const handleScroll =  (event) => { 
-        event.nativeEvent.contentOffset.y = scrollY
-        event.useNativeDriver= true 
-    };
-
     const handleResponse = () =>{
         navigation.navigate("Response", {type: 'review', id: id});
     }
@@ -106,16 +96,13 @@ const CommentScreen = () => {
                     <Animated.View>
                         <View style={[styles.header, headerOpacity ]}>
                             <Pressable onPress={handleGoBack}>
-                                <FontAwesome5 name="arrow-left" size={30} color={Colors.SeaGreen}/>
+                                <FontAwesome5 name="arrow-left" size={25} color={Colors.SeaGreen}/>
                             </Pressable>
                             <Text style={styles.title}>Commentaires</Text>
                             <Text/>
                         </View>
                     </Animated.View>
-                    <ScrollView
-                        onScroll={handleScroll}
-                        scrollEventThrottle={16}
-                    >    
+                    <ScrollView>    
                     {count > 0 ? 
                         <DataTable>
                             <DataTable.Header  style={{marginBottom: 30, borderBottomColor: Colors.Onyx}}>
@@ -138,7 +125,8 @@ const CommentScreen = () => {
                                 onItemsPerPageChange={handleonItemsPerPageChange}
                                 selectPageDropdownLabel={'Commentaire par page'}
                                 showFastPaginationControls
-                            /></DataTable> 
+                            />
+                            </DataTable> 
                          :  <Text style={{ color: Colors.White, fontSize: 20, textAlign: 'center'  }}>Aucun commentaire, soyez le premier à rédiger un commentaire !</Text> 
                         }
                     </ScrollView>
@@ -170,10 +158,11 @@ const styles = StyleSheet.create({
         left: 0,
         right: 0,
         zIndex: 1,
-        marginBottom: Platform.OS === 'web' ? 30 : 20
+        marginBottom: Platform.OS === 'web' ? 30 : 20,
+        marginTop: Platform.OS === 'web' ? 30 : 20
     },
     title: {
-        fontSize: Platform.OS === "web" ? 35 : 30,
+        fontSize: Platform.OS === "web" ? 35 : 25,
         color: Colors.SeaGreen,
         fontWeight: 'bold'
     },
