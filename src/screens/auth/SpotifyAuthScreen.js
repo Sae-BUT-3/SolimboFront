@@ -7,7 +7,6 @@ import { useEffect } from 'react';
 import { Linking } from 'react-native';
 
 function SpotifyAuthScreen({ navigation }) {
-
     useEffect(() => {
         const url = Linking.getInitialURL();
         handleOpenURL(url);

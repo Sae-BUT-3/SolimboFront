@@ -1,7 +1,6 @@
 import React from 'react';
-import { Button, View, Text } from 'react-native';
+import { SafeAreaView, Button, View, Text } from 'react-native';
 import { useAuth } from '../contexts/AuthContext';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import commonStyles from '../style/commonStyle';
 
 function ProfileScreen() {

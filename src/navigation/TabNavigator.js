@@ -28,20 +28,22 @@ function TabNavigator() {
             initialRouteName='Search'
         >
             <Tab.Screen 
-                name="Search" 
-                component={SearchScreen} 
+                name="Home" 
+                component={HomeScreen} 
                 options={{
+                    title: 'Solimbo - Réseau social de partage de musique',
                     tabBarIcon: ({ focused, color, size }) => (
-                        <FontAwesome5 name={focused ? 'search' : 'search'} size={size} color={color} />
+                        <FontAwesome5 name={focused ? 'home' : 'home'} size={size} color={color} />
                     ),
                 }}
             />
             <Tab.Screen 
-                name="Home" 
-                component={HomeScreen} 
+                name="Search" 
+                component={SearchScreen} 
                 options={{
+                    title: 'Solimbo - Rechercher',
                     tabBarIcon: ({ focused, color, size }) => (
-                        <FontAwesome5 name={focused ? 'home' : 'home'} size={size} color={color} />
+                        <FontAwesome5 name={focused ? 'search' : 'search'} size={size} color={color} />
                     ),
                 }}
             />
@@ -55,6 +57,7 @@ function TabNavigator() {
                     },
                 })}
                 options={{
+                    title: 'Solimbo - Commenter une oeuvre',
                     tabBarIcon: ({ color, size }) => (
                         <TouchableOpacity
                             onPress={() => {
@@ -78,6 +81,7 @@ function TabNavigator() {
                 name="Activity" 
                 component={ActivityScreen} 
                 options={{
+                    title: 'Solimbo - Activité utilisateur ',
                     tabBarIcon: ({ focused, color, size }) => (
                         <FontAwesome5 name={focused ? 'bell' : 'bell'} size={size} color={color} />
                     ),
@@ -87,6 +91,7 @@ function TabNavigator() {
                 name="Profile" 
                 component={ProfileScreen} 
                 options={{
+                    title: 'Solimbo - Profil utlisateur',
                     tabBarIcon: ({ focused, color, size }) => (
                         <FontAwesome5 name={focused ? 'user' : 'user'} size={size} color={color} />
                     ),

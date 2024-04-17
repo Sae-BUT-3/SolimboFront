@@ -8,10 +8,10 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-
+  const [response, setError] = useState(null)
+  
   const signInViaToken = (token) => {
-    Tokenizer.setToken(token);
-    setIsAuthenticated(true); // Marquer l'utilisateur comme authentifié
+    return response
   }
 
   const signIn = (email, password) => {
@@ -23,14 +23,22 @@ export const AuthProvider = ({ children }) => {
     
     axiosInstance.post("/users/signin", postData)
       .then(response => {
-        console.log("🚀 ~ signIn ~ response:", response.data)
-        const token = response.data.token;
-        Tokenizer.setToken(token);
-        setIsAuthenticated(true); // Marquer l'utilisateur comme authentifié
+        if(response.data) {
+          Tokenizer.setToken(response.data.token);
+          Tokenizer.setUser(response.data.user)
+          setIsAuthenticated(true); // Marquer l'utilisateur comme authentifié
+          console.log("🚀 ~ Connexion ~ authentification réussie")
+        }
+        else {
+          console.log("Connection failed, Token and data user not found in response.")
+          setError("Échec de l'authentification, jeton non trouvé dans la réponse" );
+        }
       })
       .catch(error => {
-        console.error(error);
+        console.log("Error : /users/signin " + error)
+        setError("Échec de l'authentification, email ou mot de passe invalide !" );
       });
+      return response
   };
 
   const autoSignIn = async () => {

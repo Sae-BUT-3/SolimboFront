@@ -5,12 +5,12 @@
     "slug": "Solimbo",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/main_logo_no_bg.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/main_logo_no_bg.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#191414"
     },
     "assetBundlePatterns": [
       "**/*"
@@ -21,8 +21,8 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "foregroundImage": "./assets/main_logo_v1_500x500.png",
+        "backgroundColor": "#206f3e"
       },
       "package": "com.solimbo.app"
     },

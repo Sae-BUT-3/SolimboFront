@@ -1,13 +1,14 @@
-import React from 'react';
-import { View, Text, Image } from 'react-native';
+import React, { useEffect, useState }from 'react';
+import { View, Text, Image, Platform, StyleSheet } from 'react-native';
 import PressableBasic from '../../components/pressables/PressableBasic';
 import { useAuth } from '../../contexts/AuthContext';
 import commonStyles from '../../style/commonStyle';
 import authStyle from '../../style/authStyle';
-import { useState, useEffect } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import BasicInput from '../../components/form/BasicInput';
 import PressableSpotify from '../../components/pressables/PressableSpotify';
+import { useLinkTo } from '@react-navigation/native';
+import { Snackbar } from 'react-native-paper';
 import { makeRedirectUri, useAuthRequest } from 'expo-auth-session';
 import * as WebBrowser from 'expo-web-browser';
 
@@ -41,6 +42,20 @@ function SignInScreen({ navigation }) {
   const { signIn } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState(null);
+  const linkTo = useLinkTo();
+
+  const handleSignIn = () => {
+    const credentials = {
+      email: email,
+      password: password,
+    };
+    const res = signIn(credentials);
+    setError(res)
+  };
+  const handleClose = () => {
+    setError(null);
+  };
 
   const redirectUri = makeRedirectUri({
     scheme: 'solimbo',
@@ -65,7 +80,7 @@ function SignInScreen({ navigation }) {
 }, [response]);
 
   return (
-    <SafeAreaView style={[commonStyles.safeAreaContainer ]}>
+    <SafeAreaView style={[commonStyles.safeAreaContainer, {justifyContent : 'normal'} ]}>
         
         <View style={[commonStyles.columnCenterContainer, authStyle.formContainer]}>
           <View style={commonStyles.columnCenterContainer}>
@@ -77,22 +92,25 @@ function SignInScreen({ navigation }) {
           <View style={commonStyles.columnCenterContainer}>
 
             <BasicInput
-              placeholder="Email"
+              autoCapitalize="none"
+              autoCorrect={false}
+              placeholder="Entrez votre email"
               textContentType="emailAddress"
               keyboardType="email-address"
               value={email}
-              onChangeText={(text) => setEmail(text)}
+              onChangeText={setEmail}
             />
 
             <BasicInput
-              placeholder="Password"
+              placeholder="Entrez votre mot de passe"
               secureTextEntry
               value={password}
-              onChangeText={(text) => setPassword(text)}
+              onChangeText={setPassword}
             />
             <PressableBasic
-            text="Se connecter"
-            onPress={() => signIn(email, password)}
+            text="Connexion"
+
+            onPress={handleSignIn}
             />
             <Text style={authStyle.textPasswordForgot}>Mot de passe oublié ? </Text>
           </View>
@@ -120,7 +138,22 @@ function SignInScreen({ navigation }) {
           <Text style={commonStyles.textLink} 
             onPress={() => navigation.navigate('SignUp')}
           >S'inscire</Text>
-        </View> 
+        </View>
+        {error && (
+            <Snackbar
+              visible={error !== null}
+              onDismiss={handleClose}
+              action={{
+                  label: 'Fermer',
+                  onPress: handleClose
+              }}
+              duration={Snackbar.DURATION_LONG}
+              elevation={3}
+              style={{width: Platform.OS == 'web' ? 500 : 400}}
+            >
+              {error}
+            </Snackbar>
+        )}
     </SafeAreaView>
   );
 }
