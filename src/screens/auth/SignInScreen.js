@@ -107,8 +107,6 @@ function SignInScreen({ navigation }) {
               value={password}
               onChangeText={setPassword}
             />
-          </View>
-          <View style={commonStyles.columnCenterContainer}>
             <PressableBasic
             text="Connexion"
 

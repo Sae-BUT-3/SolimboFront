@@ -25,7 +25,10 @@ const pressableBasicStyle = StyleSheet.create({
         fontFamily: "inter-semi-bold",
     },
     buttonPressed: {
-        backgroundColor: Colors.SeaGreen,
+        backgroundColor: Colors.CalPolyGreen,
+    },
+    buttonDisabled: {
+        backgroundColor: Colors.Onyx,
     }
 });
 

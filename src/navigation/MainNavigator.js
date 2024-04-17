@@ -4,7 +4,8 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useAuth } from "../contexts/AuthContext";
 
 import SignInScreen from "../screens/auth/SignInScreen";
-import SignUpScreen from "../screens/auth/SignUpScreen";
+import SignUpScreen from "../screens/auth/signup/SignUpScreen";
+import SpotifyAuthScreen from "../screens/auth/SpotifyAuthScreen";
 import ConfirmUserScreen from "../screens/auth/ConfirmUserScreen";
 
 import TabNavigator from "./TabNavigator";
@@ -17,7 +18,6 @@ import ReviewScreen from "../screens/review/ReviewScreen";
 import OeuvreScreen from "../screens/oeuvre/OeuvreScreen";
 import DiscograpyScreen from "../screens/artist/DicographyScreen";
 import ResponseScreen from "../screens/comment/ResponseScreen";
-import SpotifyAuthScreen from "../screens/auth/SpotifyAuthScreen";
 
 const Stack = createNativeStackNavigator();
 
