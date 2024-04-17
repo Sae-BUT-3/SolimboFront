@@ -11,13 +11,13 @@ import TabNavigator from "./TabNavigator";
 
 import { Colors } from "../style/color";
 import {StyleSheet } from "react-native";
-import SpotifyAuthScreen from "../screens/auth/SpotifyAuthScreen";
 import ArtistScreen from "../screens/artist/ArtistScreen";
 import CommentScreen from "../screens/comment/CommentScreen";
 import ReviewScreen from "../screens/review/ReviewScreen";
 import OeuvreScreen from "../screens/oeuvre/OeuvreScreen";
 import DiscograpyScreen from "../screens/artist/DicographyScreen";
 import ResponseScreen from "../screens/comment/ResponseScreen";
+import SpotifyAuthScreen from "../screens/auth/SpotifyAuthScreen";
 
 const Stack = createNativeStackNavigator();
 

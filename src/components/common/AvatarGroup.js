@@ -40,7 +40,7 @@ const AvatarGroup = ({ avatars, size, type }) => {
             key={index}
             source={{ uri:  type === 'user' ? avatar.photo : avatar.image }}
             size={size}
-            style={{ marginRight: 10, zIndex: avatars.length - index }}
+            style={{zIndex: avatars.length - index }}
             accessibilityLabel={type === 'user' ? avatar.pseudo : avatar.name}
           />
         ))

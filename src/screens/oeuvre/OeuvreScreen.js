@@ -10,6 +10,8 @@ import { FontAwesome5 } from '@expo/vector-icons'; // Importation de FontAwesome
 import OeuvreReview from '../../components/oeuvre/OeuvreReview';
 import Oeuvre from '../../components/oeuvre/Oeuvre';
 import Trackgraphy from '../../components/oeuvre/Trackgraphy';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import Item from '../../components/common/Item';
 
 const OeuvreScreen = () => {
     const navigation = useNavigation();
@@ -25,7 +27,7 @@ const OeuvreScreen = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [fail, setFailed] = useState(null);
     const [response, setResponse] = useState(null);
-    const [showTitle, setShowTitle] = useState(false);
+    const [showTitle, setShowTitle] = useState(type === 'track');
 
     const handleClose = () => {
         setResponse(null);
@@ -45,12 +47,12 @@ const OeuvreScreen = () => {
     };
 
     useEffect(() => {
-        axiosInstance.get(`/oeuvre/${type}/${id}`)
+        axiosInstance.get(`/oeuvre/${id}`)
         .then(response => {
             setOeuvre(response.data.oeuvre);
             setArtists(response.data.artist);
-            navigation.setOptions({ title: response.data + ' | Solimbo' });
-            setTracks(response.data.tracks);
+            navigation.setOptions({ title: response.data.oeuvre.name + ' | Solimbo' });
+            setTracks(response.data.oeuvre.tracks);
             setFriendsLikes(response.data);
             setReviews(response.data.reviewsByTime);
             setLike(response.data.doesUserLikes);
@@ -73,7 +75,7 @@ const OeuvreScreen = () => {
     return (
         <View style={styles.container}>
             {isLoading ? (<Loader />) : (
-                <>
+                <SafeAreaView>
                     <ScrollView
                         onScroll={handleScroll}
                         scrollEventThrottle={16}
@@ -88,13 +90,13 @@ const OeuvreScreen = () => {
                                 { useNativeDriver: true }
                             )}
                         >
-                            <View style={styles.sectionFilter}>
+                           { type !== 'track' && (<><View style={styles.sectionFilter}>
                                 <Text style={styles.sectionTitle}>Titres</Text>
-                                {Platform.OS === 'web' && tracks.length > 0 ? <Pressable onPress={handlePress}>
+                                {Platform.OS === 'web' && oeuvre.total_tracks > 0 ? <Pressable onPress={handlePress}>
                                     <Text style={styles.buttonText}>Afficher plus</Text>
                                 </Pressable> : null}
                             </View>
-                            <Trackgraphy items={tracks} id={id} />
+                            <Trackgraphy items={tracks} id={id} /></>)}
                             <View style={styles.sectionFilter}>
                                 <Text style={styles.sectionTitle}>Récentes reviews</Text>
                                 {Platform.OS === 'web' && reviews.length > 0 ? <Pressable onPress={() => { navigation.navigate('Review', { id }) }}>
@@ -119,11 +121,11 @@ const OeuvreScreen = () => {
                     {showTitle && (
                         <View style={styles.titleHeader}>
                             <Pressable onPress={() => { navigation.goBack() }}>
-                                <FontAwesome5 name="arrow-left" size={35} color={Colors.DarkSpringGreen} />
+                                <FontAwesome5 name="arrow-left" size={30} color={Colors.DarkSpringGreen} />
                             </Pressable>
                         </View>
                     )}
-                </>
+                </SafeAreaView>
             )}
         </View>
     );
@@ -138,7 +140,7 @@ const styles = StyleSheet.create({
     sectionTitle: {
         color: Colors.DarkSpringGreen,
         fontWeight: 'bold',
-        fontSize: 35,
+        fontSize: Platform.OS === 'web' ? 35 : 25,
         elevation: Platform.OS === 'android' ? 3 : 0
     },
     sectionFilter: {

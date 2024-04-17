@@ -92,7 +92,7 @@ const styles = StyleSheet.create({
   filterText: {
     fontWeight: 'bold',
     color: Colors.White,
-    fontSize: 17
+    fontSize: Platform.OS  === 'web' ? 17 : 14
   },
   btn: {
     marginRight: 10,

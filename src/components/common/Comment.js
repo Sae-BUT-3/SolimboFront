@@ -20,13 +20,13 @@ const Comment = ({ data }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const navigation = useNavigation();
   const renderTruncatedFooter = (handlePress) => (
-    <Text onPress={handlePress} style={{ color: Colors.SeaGreen, fontSize: Platform.OS == 'web' ? 20 : 19, fontWeight: 'normal' }}>
+    <Text onPress={handlePress} style={{ color: Colors.SeaGreen, fontSize: Platform.OS == 'web' ? 20 : 17, fontWeight: 'normal' }}>
       Lire plus
     </Text>
   );
 
   const renderRevealedFooter = (handlePress) => (
-    <Text onPress={handlePress} style={{ color: Colors.SeaGreen, fontSize: Platform.OS == 'web' ? 20 : 19, fontWeight: 'normal' }}>
+    <Text onPress={handlePress} style={{ color: Colors.SeaGreen, fontSize: Platform.OS == 'web' ? 20 : 17, fontWeight: 'normal' }}>
       Lire moins
     </Text>
   );
@@ -50,10 +50,14 @@ const Comment = ({ data }) => {
   }
 
   const displayReply = () => {
-    axiosInstance.get(`/comment/${data.id_com}`, {params: {page: 1, pageSize: data.countComment, orderByLike: false}})
-    .then(response => {
-      setReplies(response.data.comments);
-    }).catch(e =>  console.log(`comment/${id} : ${e.response.data}`));
+    if(replies === null) {
+      axiosInstance.get(`/comment/${data.id_com}`, {params: {page: 1, pageSize: data.countComment, orderByLike: false}})
+      .then(response => {
+        setReplies(response.data.comments);
+      }).catch(e =>  console.log(`comment/${id} : ${e.response.data}`));
+    }else{
+      setReplies(null)
+    }
   }
   return (
     <View style={styles.commentContainer}>
@@ -112,7 +116,7 @@ const Comment = ({ data }) => {
       </View>
       {replies && (
         <>
-          <Divider style={styles.divider}/>          
+          <Divider style={[styles.divider,{marginBottom: 15}]}/>          
           <CommentResponse items={replies}/>
         </>
       )}
@@ -138,6 +142,7 @@ const styles = StyleSheet.create({
   },
   divider: {
     backgroundColor: Colors.BattleShipGray,
+    marginTop: 10,
   },
 });
 

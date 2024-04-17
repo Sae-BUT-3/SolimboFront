@@ -1,6 +1,7 @@
 import React from 'react';
-import { View, Button, SafeAreaView } from 'react-native';
+import { View, Button } from 'react-native';
 import commonStyles from '../../style/commonStyle';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 function SignUpScreen({ navigation }) {
     return (

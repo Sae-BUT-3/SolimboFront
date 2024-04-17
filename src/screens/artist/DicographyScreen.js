@@ -7,12 +7,15 @@ import ItemPopup from '../../components/artist/ItemPopup';
 import Loader from '../../components/Loader';
 import ErrorRequest from '../../components/ErrorRequest';
 import { useNavigation, useRoute } from '@react-navigation/native';
+import Filter from '../../components/search/Filter';
 
 const DiscograpyScreen = () => {
     const navigation = useNavigation( ); 
     const scrollY = useRef(new Animated.Value(0)).current;
     const [albums, setAlbums] = useState([]);
+    const [album, setDisplayAlbum] = useState(true);
     const [singles, setSingles] = useState([]);
+    const [single, setDisplaySingles] = useState(true);
     const [error, setError] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const route = useRoute();
@@ -39,10 +42,19 @@ const DiscograpyScreen = () => {
         }).catch(e => setError(e.response.data));
     },[]);
 
-    const handleScroll =  (event) => { 
-        event.nativeEvent.contentOffset.y = scrollY
-        event.useNativeDriver= true 
-    };
+    const filtrer = (item) =>{
+        if(item === "Singles"){
+            setDisplaySingles(!single);
+            setDisplayAlbum(false);
+        } 
+        else if (item ==="Albums"){
+            setDisplayAlbum(!album);
+            setDisplaySingles(false);
+        }else{
+            setDisplayAlbum(!album);
+            setDisplaySingles(!single);
+        }
+    }
 
     if (error) {
         return <ErrorRequest err={error} />;
@@ -60,33 +72,36 @@ const DiscograpyScreen = () => {
                     <Text style={styles.title}>Discographie</Text>
                     <Text/>
                 </Animated.View>
-                <ScrollView
-                    onScroll={handleScroll}                
-                    scrollEventThrottle={16}
-                >
-                    <View style={{ marginLeft: 30, marginBottom: 30 }}>
+                <ScrollView>
+                    <View style={{display: 'flex', flexDirection: 'row', gap: 10, alignItems: 'center', marginBottom: 30, flexWrap: 'wrap'}}>
+                        <FontAwesome5 name="filter" size={20} color={Colors.SeaGreen} regular/>
+                        {["Albums", "Singles"].map((item, index) => (
+                            <Filter
+                                key={index}
+                                onPressHandler={()=>{filtrer(item)}}
+                                text={item}
+                            />
+                        ))}
+                                
                     </View>
                     <View style={styles.item}>
-                        {albums.sort((a, b) => {
+                    {album &&( albums.sort((a, b) => {
                             const dateA = new Date(a.date);
                             const dateB = new Date(b.date);
                             return dateA - dateB;
                         }).map((item) => (
                             <ItemPopup key={item.id} data={item} />
-                        ))}
-                    </View>
-                    <View style={{ marginLeft: 30, marginBottom: 30 }}>
-                        <Text style={styles.sectionTitle}>Les 50 derniers singles</Text>
-                    </View>
-                    <View style={styles.item}>
-                        {singles.sort((a, b) => {
+                        )))
+                    }
+                    {single && (singles.sort((a, b) => {
                             const dateA = new Date(a.date);
                             const dateB = new Date(b.date);
                             return dateA - dateB;
                         }).map((item) => (
                             <ItemPopup key={item.id} data={item} />
-                        ))}
-                    </View>
+                        )))
+                  }
+                  </View>
                 </ScrollView>
             </>
         )}
@@ -111,7 +126,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     zIndex: 1,
-    marginBottom: Platform.OS === 'web' ? 30 : 20
+    marginBottom: Platform.OS === 'web' ? 30 : 20,
 },
  title: {
    fontSize: Platform.OS === 'web' ? 35 : 30,
