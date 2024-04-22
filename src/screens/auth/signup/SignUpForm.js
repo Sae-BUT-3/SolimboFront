@@ -9,8 +9,8 @@ import FontAwsome5 from 'react-native-vector-icons/FontAwesome5';
 
 
 const SignupForm = ({ onSubmit, errors }) => {
-    const [email, setEmail] = useState('fakoc53768@sentrau.com');
-    const [password, setPassword] = useState('test123456');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
 
     const handleSubmit = () => {
         onSubmit({ email, password });

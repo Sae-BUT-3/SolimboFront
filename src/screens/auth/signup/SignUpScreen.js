@@ -79,8 +79,8 @@ function SignUpScreen({ navigation }) {
                 confirmToken: confirmToken,
             })
             .then((response) => {
-                if (response.data.token) {
-                    signInViaToken(response.data.token);
+                if (response.data) {
+                    signInViaToken(response.data);
                 }
             })
             .catch((error) => {
@@ -89,7 +89,7 @@ function SignUpScreen({ navigation }) {
     };
 
     return (
-        <SafeAreaView style={[commonStyles.safeAreaContainer ]}>
+        <SafeAreaView style={[commonStyles.safeAreaContainer, {justifyContent : 'normal'} ]}>
             <View style={[commonStyles.columnCenterContainer, authStyle.formContainer]}>
                 <View style={commonStyles.columnCenterContainer}>
                 <Image

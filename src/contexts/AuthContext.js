@@ -11,8 +11,10 @@ export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [response, setError] = useState(null)
   
-  const signInViaToken = (token) => {
-    return response
+  const signInViaToken = (data) => {
+    Tokenizer.setToken(data.token);
+    Tokenizer.setUser(data.user)
+    setIsAuthenticated(true);
   }
 
   const signIn = (credentials) => {
