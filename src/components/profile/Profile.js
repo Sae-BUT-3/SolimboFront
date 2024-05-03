@@ -13,16 +13,37 @@ import { Colors } from "../../style/color";
 import { breakpoint } from "../../style/breakpoint";
 import PressableBasic from "../pressables/PressableBasic";
 import commonStyles from "../../style/commonStyle";
+const getFollowValues = (user, relation) => {
+  if (!user) return ["+ suivre", "suivi"];
+  let afterFollow = "suivi";
+  let beforeFollow = "+ suivre";
 
-function SearchBar({ user, isCurrent, handleFollow, handleModifier }) {
+  if (user.is_private && (relation.isWaited || !relation.isFollowed)) {
+    afterFollow = "en attente";
+  }
+  if (relation.doesFollows) {
+    beforeFollow = "+ suivre en retour";
+  }
+  if (relation.doesFollow) {
+  }
+  return relation.isFollowed
+    ? [afterFollow, beforeFollow]
+    : [beforeFollow, afterFollow];
+};
+function SearchBar({
+  user,
+  isCurrent,
+  relation,
+  handleFollow,
+  handleModifier,
+}) {
   const { height, width } = useWindowDimensions();
+  const [followText, setFollowText] = useState(["+ suivre", "suivi"]);
   const [isFollowHovered, setIsFollowHovered] = useState(false);
   const [isModifierHovered, setIsModifierHovered] = useState(false);
-  const getButtonText = () => {
-    // if(relation.are)
-  };
+
   useEffect(() => {
-    console.log(user);
+    setFollowText(getFollowValues(user, relation));
   }, [user]);
   const handleFollowMouseEnter = () => {
     setIsFollowHovered(true);
@@ -38,6 +59,12 @@ function SearchBar({ user, isCurrent, handleFollow, handleModifier }) {
 
   const handleModifierMouseLeave = () => {
     setIsModifierHovered(false);
+  };
+
+  const onFollowPress = () => {
+    handleFollow().then(() => {
+      setFollowText([followText[1], followText[0]]);
+    });
   };
   const styles = StyleSheet.create({
     container: {
@@ -158,11 +185,11 @@ function SearchBar({ user, isCurrent, handleFollow, handleModifier }) {
             activeOpacity={1}
             onMouseEnter={handleFollowMouseEnter}
             onMouseLeave={handleFollowMouseLeave}
-            onPress={handleFollow}
+            onPress={onFollowPress}
           >
             {!false ? (
               <Text style={[commonStyles.text, styles.followText]}>
-                + Suivre
+                {followText[0]}
               </Text>
             ) : (
               <Text style={[commonStyles.text, styles.followText]}>Suivi</Text>
@@ -176,19 +203,21 @@ function SearchBar({ user, isCurrent, handleFollow, handleModifier }) {
             <Text style={[commonStyles.text, styles.aliasText]}>
               {user?.alias}
             </Text>
-            <Pressable
-              style={[
-                commonStyles.text,
-                styles.ModifierButton,
-                isModifierHovered ? styles.btnModiferHovered : null,
-              ]}
-              activeOpacity={1}
-              onMouseEnter={handleModifierMouseEnter}
-              onMouseLeave={handleModifierMouseLeave}
-              onPress={handleModifier}
-            >
-              <Text>modifer</Text>
-            </Pressable>
+            {isCurrent && (
+              <Pressable
+                style={[
+                  commonStyles.text,
+                  styles.ModifierButton,
+                  isModifierHovered ? styles.btnModiferHovered : null,
+                ]}
+                activeOpacity={1}
+                onMouseEnter={handleModifierMouseEnter}
+                onMouseLeave={handleModifierMouseLeave}
+                onPress={handleModifier}
+              >
+                <Text>modifier</Text>
+              </Pressable>
+            )}
           </View>
           <Text style={[commonStyles.text, styles.pseudoText]}>
             @{user?.pseudo}
