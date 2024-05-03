@@ -1,24 +1,46 @@
 import React, { useEffect, useState } from "react";
-import { Button, View, Text, Image } from "react-native";
+import {
+  Button,
+  View,
+  Text,
+  Platform,
+  Image,
+  ScrollView,
+  FlatList,
+} from "react-native";
 import { useAuth } from "../contexts/AuthContext";
+import { useRoute } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import commonStyles from "../style/commonStyle";
 import axiosInstance from "../api/axiosInstance";
 import Profile from "../components/profile/Profile";
 import ModifyProfile from "../components/profile/Modify/ModifyProfile";
+import Review from "../components/common/Review";
+import Item from "../components/common/Item";
 import { breakpoint } from "../style/breakpoint";
+import Loader from "../components/Loader";
+import ErrorRequest from "../components/ErrorRequest";
+import Tokenizer from "../utils/Tokenizer";
+
 import { StyleSheet, useWindowDimensions } from "react-native";
+import { Colors } from "../style/color";
+
 function ProfileScreen() {
   const [data, setData] = useState([]);
+  const [reviews, setReviews] = useState([]);
+  const [page, setPage] = useState(1);
+  const [isLoading, setIsLoading] = useState(false);
   const { width } = useWindowDimensions();
   const [isModify, setIsModify] = useState(false);
+  const [error, setError] = useState(null);
   const { logout } = useAuth();
+  const [isFetching, setisFetching] = useState(false);
+  const route = useRoute();
+  const id = route?.params?.id;
+  const [isFinished, setIsFinished] = useState(false);
   const checkPseudo = (pseudo) => {
-    const headers = {
-      Authorization: `Bearer ${"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJteS1zdWIiLCJ2YWx1ZSI6NTMsImF1ZCI6InVybjphdWRpZW5jZTp0ZXN0IiwiaXNzIjoidXJuOmlzc3Vlcjp0ZXN0IiwiaWF0IjoxNzEyMDU2MDY3LCJleHAiOjMzMjM4MDk4NDY3fQ.vHJbKGiwfghh3RdDWRrVy50IdJ3_Yib-HbyRCEe4fL4"}`,
-    };
     return axiosInstance
-      .get(`/users/isUser?pseudo=${pseudo}`, { headers })
+      .get(`/users/isUser?pseudo=${pseudo}`)
       .then((response) => {
         return !response.data.isUser;
       });
@@ -26,61 +48,176 @@ function ProfileScreen() {
   const handleModify = (formData) => {
     const headers = {
       "Content-Type": "multipart/form-data",
-      Authorization: `Bearer ${"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJteS1zdWIiLCJ2YWx1ZSI6NTMsImF1ZCI6InVybjphdWRpZW5jZTp0ZXN0IiwiaXNzIjoidXJuOmlzc3Vlcjp0ZXN0IiwiaWF0IjoxNzEyMDU2MDY3LCJleHAiOjMzMjM4MDk4NDY3fQ.vHJbKGiwfghh3RdDWRrVy50IdJ3_Yib-HbyRCEe4fL4"}`,
     };
     return axiosInstance
       .post("/users/modify", formData, { headers })
       .then((response) => {
-        console.log(
-          "🚀 ~ file: ProfileScreen.js:handleModify ~ response:",
-          response.data
-        );
         setData({
           ...data,
           user: response.data,
         });
       });
   };
+  const handleFollow = () => {
+    return axiosInstance.post("/amis/follow", {
+      amiIdUtilisateur: data.user.id_utilisateur,
+    });
+  };
+  const handleScroll = (event) => {
+    const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent;
+    const endOffset = contentSize.height - layoutMeasurement.height;
+    const isEnd = contentOffset.y >= endOffset - 50;
+    if (isEnd && !isFetching && !isFinished) {
+      setisFetching(true);
+      getMoreReviews(page + 1).then((nReviews) => {
+        if (nReviews && reviews) {
+          const new_reviews = [...reviews, ...(nReviews || [])];
+          if (new_reviews.length === reviews.length) {
+            setIsFinished(true);
+          }
+          setReviews(new_reviews);
+          setisFetching(false);
+          setPage(page + 1);
+        }
+      });
+    }
+  };
+  const getMoreReviews = async (pageNumber) => {
+    const query = {
+      page: pageNumber,
+      pageSize: 20,
+      orderByLike: true,
+    };
+    const queryString = new URLSearchParams(query).toString();
+    const id_utilisateur =
+      id || (await Tokenizer.getCurrentUser()).id_utilisateur;
+    return await axiosInstance
+      .get(`/users/${id_utilisateur}/page?${queryString}`)
+      .then((response) => {
+        return response.data.reviews;
+      })
+      .catch((e) => {
+        setError(e.response.data);
+      });
+  };
   const style = StyleSheet.create({
     container: {
-      paddingTop: 30,
+      height: "100%",
     },
     subcontainer: {
       width: width > breakpoint.medium ? 1200 : "100%",
       paddingLeft: 10,
       paddingRight: 10,
+      height: "100%",
+    },
+    albumContainer: {
+      display: "flex",
+      flexDirection: "row",
+
+      flexWrap: "wrap",
+      justifyContent: "space-around",
+    },
+    commentContainer: {
+      width: "100%",
+      display: "flex",
+      alignItems: "center",
+      marginBottom: 50,
+    },
+    ScrollViewContainer: {
+      width: "100%",
+      height: "100%",
+    },
+    profileContainer: {
+      paddingTop: 30,
+      paddingBottom: 30,
+      position: "sticky",
+      top: 0,
+      backgroundColor: Colors.Licorice,
+      zIndex: 1,
     },
   });
-
+  useEffect(() => {}, [reviews]);
   useEffect(() => {
-    const query = {
-      page: 1,
-      pageSize: 3,
-      orderByLike: true,
+    const effect = async () => {
+      const query = {
+        page: page,
+        pageSize: 20,
+        orderByLike: true,
+      };
+      const queryString = new URLSearchParams(query).toString();
+      const id_utilisateur =
+        id || (await Tokenizer.getCurrentUser()).id_utilisateur;
+      axiosInstance
+        .get(`/users/${id_utilisateur}/page?${queryString}`)
+        .then((response) => {
+          setReviews(response.data.reviews);
+          setData(response.data);
+          setIsLoading(false);
+        })
+        .catch((e) => {
+          setError(e.response.data);
+        });
     };
-    const headers = {
-      Authorization: `Bearer ${"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJteS1zdWIiLCJ2YWx1ZSI6NTMsImF1ZCI6InVybjphdWRpZW5jZTp0ZXN0IiwiaXNzIjoidXJuOmlzc3Vlcjp0ZXN0IiwiaWF0IjoxNzEyMDU2MDY3LCJleHAiOjMzMjM4MDk4NDY3fQ.vHJbKGiwfghh3RdDWRrVy50IdJ3_Yib-HbyRCEe4fL4"}`,
-    };
-    const queryString = new URLSearchParams(query).toString();
-    axiosInstance
-      .get(`/users/53/page?${queryString}`, { headers })
-      .then((response) => {
-        console.log(response.data);
-        setData(response.data);
-      })
-      .catch((error) => {});
+    effect();
   }, []);
-  return (
+  if (error) {
+    return <ErrorRequest err={error} />;
+  }
+  return isLoading ? (
+    <Loader />
+  ) : (
     <SafeAreaView style={[commonStyles.safeAreaContainer, style.container]}>
-      <View style={[style.subcontainer]}>
-        <Profile
-          user={data.user}
-          isCurrent={data.isCurrent}
-          relation={data.relation}
-          handleModifier={() => setIsModify(true)}
-          handleFollow={() => {}}
-        ></Profile>
-      </View>
+      <ScrollView
+        onScroll={handleScroll}
+        scrollEventThrottle={16}
+        style={style.ScrollViewContainer}
+      >
+        <View style={{ width: "100%", display: "flex", alignItems: "center" }}>
+          <View style={[style.subcontainer]}>
+            <View style={style.profileContainer}>
+              <Profile
+                user={data.user}
+                isCurrent={data.isCurrent}
+                relation={data.relation}
+                handleModifier={() => setIsModify(true)}
+                handleFollow={handleFollow}
+              ></Profile>
+            </View>
+            {data.forbidden ? (
+              <Text>Accès interdit</Text>
+            ) : (
+              <ScrollView style={style.ScrollViewContainer}>
+                {Platform.OS !== "web" ? (
+                  <ScrollView horizontal>
+                    {data?.oeuvres
+                      ? data.oeuvres.map((item, index) => (
+                          <Item key={index} data={item} />
+                        ))
+                      : null}
+                  </ScrollView>
+                ) : (
+                  <View style={[style.albumContainer]}>
+                    {data?.oeuvres
+                      ? data.oeuvres.map((item, index) => (
+                          <Item key={index} data={item} />
+                        ))
+                      : null}
+                  </View>
+                )}
+                <View style={style.commentContainer}>
+                  {reviews
+                    ? reviews.map((item, index) => (
+                        <Review key={index} data={item} />
+                      ))
+                    : null}
+                  {isFetching ? <Loader /> : null}
+                </View>
+              </ScrollView>
+            )}
+          </View>
+        </View>
+      </ScrollView>
+
       {isModify ? (
         <ModifyProfile
           user={data.user}

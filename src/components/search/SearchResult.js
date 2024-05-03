@@ -37,6 +37,7 @@ function SearchResult({_id, type, imageURL, title, subtitle, rounded, onPress}) 
                     navigation.navigate('Artist', {id: _id });
                     break;
                 case 'user':
+                    navigation.navigate('user', {id: _id });
                     break;
                 case 'track':
                     navigation.navigate('Oeuvre', {type:'track', id: _id });
