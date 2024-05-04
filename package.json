@@ -52,7 +52,7 @@
     "expo-image-picker": "~14.1.1",
     "react-native-web": "~0.19.6",
     "rn-fetch-blob": "^0.12.0",
-    "react-native-swipe-gestures": "^1.0.5",
+    "react-native-swipe-gestures": "^1.0.5"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
