@@ -6,7 +6,7 @@ import PressableBasic from '../../components/pressables/PressableBasic';
 import BasicInput from '../../components/form/BasicInput';
 import { useAuth } from '../../contexts/AuthContext';
 import { Colors } from '../../style/color';
-import FontAwsome5 from '@expo/vector-icons';
+import { FontAwesome5 } from '@expo/vector-icons';
 
 function ConfirmUserScreen({ route, navigation }) {
     const [confirmtoken, setConfirmtoken] = useState('');
@@ -130,7 +130,7 @@ function ConfirmUserScreen({ route, navigation }) {
                     ) : 
                     <>
                         <View style={[commonStyles.row]}>
-                            <FontAwsome5 name="exclamation-circle" size={18} color={Colors.CalPolyGreen} style={{ marginRight: 5 }} />
+                            <FontAwesome5 name="exclamation-circle" size={18} color={Colors.CalPolyGreen} style={{ marginRight: 5 }} />
                             <Text style={[commonStyles.textError] }>
                                 Ce pseudo est déjà pris
                             </Text>
