@@ -3,8 +3,7 @@ import {View, Button, TextInput, Text, ScrollView, StyleSheet, useWindowDimensio
 import axiosInstance from '../../api/axiosInstance';
 import Searchbar from "../../components/search/Searchbar";
 import SearchResult from "../../components/search/SearchResult";
-import {Colors} from "../../style/color";
-import ErrorRequest from '../../components/ErrorRequest';
+import ErrorRequest from '../../components/common/ErrorRequest';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import commonStyles from '../../style/commonStyle';
 import searchStyle from '../../style/searchStyle';

@@ -5,14 +5,14 @@ import { FontAwesome5 } from '@expo/vector-icons'; // Importation de FontAwesome
 import {Provider as PaperProvider} from 'react-native-paper';
 import { Colors } from '../../style/color';
 import { DataTable } from 'react-native-paper';
-import Comment from '../../components/common/Comment';
+import Comment from '../../components/comment/Comment';
 import Tokenizer from '../../utils/Tokenizer';
 import axiosInstance from '../../api/axiosInstance';
-import Review from '../../components/common/Review';
-import ErrorRequest from '../../components/ErrorRequest';
-import Loader from '../../components/Loader';
+import Review from '../../components/review/Review';
+import ErrorRequest from '../../components/common/ErrorRequest';
+import Loader from '../../components/common/Loader';
 
-const numberOfItemsPerPageList = [5, 10, 15 , 20, 25];
+const numberOfItemsPerPageList = [25, 55, 100, 250];
 
 const CommentScreen = () => {
     const route = useRoute();
@@ -96,7 +96,7 @@ const CommentScreen = () => {
                     <Animated.View>
                         <View style={[styles.header, headerOpacity ]}>
                             <Pressable onPress={handleGoBack}>
-                                <FontAwesome5 name="arrow-left" size={25} color={Colors.SeaGreen}/>
+                                <FontAwesome5 name="chevron-left" size={25} color={Colors.White} style={{paddingTop: 15}}/>
                             </Pressable>
                             <Text style={styles.title}>Commentaires</Text>
                             <Text/>
@@ -111,7 +111,7 @@ const CommentScreen = () => {
                             {comments.map((item, index) => (
                                 <DataTable.Row key={index} style={{borderBottomWidth: 0, marginBottom: 20}}>
                                     <DataTable.Cell>
-                                        <Comment key={index} data={item} /> 
+                                        <Comment key={index} data={item} hide={false}/> 
                                     </DataTable.Cell>
                                 </DataTable.Row>
                             )) }
@@ -125,9 +125,10 @@ const CommentScreen = () => {
                                 onItemsPerPageChange={handleonItemsPerPageChange}
                                 selectPageDropdownLabel={'Commentaire par page'}
                                 showFastPaginationControls
+                                style={{backgroundColor: Colors.Jet, color: Colors.White}}
                             />
                             </DataTable> 
-                         :  <Text style={{ color: Colors.White, fontSize: 20, textAlign: 'center'  }}>Aucun commentaire, soyez le premier à rédiger un commentaire !</Text> 
+                         :  <Text style={{ color: Colors.White, fontSize: 20, textAlign: 'center', marginTop: 30  }}>Aucun commentaire, soyez le premier à rédiger un commentaire !</Text> 
                         }
                     </ScrollView>
                     <View style={styles.response}>
@@ -150,21 +151,19 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        paddingTop: 35,
-        paddingLeft: 20,
-        paddingBottom: 10,
+        padding: 30,
         position: 'relative',
         top: 0,
         left: 0,
         right: 0,
         zIndex: 1,
-        marginBottom: Platform.OS === 'web' ? 30 : 20,
-        marginTop: Platform.OS === 'web' ? 30 : 20
+        backgroundColor: 'rgba(43, 43, 43, 0.3)',
     },
     title: {
         fontSize: Platform.OS === "web" ? 35 : 25,
-        color: Colors.SeaGreen,
-        fontWeight: 'bold'
+        color: Colors.White,
+        fontWeight: 'bold',
+        paddingTop: 15,
     },
     response: {
         flexDirection: 'row',

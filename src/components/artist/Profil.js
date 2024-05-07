@@ -2,11 +2,19 @@ import React, { useState, useEffect } from 'react';
 import {StyleSheet,View, Text, Pressable, Platform, ImageBackground, Image} from 'react-native';
 import { Colors } from '../../style/color';
 import AvatarGroup from '../common/AvatarGroup';
-import { Divider } from 'react-native-paper';
+import { Avatar, Divider } from 'react-native-paper';
+import Follower from '../follow/Follower';
+import ImagePanel from '../common/ImagePanel';
 
 const Profil = ({ data, friends_followers, follow, followArtist }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [isImageHovered, setIsImageHovered] = useState(false);
+  const [visible, isVisible] = useState(false);
+  const [showAll, setShowAll] = useState(false);
+
+  const handleShowAll = () => {
+    setShowAll(true);
+  };
 
   const handleMouseEnter = () => {
     setIsHovered(true);
@@ -24,7 +32,7 @@ const Profil = ({ data, friends_followers, follow, followArtist }) => {
     setIsImageHovered(false);
   };
 
-  return (
+  return (<>
     <ImageBackground
       source={{ uri:data.image}}
       style={styles.backgroundImage}
@@ -55,25 +63,41 @@ const Profil = ({ data, friends_followers, follow, followArtist }) => {
             </View>
             <View style={{ display: Platform.OS !== 'web'? 'flex': undefined, alignItems: Platform.OS !== 'web'? 'center' : null}}>
                 <View style={styles.container}>
-                  <Text style={styles.nameA}>{data.name}</Text>
+                  <Text numberOfLines={2} style={styles.nameA}>{data.name}</Text>
                 </View>
                 <View style={styles.sectionFollower}>
                   <View>
-                    <Text style={{color: Colors.White, fontSize: 20, textAlign:  'center', margin: 5}}>
-                    {data.follower_count} 
-                    </Text>
+                    <Pressable onPress={()=> isVisible(!visible)}>
+                      <Text style={{color: Colors.White, fontSize: 20, textAlign:  'center', margin: 5, fontWeight: 'bold'}}>
+                        {data.follower_count} 
+                      </Text>
+                    </Pressable>
                     <Text style={{color: Colors.White, fontSize: 16, textAlign: 'center', margin: 5}}>Followers</Text> 
                   </View>
-                  {friends_followers.count > 0 &&( <Divider  style={{ height: '100%', width: 1, backgroundColor:Colors.White}}/>) }
-                  <View style={{display: 'flex', alignItems: "center"}}>
-                    <AvatarGroup avatars={friends_followers.users} size={34} type='user'/>
-                    {friends_followers.count > 0 ? <Text style={{color: Colors.White, fontSize: 16, textAlign: 'center', margin: 5}}>{`Dont ${friends_followers.count} amis`}</Text>  : null}
-                  </View>
+                  {friends_followers.count > 0 && ( <>
+                    <Divider  style={{ height: '100%', width: 1, backgroundColor:Colors.White}}/>
+                    <View style={{display: 'flex', alignItems: "center"}}>
+                      {friends_followers && friends_followers.count > 1 ? 
+                        <Pressable onPress={()=> setShowAll(!showAll)}>
+                          <AvatarGroup avatars={friends_followers.users} size={34} type='user'/>
+                        </Pressable> :
+                        <Pressable>
+                          <Avatar.Image
+                            source={{ uri: friends_followers.users[0].photo}}
+                            size={34}
+                          />
+                        </Pressable>
+                      }
+                      <Text style={{color: Colors.White, fontSize: 16, textAlign: 'center', margin: 5}}>{`Dont ${friends_followers.count} amis`}</Text>
+                    </View></>)}
                 </View>
             </View>
         </View>
       </View>
     </ImageBackground>
+    { (visible && data.follower_count > 0)&& <Follower id={data.id} isVisible={isVisible} type='follower' />}
+    { (friends_followers.count > 1 && showAll) && <ImagePanel avatars={friends_followers.users} type={'user'} show={setShowAll}/>}
+    </>
   )
 }
 
@@ -82,10 +106,9 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexWrap: 'wrap',
     flexDirection:'row',
-    justifyContent: Platform.OS === 'web'? 'space-around' : 'center',
+    justifyContent: 'space-around',
     alignItems: 'center',
-    padding: 20,
-    gap:10,
+    gap: 30,
     color: Colors.White,
   },
   overlay: {
@@ -118,7 +141,7 @@ const styles = StyleSheet.create({
   },
   sectionFollower: {
     display: 'flex',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     alignItems: 'center',
     flexDirection: 'row',
     backgroundColor: Colors.BattleShipGray,
@@ -136,12 +159,12 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start', // Aligne les éléments en haut
   },
   nameA:{
-    fontSize: Platform.OS === 'web' ? 30 : 25,
-    color: Colors.SeaGreen,
+    fontSize: Platform.OS === 'web' ? 30 : 20,
+    color: Colors.White,
     fontWeight: 'bold',
     marginBottom: 10,
     textTransform: 'uppercase',
-    textShadowColor: 'rgba(0, 0, 0, 0.75)',
+    textShadowColor: 'rgba(0, 0, 0, 0.5)',
     textShadowOffset: {width: -1, height: 1},
     textShadowRadius: 10,
   },

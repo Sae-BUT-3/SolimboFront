@@ -1,7 +1,7 @@
 import React, {useState,useEffect} from 'react';
 import { StyleSheet, View, Text, Pressable, Platform} from 'react-native';
 import { Colors } from '../../style/color';
-import Item from '../common/Item';
+import Item from './Item';
 
 const ArtistAppearsOn = ({ items}) => {
   const [filter, setFilter] = useState('');

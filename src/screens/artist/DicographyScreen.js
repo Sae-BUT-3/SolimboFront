@@ -4,18 +4,16 @@ import { FontAwesome5 } from '@expo/vector-icons'; // Importation de FontAwesome
 import axiosInstance from '../../api/axiosInstance';
 import { Colors } from '../../style/color';
 import ItemPopup from '../../components/artist/ItemPopup';
-import Loader from '../../components/Loader';
-import ErrorRequest from '../../components/ErrorRequest';
+import Loader from '../../components/common/Loader';
+import ErrorRequest from '../../components/common/ErrorRequest';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import Filter from '../../components/search/Filter';
 
 const DiscograpyScreen = () => {
     const navigation = useNavigation( ); 
-    const scrollY = useRef(new Animated.Value(0)).current;
     const [albums, setAlbums] = useState([]);
-    const [album, setDisplayAlbum] = useState(true);
     const [singles, setSingles] = useState([]);
-    const [single, setDisplaySingles] = useState(true);
+    const [filter, setFilter] = useState('album');
     const [error, setError] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const route = useRoute();
@@ -25,7 +23,6 @@ const DiscograpyScreen = () => {
         axiosInstance.get('/spotify/fetchArtistSongs',{params: {
             id: id, 
             filter: 'single',
-            limit: 50
         },})
         .then(response => {
             setSingles(response.data);
@@ -34,7 +31,6 @@ const DiscograpyScreen = () => {
         axiosInstance.get('/spotify/fetchArtistSongs',{params: {
             id: id, 
             filter: 'album',
-            limit: 50
         },})
         .then(response => {
             setAlbums(response.data);
@@ -42,19 +38,6 @@ const DiscograpyScreen = () => {
         }).catch(e => setError(e.response.data));
     },[]);
 
-    const filtrer = (item) =>{
-        if(item === "Singles"){
-            setDisplaySingles(!single);
-            setDisplayAlbum(false);
-        } 
-        else if (item ==="Albums"){
-            setDisplayAlbum(!album);
-            setDisplaySingles(false);
-        }else{
-            setDisplayAlbum(!album);
-            setDisplaySingles(!single);
-        }
-    }
 
     if (error) {
         return <ErrorRequest err={error} />;
@@ -67,40 +50,38 @@ const DiscograpyScreen = () => {
             <>
                 <Animated.View style={styles.header}>
                     <Pressable onPress={() => { navigation.goBack() }}>
-                        <FontAwesome5 name="arrow-left" size={30} color={Colors.SeaGreen}/>
+                        <FontAwesome5 name="chevron-left" size={25} color={Colors.White} style={{paddingTop: 15}}/>
                     </Pressable>
                     <Text style={styles.title}>Discographie</Text>
                     <Text/>
                 </Animated.View>
+                <View style={{display: 'flex', flexDirection: 'row', gap: 10, alignItems: 'center', marginBottom: 15, flexWrap: 'wrap', backgroundColor: 'rgba(43, 43, 43, 0.3)', padding: 20}}>
+                        <Pressable style={[styles.filterButton, filter === 'album' && { backgroundColor: Colors.DarkSpringGreen }]} onPress={() => setFilter('album')} activeOpacity={1}>
+                            <Text style={[styles.filterText, filter === 'album']}>Albums</Text>
+                        </Pressable>
+                        <Pressable style={[styles.filterButton, filter === 'single' && { backgroundColor: Colors.DarkSpringGreen }]} onPress={() => setFilter('single')} activeOpacity={1}>
+                            <Text style={[styles.filterText, filter === 'single']}>Singles</Text>
+                        </Pressable>          
+                </View>
                 <ScrollView>
-                    <View style={{display: 'flex', flexDirection: 'row', gap: 10, alignItems: 'center', marginBottom: 30, flexWrap: 'wrap'}}>
-                        <FontAwesome5 name="filter" size={20} color={Colors.SeaGreen} regular/>
-                        {["Albums", "Singles"].map((item, index) => (
-                            <Filter
-                                key={index}
-                                onPressHandler={()=>{filtrer(item)}}
-                                text={item}
-                            />
-                        ))}
-                                
-                    </View>
+                    
                     <View style={styles.item}>
-                    {album &&( albums.sort((a, b) => {
-                            const dateA = new Date(a.date);
-                            const dateB = new Date(b.date);
-                            return dateA - dateB;
-                        }).map((item) => (
-                            <ItemPopup key={item.id} data={item} />
-                        )))
+                        {filter == 'album' &&( albums.sort((a, b) => {
+                                const dateA = new Date(a.date);
+                                const dateB = new Date(b.date);
+                                return dateA - dateB;
+                            }).map((item) => (
+                                <ItemPopup key={item.id} data={item} />
+                            )))
+                        }
+                        {filter == 'single' (singles.sort((a, b) => {
+                                const dateA = new Date(a.date);
+                                const dateB = new Date(b.date);
+                                return dateA - dateB;
+                            }).map((item) => (
+                                <ItemPopup key={item.id} data={item} />
+                            )))
                     }
-                    {single && (singles.sort((a, b) => {
-                            const dateA = new Date(a.date);
-                            const dateB = new Date(b.date);
-                            return dateA - dateB;
-                        }).map((item) => (
-                            <ItemPopup key={item.id} data={item} />
-                        )))
-                  }
                   </View>
                 </ScrollView>
             </>
@@ -112,32 +93,28 @@ const DiscograpyScreen = () => {
 const styles = StyleSheet.create({
  container: {
    backgroundColor: Colors.Licorice,
-   borderRadius: 20,
-   padding: 30,
-   position: 'relative',
  },
  header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: Platform.OS === 'web' ? 20 : 10,
+    alignItems: 'baseline',
+    padding: 30,
     position: 'relative',
     top: 0,
     left: 0,
     right: 0,
     zIndex: 1,
-    marginBottom: Platform.OS === 'web' ? 30 : 20,
+    backgroundColor: 'rgba(43, 43, 43, 0.3)',
 },
- title: {
-   fontSize: Platform.OS === 'web' ? 35 : 30,
-   fontWeight: 'bold',
-   color: Colors.SeaGreen
- },
+title: {
+    fontSize: Platform.OS === "web" ? 35 : 25,
+    color: Colors.White,
+    fontWeight: 'bold',
+    paddingTop: 15,
+},
  item: {
     display: 'flex',
     flexDirection: 'row',
-    alignContent: 'space-between',
-    alignContent: 'flex-start',
     flexWrap: 'wrap',
     marginBottom: 30
  },
@@ -145,6 +122,23 @@ const styles = StyleSheet.create({
     color: Colors.SeaGreen,
     fontWeight: 'bold',
     fontSize: 27,
+  },
+  filterButton: {
+    marginRight: 10,
+    paddingHorizontal: 15,
+    paddingVertical: 8,
+    borderRadius: 20,
+    backgroundColor: Colors.Jet,
+    shadowColor: Colors.Onyx,
+    shadowOpacity: 0.3,
+    shadowRadius: 3,
+    elevation: Platform.OS === 'android' ? 3 : 0, 
+    transition: 'background-color 0.3s ease'
+  },
+  filterText: {
+    fontWeight: 'bold',
+    color: Colors.White,
+    fontSize: Platform.OS  === 'web' ? 17 : 14
   },
 });
 

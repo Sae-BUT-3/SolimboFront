@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import {StyleSheet, Pressable, View, Text, Platform} from 'react-native';
+import {StyleSheet, Pressable, View, Text, Platform, Alert} from 'react-native';
 import { FontAwesome5 } from '@expo/vector-icons'; // Importation de FontAwesome5
 import { Avatar } from 'react-native-elements';
 import {Rating} from 'react-native-ratings';
 import { Colors } from '../../style/color';
 import { useNavigation } from '@react-navigation/native';
 import axiosInstance from '../../api/axiosInstance';
-import Date from './DateT';
-import PointTrait from './PointTrait';
+import Date from '../common/DateT';
+import PointTrait from '../common/PointTrait';
 import ReadMore from 'react-native-read-more-text';
-import { Divider } from 'react-native-paper';
-import Confirmation from './Confirmation';
 import Tokenizer from '../../utils/Tokenizer';
+import ActionsPanel from '../common/ActionsPanel';
+import { Share } from 'react-native';
 
 const toCapitalCase = (mot) => {
     if(mot == 'artist') mot =  mot + 'e'
@@ -23,8 +23,8 @@ const Review = ({ data}) => {
   const [like, setLike] = useState(false)
   const [countlikes, setCountLikes] = useState(0)
   const [isExpanded, setIsExpanded] = useState(false);
-  const [confirm, setConfirm] = useState(false);
   const [currentUser, setUser] =  useState({});
+  const [isActive, setActive] = useState(false);
 
   const renderTruncatedFooter = (handlePress) => (
     <Text onPress={handlePress} style={{ color: Colors.SeaGreen, fontSize: Platform.OS == 'web' ? 20 : 17, fontWeight: 'normal' }}>
@@ -60,6 +60,7 @@ const Review = ({ data}) => {
   }
 
   const handleCommentButtonClick = () => {
+    setActive(false);
     navigation.navigate('Comment', {id: data.id_review})
   };
 
@@ -69,7 +70,7 @@ const Review = ({ data}) => {
           case 'single':
           case 'album':
           case 'compliation':
-            navigation.navigate('Oeuvre', {type: 'album', id : data.id });
+            navigation.navigate('Oeuvre', {type: 'album', id : data.oeuvre.id });
             break;
       }
     }
@@ -81,9 +82,85 @@ const Review = ({ data}) => {
         
       }).catch(e => console.log(`delete review : ${e.response.data}`));
   }
+  const handleDelete = () => {
+    Alert.alert(
+      'Confirmation',
+      'Voulez-vous vraiment supprimer cette review ?',
+      [
+        {
+          text: 'Annuler',
+          onPress: () => console.log('Annulation de la suppression'),
+          style: 'cancel',
+        },
+        { text: 'Supprimer', onPress: () => {setActive(false); deleteReview();} },
+      ],
+      { cancelable: false }
+    );
+  };
 
+  const onShare = async () => {
+    try {
+      const result = await Share.share({
+        message:
+          `Partage de la review de ${data.utilisateur.pseudo}`,
+      });
+      if (result.action === Share.sharedAction) {
+        if (result.activityType) {
+          // shared with activity type of result.activityType
+        } else {
+          // shared
+        }
+      } else if (result.action === Share.dismissedAction) {
+        // dismissed
+      }
+    } catch (error) {
+      Alert.alert(error.message);
+    }
+  };
+
+  const actions = [
+  {
+    name: 'comment-medical',
+    handle: ()=>{
+      setActive(false); 
+      navigation.navigate('Response', {type: 'review', id: data.id_review})
+    },
+    color: Colors.SeaGreen,
+    text: 'Commenter',
+    textColor: Colors.White,
+    solid: true,
+    size: 30
+  },
+  {
+    name: 'comment-dots',
+    handle: handleCommentButtonClick,
+    color: Colors.SeaGreen,
+    text: 'Afficher les commentaires',
+    textColor: Colors.White,
+    solid: true,
+    size: 30
+  },
+  {
+    name: 'share',
+    handle: onShare,
+    color: Colors.SeaGreen,
+    text: 'Partager',
+    textColor: Colors.White,
+    solid: true,
+    size: 30
+  },
+ (currentUser.id_utilisateur === data.utilisateur.id_utilisateur && {
+    name: 'trash-alt',
+    handle: handleDelete,
+    color: 'red',
+    text: 'Supprimer',
+    textColor: 'red',
+    solid: true,
+    size: 24
+  })]
   return (
-    <><View key={data.id_review} style={styles.reviewContainer}>
+    <Pressable onLongPress={()=> setActive(!isActive)}>
+    <View key={data.id_review} style={styles.reviewContainer}>
         <View style={styles.reviewerInfo}>
           <View style={{display: 'flex', flexDirection: 'row', gap: 5}}>
                 <Pressable onPress={() => goTo(data.oeuvre.id, data.oeuvre.type)}>
@@ -132,22 +209,17 @@ const Review = ({ data}) => {
               <Text style={{color: Colors.White, fontSize: 20}}>{countlikes}</Text>
             </View>
             <View  style={{display: 'flex', flexDirection: 'row', alignItems: 'flex-end', gap: 10}}>
-              <Pressable onPress={() => handleCommentButtonClick()}>
+              <Pressable onPress={handleCommentButtonClick}>
                 <FontAwesome5  name="comment-dots" size={30} color={Colors.DarkSpringGreen} regular/>
               </Pressable>
               <Text style={{color: Colors.White, fontSize: 20}}>{data.countComment}</Text>
-            </View>
-            {currentUser.id_utilisateur === data.utilisateur.id_utilisateur && (<><Divider style={{ height: '100%', width: 1 , backgroundColor: Colors.Onyx}} />
-            <Pressable onPress={()=>{setConfirm(true)}}>
-                <FontAwesome5 name='trash-alt' size={25} color={Colors.DarkSpringGreen} regular />
-            </Pressable></>)}
+            </View>  
           </View>
           <Date dateString={data.createdAt}/>
         </View>
     </View>
-  {confirm && 
-    (<Confirmation handlePress={deleteReview} visible={true} message={"Etes vous sûr de vouloir supprimer cette critique ? L'action est irreversible."}/>)} 
-  </>
+    {isActive && <ActionsPanel actions={actions}/>}
+    </Pressable>
 )}
 const styles = StyleSheet.create({
   reviewContainer: {
@@ -165,6 +237,17 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 3,
     elevation: Platform.OS === 'android' ? 3 : 0, 
+  },
+  leftAction: {
+    backgroundColor: 'red',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: 75,
+    borderRadius: 15,
+    padding: 20,
+    marginBottom: Platform.OS == 'web' ? 30 : 20,
+    marginLeft: Platform.OS  == "web" ? 20 : 0,
+    marginRight: Platform.OS  == "web" ? 20 : 0,
   },
   reviewerInfo: {
     display: 'flex',

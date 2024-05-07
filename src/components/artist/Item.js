@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import { StyleSheet, View, Text, Pressable, Platform, Image} from 'react-native';
 import { Colors } from '../../style/color';
-import PointTrait from './PointTrait';
+import PointTrait from '../common/PointTrait';
 import {useNavigation} from '@react-navigation/native'
 import {Rating} from 'react-native-ratings';
 
@@ -18,7 +18,7 @@ const Item = ({data}) => {
             switch(type){
                 case 'single':
                 case 'album':
-                case 'compliation':
+                case 'compilation':
                     navigation.navigate('Oeuvre', {type: 'album', id : data.id });
                     break;
             }
@@ -106,8 +106,8 @@ const styles = StyleSheet.create({
         backgroundColor: Colors.Jet,
         paddingHorizontal: 20,
         paddingVertical: 20,
-        marginLeft: Platform.OS == 'web' ? 30 : 20,
-        marginRight: Platform.OS == 'web' ? 0 : 20,
+        marginLeft: Platform.OS == 'web' ? 30 : 10,
+        marginRight: Platform.OS == 'web' ? 0 : 5,
         borderRadius: 15,
         maxWidth: Platform.OS == 'web' ? 200 : 395,
         transition: 'background-color 0.3s ease',
