@@ -1,19 +1,18 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
-import { StyleSheet, View, Text, Pressable, Animated, Platform, ScrollView } from 'react-native'; 
+import { StyleSheet, View, Text, Pressable, Animated, Platform, ScrollView, RefreshControl } from 'react-native'; 
 import { Provider as PaperProvider } from 'react-native-paper';
 import { Colors } from '../../style/color';
-import { FontAwesome5 } from '@expo/vector-icons'; // Importation de FontAwesome5
+import { FontAwesome, FontAwesome5 } from '@expo/vector-icons'; // Importation de FontAwesome5
 import { DataTable } from 'react-native-paper';
 import { useRoute, useNavigation, useFocusEffect } from '@react-navigation/native';
-import Review from '../../components/common/Review';
+import Review from '../../components/review/Review';
 import axiosInstance from '../../api/axiosInstance';
-import Loader from '../../components/Loader';
-import ErrorRequest from '../../components/ErrorRequest';
+import Loader from '../../components/common/Loader';
+import ErrorRequest from '../../components/common/ErrorRequest';
 import Filter from '../../components/search/Filter';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
-const numberOfItemsPerPageList = [15, 25 , 55, 100, 250];
-const sorts =  ["Date", "Like", "Amis uniquement"];
+const numberOfItemsPerPageList = [25 , 50, 100, 250];
+const sorts =  ["Suivis uniquement","Par date", "Par like" ];
 const ReviewScreen = () => {
     const navigation = useNavigation();
     const route = useRoute();
@@ -25,10 +24,22 @@ const ReviewScreen = () => {
     const [error, setError] = useState(null);
     const [page, setPage] = useState(0);
     const [itemsPerPage, onItemsPerPageChange] = useState(numberOfItemsPerPageList[0]);
+    const [filtre, setFiltre] = useState(false);
+    const [refreshing, setRefreshing] = useState(false);
 
-    useCallback(() => {
-        updateReviews(page, itemsPerPage);
+    const onRefresh = useCallback(() => {
+      setRefreshing(true);
+      updateReviews(page, itemsPerPage);
+      setTimeout(() => {
+        setRefreshing(false);
+      }, 2000);
     }, []);
+
+    useFocusEffect(
+        useCallback(() => {
+            updateReviews(page, itemsPerPage);
+        }, [])
+    );
     
     const updateReviews = (newPage, newItemsPerPage, orderByLike=false) => {
         axiosInstance.get(`/reviews/oeuvre/${id}`, { params: { page: newPage + 1, pageSize: newItemsPerPage, orderByLike: orderByLike } })
@@ -78,12 +89,7 @@ const ReviewScreen = () => {
         }
     }, [])
 
-    const scrollY = useRef(new Animated.Value(0)).current;
-    const headerOpacity = scrollY.interpolate({
-        inputRange: [0, 200],
-        outputRange: [0, 1],
-        extrapolate: 'clamp',
-    });
+    
 
     const handleSort = (like) => {
         updateReviews(page, itemsPerPage, like);
@@ -96,27 +102,31 @@ const ReviewScreen = () => {
     return ( isLoading ? <Loader /> : (
                 <PaperProvider>
                     <View style={styles.container}>
-                        <Animated.View style={[styles.header, headerOpacity]}>
+                        <Animated.View style={[styles.header]}>
                             <Pressable onPress={() => { navigation.goBack() }}>
-                                <FontAwesome5 name="arrow-left" size={25} color={Colors.SeaGreen}/>
+                                <FontAwesome5 name="chevron-left" size={25} color={Colors.White} style={{paddingTop: 15}}/>
                             </Pressable>
                             <Text style={styles.title}>Reviews</Text>
                             <Text/>
                         </Animated.View>
-                        <ScrollView>
-                            <View style={styles.diplayContainer}>
+                        <ScrollView
+                            refreshControl={
+                                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+                            }                       
+                        >
+                            <ScrollView style={styles.diplayContainer} horizontal={true}>
                                 <View style={{display: 'flex', flexDirection: 'row', gap: 10, alignItems: 'center', marginBottom: 10, flexWrap: 'wrap'}}>
-                                    <FontAwesome5 name="filter" size={20} color={Colors.SeaGreen} regular/>
+                                    <FontAwesome name="filter" size={25} color={Colors.DarkSpringGreen} regular/>
                                     {sorts.map((item, index) => (
                                         <Filter
                                             key={index}
-                                            onPressHandler={()=>handleSort(item === 'Like')}
+                                            onPressHandler={()=>{item === 'Suvis uniquement' ? setFiltre(!filtre) : handleSort(item === 'Like')}}
                                             text={item}
                                         />
                                     ))}
                                 
                                 </View>
-                        </View>
+                        </ScrollView>
                         {count > 0 ?
                             <DataTable>
                                {reviews.map((item, index) => (
@@ -127,14 +137,19 @@ const ReviewScreen = () => {
                                     </DataTable.Row>
                                 ))
                                 }
-                                {reviewsArtist?.map((item, index) => (
+                                {reviewsArtist?.filter(item => {
+                                    if(filtre) 
+                                        return item.made_by_friend
+                                    return 1
+                                }).map((item, index) => (
                                     <DataTable.Row key={index} style={{marginTop: 20, marginLeft: 0, borderBottomColor: Colors.Onyx}}>
                                         <DataTable.Cell>
                                             <Review data={item}/>
                                         </DataTable.Cell>
                                     </DataTable.Row>
                                 ))}
-                                <DataTable.Pagination
+                                { count > 25 && 
+                                    <DataTable.Pagination
                                     page={page}
                                     numberOfPages={Math.ceil(count / itemsPerPage)}
                                     onPageChange={page => {handleChangePage(page)}}
@@ -147,10 +162,11 @@ const ReviewScreen = () => {
                                     paginationControlRippleColor={Colors.White}
                                     dropdownItemRippleColor={Colors.White}
                                     selectPageDropdownRippleColor={Colors.Jet}
-                                    style={{backgroundColor: Colors.Licorice, color: Colors.White}}
-                                />
+                                    style={{backgroundColor: Colors.Jet, color: Colors.White}}
+                                    />
+                                }
                             </DataTable>
-                            : <Text style={{ color: Colors.White, fontSize: 20, textAlign: 'center' }}>Aucune critique, soyez le premier à rédiger une critique !</Text>
+                            : <Text style={{ color: Colors.White, fontSize: 20, textAlign: 'center', marginTop: 30 }}>Aucune critique, soyez le premier à rédiger une critique !</Text>
                         }
                         </ScrollView>
                 </View>
@@ -168,27 +184,25 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        paddingTop: 35,
-        paddingLeft: 20,
-        paddingBottom: 10,
+        padding: 30,
         position: 'relative',
         top: 0,
         left: 0,
         right: 0,
         zIndex: 1,
-        marginBottom: Platform.OS === 'web' ? 30 : 15,
-        marginTop: Platform.OS === 'web' ? 30 : 15
-
+        backgroundColor: 'rgba(43, 43, 43, 0.3)',
     },
     title: {
-        fontSize: Platform.OS === 'web' ? 35 : 25,
-        color: Colors.SeaGreen,
-        fontWeight: 'bold'
+        fontSize: Platform.OS === "web" ? 35 : 25,
+        color: Colors.White,
+        fontWeight: 'bold',
+        paddingTop: 15,
     },
     diplayContainer: {
-        display: "flex",
-        alignItems: "flex-start",
         padding: 15,
+        paddingLeft: 20,
+        backgroundColor: 'rgba(43, 43, 43, 0.3)',
+
     },
     filterButton: {
         marginRight: 10,

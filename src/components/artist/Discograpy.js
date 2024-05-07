@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import { StyleSheet, View, Text, Pressable, Platform} from 'react-native';
 import { Colors } from '../../style/color';
-import Item from '../common/Item';
+import Item from './Item';
 import { useNavigation } from '@react-navigation/native';
 
 
@@ -44,18 +44,12 @@ const Discography = ({ items, id}) => {
                 const dateB = new Date(b.date);
                 return dateA - dateB;
               }
-              return a.popularity > b.popularity ? 1 : -1;
+              return a.popularity - b.popularity;
             }).slice(0, Platform.OS == 'web' ? 5 : 3).map(item => (
             <Item  key={item.id} data={item}/>)) : 
             <View style={{display:'flex', margin: 30}}>
               <Text style={{color: Colors.White, fontSize:20, fontWeight:'normal'}}>Discographie vide pour le moment.</Text>
             </View>}
-            {Platform.OS !== 'web' && (
-            <View style={[styles.sectionFilter, {alignItems: 'center'}]}>
-              <Pressable style={styles.btn} onPress={()=>{navigation.navigate('Discographie', {id})}}>
-                <Text style={styles.filterText}>Voir toute la discographie</Text>
-              </Pressable>
-            </View>)}
         </View>
       </View> 
     </>

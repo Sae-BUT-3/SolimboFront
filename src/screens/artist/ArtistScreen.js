@@ -1,10 +1,10 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import axiosInstance from '../../api/axiosInstance';
-import { StyleSheet, ScrollView, Text, View, Pressable, Platform, Animated } from 'react-native';
+import { StyleSheet, ScrollView, Text, View, Pressable, Platform, Animated, RefreshControl } from 'react-native';
 import Discography from '../../components/artist/Discograpy';
 import Profil from '../../components/artist/Profil';
-import Loader from '../../components/Loader';
-import ErrorRequest from '../../components/ErrorRequest';
+import Loader from '../../components/common/Loader';
+import ErrorRequest from '../../components/common/ErrorRequest';
 import ArtistReview from '../../components/artist/ArtistReview';
 import { Colors } from '../../style/color';
 import { useRoute, useNavigation, useFocusEffect } from '@react-navigation/native';
@@ -12,12 +12,14 @@ import ArtistAppearsOn from '../../components/artist/ArtistAppearsOn';
 import DiscograpyPopup from '../../components/artist/DicograpyPopup';
 import { Snackbar } from 'react-native-paper';
 import { FontAwesome5 } from '@expo/vector-icons'; // Importation de FontAwesome5
-import { SafeAreaView } from 'react-native-safe-area-context';
+import Filter from '../../components/search/Filter';
+import ImagePanel from '../../components/common/ImagePanel';
 
 const ArtistScreen = () => {
     const navigation = useNavigation();
     const route = useRoute();
     const { id } = route.params;
+    const [filter, setFilter] =  useState(false);
     const [discography, setDiscography] = useState([]);
     const [friendsFollowers, setFriendsFollowers] = useState(0);
     const [follow, setFollow] = useState(false);
@@ -29,9 +31,26 @@ const ArtistScreen = () => {
     const [response, setResponse] = useState(null);
     const [isDiscograpyPopupVisible, setDiscograpyPopupVisible] = useState(false);
     const [showTitle, setShowTitle] = useState(false);
+    const [refreshing, setRefreshing] = useState(false);
+    const [showAll, setShowAll] = useState(false);
+
+    const handleShowAll = () => {
+      setShowAll(true);
+    };
+
+    const onRefresh = useCallback(() => {
+      setRefreshing(true);
+      updateData();
+      setTimeout(() => {
+        setRefreshing(false);
+      }, 2000);
+    }, []);
 
     const handlePress = () => {
-        setDiscograpyPopupVisible(true);
+        if(Platform.OS === 'web')
+            setDiscograpyPopupVisible(true);
+        else
+            navigation.navigate('Discographie', {id})
     };
 
     const handleClose = () => {
@@ -40,15 +59,15 @@ const ArtistScreen = () => {
 
     const onfollowArtist = () => {
         axiosInstance.post('/users/follow', { artistId: artistProfile.id })
-            .then(res => {
-                if (!follow) {
-                    artistProfile.follower_count++;
-                    setFollow(true);
-                } else {
-                    artistProfile.follower_count--;
-                    setFollow(false);
-                }
-            }).catch(e => setResponse('Une erreur interne à notre serveur est survenue. Réessayer plus tard !'));
+        .then(res => {
+            if (!follow) {
+                artistProfile.follower_count++;
+                setFollow(true);
+            } else {
+                artistProfile.follower_count--;
+                setFollow(false);
+            }
+        }).catch(e => setResponse('Une erreur interne à notre serveur est survenue. Réessayer plus tard !'));
     };
 
     useFocusEffect(
@@ -116,14 +135,18 @@ const ArtistScreen = () => {
         
         <View style={styles.container}>
             {isLoading ? (<Loader />) : (
-                <SafeAreaView>
+                <>
                     <ScrollView
                         onScroll={handleScroll}
                         scrollEventThrottle={16}
+                        refreshControl={
+                            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+                        }
                     >
-                        <View style={{ height: showTitle ? 300 : 500 }}>
-                            <Profil data={artistProfile} friends_followers={friendsFollowers} follow={follow} followArtist={onfollowArtist} />
+                        <View style={{ height: showTitle ? (Platform.OS === 'web' ? 450 : 300 ): (Platform.OS === 'web' ? 650 : 500) }}>
+                            <Profil data={artistProfile} friends_followers={friendsFollowers} follow={follow} followArtist={onfollowArtist} show={setShowAll}/>
                         </View>
+                        { friendsFollowers.length > 1 && showAll && <ImagePanel avatars={friendsFollowers} type={'user'} show={setShowAll}/>}
                         <ScrollView
                             scrollEventThrottle={16}
                             onScroll={Animated.event(
@@ -135,19 +158,38 @@ const ArtistScreen = () => {
                                 <Text style={styles.sectionTitle}>Discographie</Text>
                                 {Platform.OS === 'web' && discography.length > 0 ? <Pressable onPress={handlePress}>
                                     <Text style={styles.buttonText}>Afficher plus</Text>
-                                </Pressable> : null}
+                                </Pressable> :                             
+                                <Pressable onPress={handlePress}>
+                                    <FontAwesome5 name="list" size={25} color={Colors.SeaGreen} />
+                                </Pressable>
+                                }
                             </View>
                             <Discography items={discography} id={id} />
                             {isDiscograpyPopupVisible && (
                                 <DiscograpyPopup onClose={() => setDiscograpyPopupVisible(false)} _id={id} />
                             )}
-                            <View style={styles.sectionFilter}>
+                            <View style={[styles.sectionFilter,  {marginBottom: 10}]}>
                                 <Text style={styles.sectionTitle}>Récentes reviews</Text>
-                                {Platform.OS === 'web' && reviews.length > 0 ? <Pressable onPress={() => { navigation.navigate('Review', { id }) }}>
+                                { reviews && reviews.length > 3 && (Platform.OS === 'web' ? <Pressable onPress={() => { navigation.navigate('Review', { id }) }}>
                                     <Text style={styles.buttonText}>Afficher plus</Text>
-                                </Pressable> : null}
+                                </Pressable> : 
+                                <Pressable onPress={() => { navigation.navigate('Review', { id }) }}>
+                                    <FontAwesome5 name="list" size={25} color={Colors.SeaGreen} />
+                                </Pressable>)
+                                }
                             </View>
-                            <ArtistReview items={reviews} id={id} />
+                            {reviews.length >= 3 && <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 10,marginBottom: 25, marginLeft: 30}}>
+                                <FontAwesome5 name="filter" size={20} color={Colors.SeaGreen} />
+                                <Filter 
+                                    onPressHandler={()=>{setFilter(!filter)}}
+                                    text={"Suivis uniquement"}
+                                />
+                            </View>}
+                            <ArtistReview items={reviews.filter(item => {
+                                if(filter) 
+                                    return item.made_by_friend
+                                return 1
+                            })} id={id} />
                            
                             <View style={styles.sectionFilter}>
                                 <Text style={styles.sectionTitle}>Apparaît sur</Text>
@@ -167,14 +209,12 @@ const ArtistScreen = () => {
                             </Snackbar>)}
                         </ScrollView>
                     </ScrollView>
-                    {showTitle && (
-                        <View style={styles.titleHeader}>
-                            <Pressable onPress={() => { navigation.goBack() }}>
-                                <FontAwesome5 name="arrow-left" size={30} color={Colors.DarkSpringGreen} />
-                            </Pressable>
-                        </View>
-                    )}
-                </SafeAreaView>
+                    <View style={styles.titleHeader}>
+                        <Pressable onPress={() => { navigation.goBack() }}>
+                            <FontAwesome5 name="chevron-left" size={25} color={Colors.White} />
+                        </Pressable>
+                    </View>
+                </>
             )}
         </View>
     );
@@ -184,21 +224,25 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: Colors.Licorice,
-        color: Colors.White
     },
     sectionTitle: {
-        color: Colors.DarkSpringGreen,
+        color: Colors.SeaGreen,
         fontWeight: 'bold',
-        fontSize: Platform.OS === 'web' ? 35 : 25,
-        elevation: Platform.OS === 'android' ? 3 : 0
+        fontSize: Platform.OS === 'web' ? 35 : 27,
+        textShadowColor: 'rgba(0, 0, 0, 0.5)',
+        textShadowOffset: {width: -1, height: 1},
+        textShadowRadius: 10,
+        padding: 5,
     },
     sectionFilter: {
         display: 'flex',
         flexDirection: 'row',
         justifyContent: 'space-between',
-        marginLeft: 30,
+        alignItems: 'center',
+        marginLeft: 10,
+        marginRight: 10,
         marginBottom: 30,
-        alignItems: 'flex-end'
+        padding: 5
     },
     buttonText: {
         color: Colors.White,
@@ -214,11 +258,10 @@ const styles = StyleSheet.create({
         right: 0,
         alignItems: 'center',
         justifyContent: 'space-between',
-        backgroundColor: 'rgba(43, 43, 43, 0.3)',
         zIndex: 1,
-        paddingTop: 30,
-        paddingLeft: 20,
-        paddingBottom: 10,
+        paddingTop: Platform.OS === 'web' ? 10 : 35,
+        paddingLeft: 10,
+        paddingBottom: 20,
     },
 });
 

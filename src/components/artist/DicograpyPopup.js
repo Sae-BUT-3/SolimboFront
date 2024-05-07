@@ -5,8 +5,8 @@ import { FontAwesome } from '@expo/vector-icons'; // Importation de FontAwesome 
 import axiosInstance from '../../api/axiosInstance';
 import { Colors } from '../../style/color';
 import ItemPopup from './ItemPopup';
-import Loader from '../../components/Loader';
-import ErrorRequest from '../../components/ErrorRequest';
+import Loader from '../common/Loader';
+import ErrorRequest from '../common/ErrorRequest';
 
 const DiscograpyPopup = ({onClose, _id}) => {
     const [modalVisible, setModalVisible] = useState(true);

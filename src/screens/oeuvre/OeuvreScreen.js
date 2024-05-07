@@ -1,24 +1,23 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback,useEffect, useState } from 'react';
 import axiosInstance from '../../api/axiosInstance';
-import { StyleSheet, ScrollView, Text, View, Pressable, Platform, Animated } from 'react-native';
-import Loader from '../../components/Loader';
-import ErrorRequest from '../../components/ErrorRequest';
+import { StyleSheet, ScrollView, Text, View, Pressable, Platform, Animated, RefreshControl } from 'react-native';
+import Loader from '../../components/common/Loader';
+import ErrorRequest from '../../components/common/ErrorRequest';
 import { Colors } from '../../style/color';
-import { useRoute, useNavigation } from '@react-navigation/native';
+import { useRoute, useNavigation, useFocusEffect } from '@react-navigation/native';
 import { Snackbar } from 'react-native-paper';
 import { FontAwesome5 } from '@expo/vector-icons'; // Importation de FontAwesome5
 import OeuvreReview from '../../components/oeuvre/OeuvreReview';
 import Oeuvre from '../../components/oeuvre/Oeuvre';
 import Trackgraphy from '../../components/oeuvre/Trackgraphy';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import Item from '../../components/common/Item';
+import ImagePanel from '../../components/common/ImagePanel';
 
 const OeuvreScreen = () => {
     const navigation = useNavigation();
     const route = useRoute();
     const { type, id } = route.params;
     const [tracks, setTracks] = useState([]);
-    const [friendsLikes, setFriendsLikes] = useState(0);
     const [like, setLike] = useState(false);
     const [favoris, setFavoris] = useState(false);
     const [reviews, setReviews] = useState([]);
@@ -28,23 +27,43 @@ const OeuvreScreen = () => {
     const [fail, setFailed] = useState(null);
     const [response, setResponse] = useState(null);
     const [showTitle, setShowTitle] = useState(type === 'track');
+    const [refreshing, setRefreshing] = useState(false);
+    const [showAll, setShowAll] = useState(false);
+
+    const handleShowAll = () => {
+      setShowAll(true);
+    };
+
+    const onRefresh = useCallback(() => {
+      setRefreshing(true);
+      updateData();
+      setTimeout(() => {
+        setRefreshing(false);
+      }, 2000);
+    }, []);
 
     const handleClose = () => {
         setResponse(null);
     };
 
-    const onLike = () => {
-      axiosInstance.post(`/oeuvre/${type}/${id}/like`)
-      .then(res => {
-          if (!like) {
-              oeuvre.like_count++;
-              setLike(true);
-          } else {
-              oeuvre.like_count--;
-              setLike(false);
-          }
-      }).catch(e => setResponse('Une erreur interne à notre serveur est survenue. Réessayer plus tard !'));
-    };
+    useFocusEffect(
+        useCallback(() => {
+            updateData();
+        }, [])
+    );
+    const updateData = () => {
+        axiosInstance.get(`/oeuvre/${id}`)
+        .then(response => {
+            setOeuvre(response.data.oeuvre);
+            setArtists(response.data.artist);
+            setTracks(response.data.oeuvre.tracks);
+            setFriendsLikes(response.data);
+            setReviews(response.data.reviewsByTime);
+            setLike(response.data.doesUserLikes);
+            setFavoris(response.data.doesUserFav);
+            setIsLoading(false);
+        }).catch(e => setFailed(e.response.data));
+    }
 
     useEffect(() => {
         axiosInstance.get(`/oeuvre/${id}`)
@@ -53,7 +72,6 @@ const OeuvreScreen = () => {
             setArtists(response.data.artist);
             navigation.setOptions({ title: response.data.oeuvre.name + ' | Solimbo' });
             setTracks(response.data.oeuvre.tracks);
-            setFriendsLikes(response.data);
             setReviews(response.data.reviewsByTime);
             setLike(response.data.doesUserLikes);
             setFavoris(response.data.doesUserFav)
@@ -75,57 +93,59 @@ const OeuvreScreen = () => {
     return (
         <View style={styles.container}>
             {isLoading ? (<Loader />) : (
-                <SafeAreaView>
+                <>
                     <ScrollView
                         onScroll={handleScroll}
                         scrollEventThrottle={16}
                     >
-                        <View style={{ height: showTitle ? 300 : 500 }}>
-                            <Oeuvre data={oeuvre} artists={artists} friends_likes={friendsLikes} favoris={favoris} like={like} likeOeuvre={onLike} />
+                        <View style={{ height: showTitle && (type!== 'track' && reviews?.length > 2) ? 300 : 500 }}>
+                            <Oeuvre data={oeuvre} artists={artists} favoris={favoris} likeUser={like} setResponse={setResponse} show={handleShowAll}/>
                         </View>
+                        { (artists.length > 1 && showAll) && <ImagePanel avatars={artists} type={'artist'} show={setShowAll}/>}
                         <ScrollView
                             scrollEventThrottle={16}
                             onScroll={Animated.event(
                                 [{ nativeEvent: { contentOffset: { y: scrollY } } }],
                                 { useNativeDriver: true }
                             )}
+                            refreshControl={
+                                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+                            }
                         >
-                           { type !== 'track' && (<><View style={styles.sectionFilter}>
-                                <Text style={styles.sectionTitle}>Titres</Text>
-                                {Platform.OS === 'web' && oeuvre.total_tracks > 0 ? <Pressable onPress={handlePress}>
-                                    <Text style={styles.buttonText}>Afficher plus</Text>
-                                </Pressable> : null}
-                            </View>
-                            <Trackgraphy items={tracks} id={id} /></>)}
-                            <View style={styles.sectionFilter}>
+                            { type !== 'track' && (<Trackgraphy items={tracks} id={id} />)}
+                            <View style={[styles.sectionFilter,  {marginBottom: 25}]}>
                                 <Text style={styles.sectionTitle}>Récentes reviews</Text>
-                                {Platform.OS === 'web' && reviews.length > 0 ? <Pressable onPress={() => { navigation.navigate('Review', { id }) }}>
-                                    <Text style={styles.buttonText}>Afficher plus</Text>
-                                </Pressable> : null}
+                                { reviews && reviews.length > 3 && (Platform.OS === 'web' ? 
+                                    <Pressable onPress={() => { navigation.navigate('Review', { id }) }}>
+                                        <Text style={styles.buttonText}>Afficher plus</Text>
+                                    </Pressable> : 
+                                    <Pressable onPress={() => { navigation.navigate('Review', { id }) }}>
+                                        <FontAwesome5 name="list" size={25} color={Colors.SeaGreen} />
+                                    </Pressable>)
+                                }
                             </View>
-                            <OeuvreReview items={reviews} id={id} />
-                            {response && (<Snackbar
-                                visible={response !== null}
-                                onDismiss={handleClose}
-                                action={{
-                                    label: 'Fermer',
-                                    onPress: handleClose
-                                }}
-                                duration={Snackbar.DURATION_SHORT}
-                                style={{width: Platform.OS == 'web' ? 500 : 400, position: 'absolute'}}
-                            >
-                                {response}
-                            </Snackbar>)}
+                            <OeuvreReview items={reviews} id={id} />  
                         </ScrollView>
                     </ScrollView>
-                    {showTitle && (
-                        <View style={styles.titleHeader}>
-                            <Pressable onPress={() => { navigation.goBack() }}>
-                                <FontAwesome5 name="arrow-left" size={30} color={Colors.DarkSpringGreen} />
-                            </Pressable>
-                        </View>
-                    )}
-                </SafeAreaView>
+                  
+                    <View style={styles.titleHeader}>
+                        <Pressable onPress={() => { navigation.goBack() }}>
+                            <FontAwesome5 name="chevron-left" size={25} color={Colors.White} />
+                        </Pressable>
+                    </View>
+                    {response && (<Snackbar
+                        visible={response !== null}
+                        onDismiss={handleClose}
+                        action={{
+                            label: 'Fermer',
+                            onPress: handleClose
+                        }}
+                        duration={Snackbar.DURATION_MEDIUM}
+                        style={{width: Platform.OS == 'web' ? 500 : 400, position: 'relative'}}
+                    >
+                        {response}
+                    </Snackbar>)}
+                </>
             )}
         </View>
     );
@@ -138,18 +158,21 @@ const styles = StyleSheet.create({
         color: Colors.White
     },
     sectionTitle: {
-        color: Colors.DarkSpringGreen,
+        color: Colors.SeaGreen,
         fontWeight: 'bold',
-        fontSize: Platform.OS === 'web' ? 35 : 25,
-        elevation: Platform.OS === 'android' ? 3 : 0
+        fontSize: Platform.OS === 'web' ? 35 : 27,
+        textShadowColor: 'rgba(0, 0, 0, 0.5)',
+        textShadowOffset: {width: -1, height: 1},
+        textShadowRadius: 10,
     },
     sectionFilter: {
         display: 'flex',
         flexDirection: 'row',
         justifyContent: 'space-between',
-        marginLeft: 30,
-        marginBottom: 30,
-        alignItems: 'flex-end'
+        marginLeft: 20,
+        marginRight: 15,
+        marginBottom: 20,
+        alignItems: 'center'
     },
     buttonText: {
         color: Colors.White,
@@ -165,11 +188,10 @@ const styles = StyleSheet.create({
         right: 0,
         alignItems: 'center',
         justifyContent: 'space-between',
-        backgroundColor: 'rgba(43, 43, 43, 0.3)',
         zIndex: 1,
-        paddingTop: 30,
-        paddingLeft: 20,
-        paddingBottom: 10,
+        paddingTop: Platform.OS === 'web' ? 10 : 35,
+        paddingLeft: 10,
+        paddingBottom: 20,
     },
 });
 

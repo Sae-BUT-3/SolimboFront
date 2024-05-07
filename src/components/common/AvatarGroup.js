@@ -1,49 +1,29 @@
-import React, { useState } from 'react';
-import { View, Pressable } from 'react-native';
+import React from 'react';
+import { Platform } from 'react-native';
+import { View} from 'react-native';
 import { Avatar } from 'react-native-paper';
+import { Colors } from '../../style/color';
 
-const maxAvatars = 5;
+const AvatarGroup = ({ avatars, size, type}) => {
+  const maxAvatars = Platform.OS === 'web' ? 5 : 3;
 
-const AvatarGroup = ({ avatars, size, type }) => {
-  const [showAll, setShowAll] = useState(false);
-
-  const handleShowAll = () => {
-    setShowAll(true);
-  };
-
-  return (
-    <View style={{ flexDirection: 'row' }}>
-      {!showAll && avatars ? (
-        <>
-          {avatars.slice(0, maxAvatars).map((avatar, index) => (
-            <Avatar.Image
-              key={index}
-              source={{ uri: type === 'user' ? avatar.photo : avatar.image }}
-              size={size}
-              style={{ marginRight: 10 }}
-              accessibilityLabel={type === 'user' ? avatar.pseudo : avatar.name}
-            />
-          ))}
-          {avatars.length > maxAvatars && (
-            <Pressable onPress={handleShowAll}>
-              <Avatar.Text
-                label={`+${avatars.length - maxAvatars}`}
-                size={size}
-                style={{ marginRight: 10 }}
-              />
-            </Pressable>
-          )}
-        </>
-      ) : avatars && (
-          avatars.map((avatar, index) => (
-          <Avatar.Image
-            key={index}
-            source={{ uri:  type === 'user' ? avatar.photo : avatar.image }}
-            size={size}
-            style={{zIndex: avatars.length - index }}
-            accessibilityLabel={type === 'user' ? avatar.pseudo : avatar.name}
+  return (   
+    <View style={{ flexDirection: 'row' , alignItems: 'center',}}>
+      {avatars && avatars.slice(0, maxAvatars).map((avatar, index) => (
+        <Avatar.Image
+          key={index}
+          source={{ uri: type === 'user' ? avatar?.photo : avatar?.image }}
+          size={size}
+          style={{ marginRight: -15 }}
+        />
+      ))}
+      {avatars && avatars.length > maxAvatars && (
+          <Avatar.Text
+            label={`+${avatars.length - maxAvatars}`}
+            size={size + 2}
+            color={Colors.White}
+            style={{ marginRight: -15, backgroundColor: 'rgba(43, 43, 43, 0.5)'}}
           />
-        ))
       )}
     </View>
   );

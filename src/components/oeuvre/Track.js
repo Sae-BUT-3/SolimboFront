@@ -1,10 +1,11 @@
 import React, {useEffect, useState} from 'react';
-import { StyleSheet, View, Text, Pressable, Platform} from 'react-native';
+import { StyleSheet, View, Text, Pressable, Platform, Linking} from 'react-native';
 import { Colors } from '../../style/color';
-import { FontAwesome5} from '@expo/vector-icons'; 
-import {Link, useNavigation} from '@react-navigation/native'
+import { FontAwesome5, FontAwesome} from '@expo/vector-icons'; 
+import {useNavigation} from '@react-navigation/native'
 import { Rating } from 'react-native-ratings';
 import { Divider } from 'react-native-paper';
+import axiosInstance from '../../api/axiosInstance';
 
 const Track = ({data}) => {
     const [isHovered, setIsHovered] = useState(false);
@@ -21,7 +22,7 @@ const Track = ({data}) => {
     };
 
     const handlePress = () =>{
-        axiosInstance.post(`oeuvre/${data.type}/like`)
+        axiosInstance.post(`oeuvre/${data.type}/${data.id}/like`)
           .then(res => {
             if(!like){
               setLike(true)
@@ -32,15 +33,19 @@ const Track = ({data}) => {
             }
           }).catch(e => console.log(`oeuvre/${data.type}/like : ${e.response.data}`));
     }
+
     const linkto = () => {
         Linking.openURL(data.spotify_url);
-      };
+    };
+
+    const openReview =  ()=>{
+        navigation.navigate('Review', {type: data.type, id: data.id})   
+    }
     
     useEffect( ()=>{  
         setLike(data.doesUserLike)
-        setCountLikes(data.countlike)
+        setCountLikes(data.likeCount)
       },[data]);
-
     return (
         <Pressable
             activeOpacity={1}
@@ -50,9 +55,6 @@ const Track = ({data}) => {
             styles.container,
             isHovered ? styles.itemHovered : null
             ]}
-            onPress= {()=>{
-                navigation.navigate('Oeuvre', {id: data.id, type: 'track' });
-            }}
         >
             <View style={styles.item}>
                 <View style={{display: 'flex', flexDirection:'row', gap: 10, alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap'}}>
@@ -71,8 +73,14 @@ const Track = ({data}) => {
                 <Divider style={[styles.divider,{marginBottom: 10}]}/>
                 <View style={styles.sectionIcon}>
                     <View style={{display: 'flex', flexDirection:'row', gap: 10, alignItems: 'center'}}>
-                        <Pressable onPress={handlePress}>{like ?  <FontAwesome5 name="heart" size={30} color={Colors.DarkSpringGreen} solid  />: <FontAwesome5 name="heart" size={30} color={Colors.DarkSpringGreen} regular/>}</Pressable>
-                        <Text style={{color: Colors.White, fontSize: 20, textAlign: Platform.OS !== 'web'? 'center' : undefined}}>{countlikes}</Text>
+                        <View style={{display: 'flex', flexDirection:'row', gap: 10, alignItems: 'center'}}>
+                            <Pressable onPress={handlePress}>{like ?  <FontAwesome5 name="heart" size={30} color={Colors.DarkSpringGreen} solid  />: <FontAwesome5 name="heart" size={30} color={Colors.DarkSpringGreen} regular/>}</Pressable>
+                            <Text style={{color: Colors.White, fontSize: 20, textAlign: Platform.OS !== 'web'? 'center' : undefined}}>{countlikes}</Text>
+                        </View>
+                        <View style={{display: 'flex', flexDirection:'row', gap: 10, alignItems: 'center'}}>
+                            <Pressable onPress={openReview}><FontAwesome name="pencil-square-o" size={30} color={Colors.DarkSpringGreen} regular/></Pressable>
+                            <Text style={{color: Colors.White, fontSize: 20, textAlign: Platform.OS !== 'web'? 'center' : undefined}}>{data.reviewCount}</Text>
+                        </View>
                     </View>
                     <Pressable onPress={linkto}><FontAwesome5 name="play-circle" size={40} color={Colors.DarkSpringGreen} solid/></Pressable>
                 </View>
@@ -85,7 +93,6 @@ const styles = StyleSheet.create({
         backgroundColor: Colors.Jet,
         paddingHorizontal: 20,
         paddingVertical: 20,
-        marginLeft: Platform.OS == 'web' ? 30 : 20,
         borderRadius: 15,
         maxWidth: Platform.OS === 'web' ? 950 : null,
         width: Platform.OS != 'web' ? 386 : null,
@@ -94,7 +101,6 @@ const styles = StyleSheet.create({
         shadowRadius: 3,
         elevation: Platform.OS === 'android' ? 3 : 0, 
         transition: 'background-color 0.3s ease',
-        marginBottom: 15
     },
     item: {
         display:'flex',

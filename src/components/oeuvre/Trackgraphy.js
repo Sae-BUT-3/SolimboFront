@@ -1,39 +1,40 @@
-import React, {useState} from 'react';
-import { StyleSheet, View, Text, Pressable, Platform} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import { StyleSheet, View, Platform} from 'react-native';
 import { Colors } from '../../style/color';
-import Item from '../common/Item';
-import { useNavigation } from '@react-navigation/native';
 import Track from './Track';
+import { DataTable, PaperProvider } from 'react-native-paper';
 
+const numberOfItemsPerPageList = [2];
 
-const Trackgraphy = ({ items, id}) => {
-  const [filter, setFilter] = useState('popularity');
-  const [isHovered, setIsHovered] = useState(false);
-  const navigation = useNavigation()
-  const handleMouseEnter = () => {
-    setIsHovered(true);
-  };
-
-  const handleMouseLeave = () => {
-    setIsHovered(false);
-  };
+const Trackgraphy = ({ items}) => {
+  const [page, setPage] = useState(0);
+  const [itemsPerPage, onItemsPerPageChange] = useState(numberOfItemsPerPageList[0]);
+  useEffect(() => {
+    setPage(0);
+  }, []);
 
   return (
-    <>
-      <View style={{marginBottom: 30}}> 
-        <View style={{display: 'flex', flexDirection: 'row', alignItems: 'flex-start', flexWrap: 'wrap'}}>
-          {items && items.length > 0 ? items.slice(0, Platform.OS == 'web' ? 5 : 3).map(item => (
-            <Track  key={item.id} data={item}/>)) : null}
-            {Platform.OS !== 'web' && (
-            <View style={[styles.sectionFilter, {alignItems: 'center'}]}>
-              <Pressable style={styles.btn} onPress={()=>{navigation.navigate('Trackgraphie', {id})}}>
-                <Text style={styles.filterText}>Voir toutes les titres</Text>
-              </Pressable>
-            </View>)}
-        </View>
-      </View> 
-    </>
-  )
+    items && (
+    <PaperProvider>
+    <DataTable  style={{paddingTop: 30, marginBottom: 30}}>                 
+      {items.slice(page * itemsPerPage, (page * itemsPerPage) + itemsPerPage).map((item, index) => (
+          <DataTable.Row key={index} style={{marginLeft: 0, borderBottomWidth: 0, marginBottom: 15}}>
+              <DataTable.Cell>
+                  <Track key={index} data={item}/> 
+              </DataTable.Cell>
+          </DataTable.Row>
+      )) }
+      { items.length > 3 && <DataTable.Pagination
+        page={page}
+        numberOfPages={Math.ceil(items.length / 3)}
+        onPageChange={(page) => setPage(page)}
+        numberOfItemsPerPage={itemsPerPage}
+        showFastPaginationControls
+        style={{backgroundColor: Colors.Jet}}
+      />}
+    </DataTable>
+    </PaperProvider>)
+  );
 }
 const styles = StyleSheet.create({
   sectionFilter: {

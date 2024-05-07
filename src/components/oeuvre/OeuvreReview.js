@@ -1,25 +1,19 @@
 import React from 'react';
 import {Text, Pressable, Platform, View, StyleSheet} from 'react-native';
-import Review from '../common/Review';
+import Review from '../review/Review';
 import { Colors } from '../../style/color';
 import { useNavigation } from '@react-navigation/native';
 
 const OeuvreReview = ({ items, id}) => {
   const navigation = useNavigation();
   return (
-    items.length > 0 ? 
+    items && items.length > 0 ? 
       <View style={styles.container}> 
-      {items.slice(0,5).map((item) => (
-        <Review key={item.id_review} data={item} />
-      ))}
-      
-      {Platform.OS !== 'web' && ( 
-        <View style={styles.sectionFilter}>
-          <Pressable style={styles.btn} onPress={()=>{navigation.navigate('Review', {id})}}>
-            <Text style={styles.filterText}>Voir tous les critiques</Text>
-          </Pressable>
-        </View>)}</View>:
-      <View style={{display:'flex', margin: 30}}>
+        {items.slice(0,5).map((item) => (
+          <Review key={item.id_review} data={item} />
+        ))}
+      </View>:
+      <View style={{display:'flex', marginLeft: 30, marginBottom: 30, alignItems: 'flex-start'}}>
         <Text style={{color: Colors.White, fontSize:20, fontWeight:'normal'}}>Aucune critique disponible pour le moment.</Text>
       </View>
 )}

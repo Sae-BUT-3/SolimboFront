@@ -5,12 +5,12 @@ import { FontAwesome5 } from '@expo/vector-icons'; // Importation de FontAwesome
 import { Avatar, Provider as PaperProvider, TextInput } from 'react-native-paper';
 import { Colors } from '../../style/color';
 import { DataTable } from 'react-native-paper';
-import Comment from '../../components/common/Comment';
+import Comment from '../../components/comment/Comment';
 import Tokenizer from '../../utils/Tokenizer';
 import axiosInstance from '../../api/axiosInstance';
-import Review from '../../components/common/Review';
-import ErrorRequest from '../../components/ErrorRequest';
-import Loader from '../../components/Loader';
+import Review from '../../components/review/Review';
+import ErrorRequest from '../../components/common/ErrorRequest';
+import Loader from '../../components/common/Loader';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 const ResponseScreen = () => {
@@ -83,30 +83,30 @@ const ResponseScreen = () => {
                 <Animated.View>
                     <View style={[styles.header, headerOpacity ]}>
                         <Pressable onPress={handleGoBack}>
-                            <FontAwesome5 name="arrow-left" size={30} color={Colors.SeaGreen}/>
+                            <FontAwesome5 name="chevron-left" size={30} color={Colors.White}/>
                         </Pressable>
                     </View>
                 </Animated.View>
                 <ScrollView>    
-                    <DataTable >
-                        <DataTable.Header style={{marginBottom: 30, borderBottomColor: Colors.Onyx}}>
-                            {type == "review" ?
-                                <Review data={data} /> : <Comment data={data}/>
-                            }
+                    <DataTable  style={{marginBottom: 30}}>
+                        <DataTable.Header style={{borderBottomColor: Colors.Jet}}>
+                            <View style={{marginBottom: 30}}>{type == "review" ?
+                                <Review data={data} /> : <Comment data={data} hide={true}/>
+                            }</View>
                         </DataTable.Header>
                     </DataTable>
                     <View style={{backgroundColor: Colors.Jet, display: 'flex', gap: 5, justifyContent:'flex-start', padding: 20}}>
                         <View style={{display: 'flex', flexDirection:'row', gap: 10, justifyContent: 'flex-start', alignItems: 'center'}}>
                             <Avatar.Image source={{ uri: currentUser.photo || require('../../assets/images/profil.png') }} size={64} accessibilityLabel={currentUser.pseudo} />
-                            <Text style={{color: Colors.SeaGreen, fontSize: Platform.OS  === "web" ? 30 : 19, fontWeight: 'normal'}}>{'@' + currentUser.alias}</Text>
+                            <Text style={{color: Colors.SeaGreen, fontSize: 19, fontWeight: 'normal'}}>{'@' + currentUser.alias}</Text>
                         </View>
                         <TextInput
                             multiline
                             maxLength={1500}
-                            placeholder={type === 'review'? 'Ajouter un commentaire...' : `Réponse au commentaire de `}
+                            placeholder={type === 'review'? 'Ajouter un commentaire à la review...' : `Réponse au commentaire de ${data.utilisateur.alias}...`}
                             value={comment}
                             onChangeText={(text) => setText(text)}
-                            underlineColor={Colors.BattleShipGray}
+                            underlineColor={Colors.Onyx}
                             activeUnderlineColor={Colors.BattleShipGray}
                             textColor={Colors.White}
                             color={Colors.White}
@@ -158,7 +158,7 @@ const styles = StyleSheet.create({
         paddingVertical: 8,
         borderRadius: 20,
         width: 150,
-        backgroundColor: Colors.SeaGreen,
+        backgroundColor: Colors.DarkSpringGreen,
         shadowColor: Colors.Onyx,
         shadowOpacity: 0.3,
         shadowRadius: 3,
