@@ -62,7 +62,7 @@ const Item = ({data}) => {
                                 ratingColor={Colors.DarkSpringGreen}
                                 tintColor={Colors.Jet}
                                 ratingBackgroundColor={Colors.Licorice}
-                                startingValue={data.rating}
+                                startingValue={data.rating || 0}
                                 readonly
                             />
                             <PointTrait point={true}/> 
@@ -84,7 +84,7 @@ const Item = ({data}) => {
                                 ratingColor={Colors.DarkSpringGreen}
                                 tintColor={Colors.Jet}
                                 ratingBackgroundColor={Colors.Licorice}
-                                startingValue={data.rating}
+                                startingValue={data.rating || 0}
                                 readonly
                             />
                             <PointTrait point={true}/> 

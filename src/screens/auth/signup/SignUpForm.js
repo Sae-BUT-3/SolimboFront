@@ -5,7 +5,7 @@ import PressableBasic from '../../../components/pressables/PressableBasic';
 import commonStyles from '../../../style/commonStyle';
 import authStyle from '../../../style/authStyle';
 import { Colors } from '../../../style/color';
-import FontAwsome5 from 'react-native-vector-icons/FontAwesome5';
+import { FontAwesome5 } from '@expo/vector-icons';
 
 
 const SignupForm = ({ onSubmit, errors }) => {
@@ -36,7 +36,7 @@ const SignupForm = ({ onSubmit, errors }) => {
             <>
                 {errors && 
                     <View style={[commonStyles.row]}>
-                    <FontAwsome5 name="exclamation-circle" size={18} color={Colors.CalPolyGreen} style={{ marginRight: 5 }} />
+                    <FontAwesome5 name="exclamation-circle" size={18} color={Colors.CalPolyGreen} style={{ marginRight: 5 }} />
                     <Text style={[commonStyles.textError] }>
                         {errors}
                     </Text>
