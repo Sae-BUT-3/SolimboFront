@@ -5,7 +5,7 @@
 > npx eas-cli build --platform android
 ```
 
-# Pour que la page artiste fontionne
+# Pour que la page artiste fonctionne
 
 ```
 > npm install react-native-modal
