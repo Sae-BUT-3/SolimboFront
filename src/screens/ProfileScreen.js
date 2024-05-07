@@ -15,7 +15,7 @@ import commonStyles from "../style/commonStyle";
 import axiosInstance from "../api/axiosInstance";
 import Profile from "../components/profile/Profile";
 import ModifyProfile from "../components/profile/Modify/ModifyProfile";
-import Review from "../components/common/Review";
+import Review from "../components/review/Review";
 import Item from "../components/common/Item";
 import { breakpoint } from "../style/breakpoint";
 import Loader from "../components/Loader";
