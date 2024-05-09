@@ -10,12 +10,11 @@ import ActivityScreen from '../screens/AcvityScreen';
 import AddButtonScreen from '../screens/AddButtonScreen';
 import ModalPostReview from '../components/ModalPostReview';
 import GestureRecognizer from 'react-native-swipe-gestures';
-
+import { useAuth } from '../contexts/AuthContext';
 const Tab = createBottomTabNavigator();
 
 function TabNavigator() {
     const [modalVisible, setModalVisible] = useState(false);
-
     return (
         <>
         <Tab.Navigator
@@ -30,7 +29,6 @@ function TabNavigator() {
                 tabBarInactiveTintColor: Colors.CalPolyGreen,
                 tabBarShowLabel: false,
             })}
-            initialRouteName='Search'
         >
             <Tab.Screen 
                 name="Home" 

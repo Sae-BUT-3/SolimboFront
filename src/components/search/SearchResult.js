@@ -108,7 +108,6 @@ function SearchResult({_id, type, imageURL, title, subtitle, rounded, onPress}) 
             onMouseEnter={handlePressIn} onMouseLeave={handleMouseLeave}
             underlayColor={Colors.Jet}
             style={[styles.searchResultContainer]}
-            onPress={onPress}
         >
             <View
                 style={[styles.diplayContainer]}

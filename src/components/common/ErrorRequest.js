@@ -2,10 +2,8 @@ import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Colors } from '../../style/color';
 import { useAuth } from '../../contexts/AuthContext';
-
 const ErrorRequest = ({err}) => {
   const { logout } = useAuth();
-
   const navigation = useNavigation();
   const returnHome = () => {
     if(err.statusCode === 401) {

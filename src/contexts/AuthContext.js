@@ -10,7 +10,7 @@ const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [response, setError] = useState(null)
-  
+  const [isLoading, setIsLoading] = useState(true)
   const signInViaToken = (data) => {
     Tokenizer.setToken(data.token);
     Tokenizer.setUser(data.user)
@@ -46,7 +46,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    autoSignIn();
+    autoSignIn().then(() => setIsLoading(false));
   }, []);
 
   const logout = () => {
@@ -56,7 +56,11 @@ export const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider value={{ isAuthenticated, signIn, logout , signInViaToken }}>
-      {children}
+      {isLoading ? (
+        null
+      ) : (
+        children
+      )}
     </AuthContext.Provider>
   );
 };

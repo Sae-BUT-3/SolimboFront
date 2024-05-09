@@ -7,7 +7,6 @@ import * as Font from 'expo-font';
 import * as Linking from 'expo-linking';
 import { Text } from 'react-native';
 const prefix = Linking.createURL('/');
-
 export default function App() {
   const [fontsLoaded, setFontsLoaded] = useState(false);
   // useEffect(() => {
@@ -23,7 +22,25 @@ export default function App() {
     prefixes: ["solimbo://"],
     config: {
       screens: {
+        SignIn: 'signin',
+        SignUp: 'signup',
+        ConfirmUser: 'confirm-user',
         Spotify: 'spotify',
+        User: 'user',
+        Response: 'response',
+        Discographie: 'discographie',
+        Comment: 'comment',
+        Review: 'review',
+        Oeuvre: 'oeuvre',
+        Artist: 'artist',
+        navigate: {
+          screens: {
+            Search: 'search',
+            Home: 'home',
+            Activity: 'activity',
+            Profile: 'profile',
+          }
+        }
       },
     },
   };
@@ -52,6 +69,8 @@ export default function App() {
     // Vous pouvez afficher un écran de chargement ici ou tout autre composant indiquant que les polices sont en cours de chargement.
     return null;
   }
+
+ 
 
   return (
     <AuthProvider>
