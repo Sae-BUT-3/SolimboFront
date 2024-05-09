@@ -10,12 +10,11 @@ import ActivityScreen from '../screens/AcvityScreen';
 import AddButtonScreen from '../screens/AddButtonScreen';
 import GestureRecognizer from 'react-native-swipe-gestures';
 import ModalPostReview from '../components/ModalPostReview';
-
+import GestureRecognizer from 'react-native-swipe-gestures';
 const Tab = createBottomTabNavigator();
 
 function TabNavigator() {
     const [modalVisible, setModalVisible] = useState(false);
-
     return (
         <>
         <Tab.Navigator
