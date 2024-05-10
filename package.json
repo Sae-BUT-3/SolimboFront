@@ -37,6 +37,7 @@
     "react-native": "0.73.2",
     "react-native-config": "^1.5.1",
     "react-native-elements": "^3.4.3",
+    "react-native-keyboard-aware-scroll-view": "^0.9.5",
     "react-native-floating-label-input": "^1.4.3",
     "react-native-keychain": "^8.1.2",
     "react-native-modal": "^13.0.1",

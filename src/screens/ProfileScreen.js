@@ -16,20 +16,20 @@ import axiosInstance from "../api/axiosInstance";
 import Profile from "../components/profile/Profile";
 import ModifyProfile from "../components/profile/Modify/ModifyProfile";
 import Review from "../components/review/Review";
+import Item from "../components/artist/Item";
 import { breakpoint } from "../style/breakpoint";
+import Loader from "../components/common/Loader";
+import ErrorRequest from "../components/common/ErrorRequest";
 import Tokenizer from "../utils/Tokenizer";
 
 import { StyleSheet, useWindowDimensions } from "react-native";
 import { Colors } from "../style/color";
-import Loader from "../components/common/Loader";
-import Item from "../components/artist/Item";
-import ErrorRequest from "../components/common/ErrorRequest";
 
 function ProfileScreen() {
   const [data, setData] = useState([]);
   const [reviews, setReviews] = useState([]);
   const [page, setPage] = useState(1);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const { width } = useWindowDimensions();
   const [isModify, setIsModify] = useState(false);
   const [error, setError] = useState(null);
@@ -90,7 +90,8 @@ function ProfileScreen() {
     };
     const queryString = new URLSearchParams(query).toString();
     const id_utilisateur =
-      id || (await Tokenizer.getCurrentUser()).id_utilisateur;
+      id || (await Tokenizer.getCurrentUser())?.id_utilisateur;
+  
     return await axiosInstance
       .get(`/users/${id_utilisateur}/page?${queryString}`)
       .then((response) => {
@@ -146,7 +147,7 @@ function ProfileScreen() {
       };
       const queryString = new URLSearchParams(query).toString();
       const id_utilisateur =
-        id || (await Tokenizer.getCurrentUser()).id_utilisateur;
+        id || (await Tokenizer.getCurrentUser())?.id_utilisateur;
       axiosInstance
         .get(`/users/${id_utilisateur}/page?${queryString}`)
         .then((response) => {
