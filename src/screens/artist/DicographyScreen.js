@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Pressable, Animated, ScrollView, Platform } from 'react-native';
 import { FontAwesome5 } from '@expo/vector-icons'; // Importation de FontAwesome5
 import axiosInstance from '../../api/axiosInstance';
@@ -7,7 +7,6 @@ import ItemPopup from '../../components/artist/ItemPopup';
 import Loader from '../../components/common/Loader';
 import ErrorRequest from '../../components/common/ErrorRequest';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import Filter from '../../components/search/Filter';
 
 const DiscograpyScreen = () => {
     const navigation = useNavigation( ); 
@@ -23,7 +22,7 @@ const DiscograpyScreen = () => {
         axiosInstance.get('/spotify/fetchArtistSongs',{params: {
             id: id, 
             filter: 'single',
-        },})
+        }})
         .then(response => {
             setSingles(response.data);
         }).catch(e => setError(e.response.data));
@@ -31,11 +30,14 @@ const DiscograpyScreen = () => {
         axiosInstance.get('/spotify/fetchArtistSongs',{params: {
             id: id, 
             filter: 'album',
-        },})
+        }})
         .then(response => {
             setAlbums(response.data);
             setIsLoading(false);
         }).catch(e => setError(e.response.data));
+        if(albums.length === 0){
+            setFilter('single');
+        }
     },[]);
 
 
@@ -44,10 +46,10 @@ const DiscograpyScreen = () => {
     }
     return (
         <View style={styles.container}>
-        {isLoading ? (
-            <Loader />
-        ) : (
-            <>
+            {isLoading ? (
+                <Loader />
+            ) : (
+                <>
                 <Animated.View style={styles.header}>
                     <Pressable onPress={() => { navigation.goBack() }}>
                         <FontAwesome5 name="chevron-left" size={25} color={Colors.White} style={{paddingTop: 15}}/>
@@ -63,30 +65,30 @@ const DiscograpyScreen = () => {
                             <Text style={[styles.filterText, filter === 'single']}>Singles</Text>
                         </Pressable>          
                 </View>
-                <ScrollView>
+                <ScrollView style={{marginBottom: 30}}>
                     
                     <View style={styles.item}>
-                        {filter == 'album' &&( albums.sort((a, b) => {
+                        {filter === 'album' && albums.sort((a, b) => {
                                 const dateA = new Date(a.date);
                                 const dateB = new Date(b.date);
                                 return dateA - dateB;
                             }).map((item) => (
                                 <ItemPopup key={item.id} data={item} />
-                            )))
+                            ))
                         }
-                        {filter == 'single' (singles.sort((a, b) => {
+                        {filter === 'single' && singles.sort((a, b) => {
                                 const dateA = new Date(a.date);
                                 const dateB = new Date(b.date);
                                 return dateA - dateB;
                             }).map((item) => (
                                 <ItemPopup key={item.id} data={item} />
-                            )))
-                    }
-                  </View>
+                            ))
+                        }
+                    </View>
                 </ScrollView>
-            </>
-        )}
-    </View>
+                </>)
+            }
+        </View>
 )}
 
 
@@ -98,7 +100,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'baseline',
-    padding: 30,
     position: 'relative',
     top: 0,
     left: 0,
@@ -116,7 +117,10 @@ title: {
     display: 'flex',
     flexDirection: 'row',
     flexWrap: 'wrap',
-    marginBottom: 30
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 30,
+    backgroundColor: Colors.Licorice,
  },
  sectionTitle: {
     color: Colors.SeaGreen,

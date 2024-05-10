@@ -13,7 +13,7 @@ import commonStyles from "../../style/commonStyle";
 import {Colors} from "../../style/color";
 import {useNavigation} from '@react-navigation/native'
 
-function SearchResult({_id, type, imageURL, title, subtitle, rounded, onPress}) {
+function SearchResult({id, type, imageURL, title, subtitle, rounded, onPress}) {
     const baseImageURL = "https://merriam-webster.com/assets/mw/images/article/art-wap-article-main/egg-3442-e1f6463624338504cd021bf23aef8441@1x.jpg"
     const {height, width} = useWindowDimensions()
     const [isHovered,setIsHovered] = useState(false)
@@ -30,23 +30,27 @@ function SearchResult({_id, type, imageURL, title, subtitle, rounded, onPress}) 
     };
 
     const navigation = useNavigation();
-    const handlePress = (_id, type) => {
-        if(_id && type){
-            switch(type){
-                case 'artist':
-                    navigation.navigate('Artist', {id: _id });
-                    break;
-                case 'user':
-                    navigation.navigate('user', {id: _id });
-                    break;
-                case 'track':
-                    navigation.navigate('Oeuvre', {type:'track', id: _id });
-                    break;
-                case 'album':
-                case 'single':
-                case 'compliation':
-                    navigation.navigate('Oeuvre', {type:'album', id: _id });
-                    break;
+    const handlePress = () => {
+        if (onPress) {
+            onPress();
+        } else {
+            if(id && type){
+                switch(type){
+                    case 'artist':
+                        navigation.navigate('Artist', {id: id });
+                        break;
+                    case 'user':
+                        navigation.navigate('user', {id: id });
+                        break;
+                    case 'track':
+                        navigation.navigate('Oeuvre', {type:'track', id: id });
+                        break;
+                    case 'album':
+                    case 'single':
+                    case 'compliation':
+                        navigation.navigate('Oeuvre', {type:'album', id: id });
+                        break;
+                }
             }
         }
     };
@@ -103,12 +107,11 @@ function SearchResult({_id, type, imageURL, title, subtitle, rounded, onPress}) 
     const imageStyle = rounded ? styles.imageRound : styles.imageSquare
     return (
         <TouchableHighlight
-            onPress={() => handlePress(_id, type)}
+            onPress={handlePress}
             onPressOut={handlePressOut}
             onMouseEnter={handlePressIn} onMouseLeave={handleMouseLeave}
             underlayColor={Colors.Jet}
             style={[styles.searchResultContainer]}
-            onPress={onPress}
         >
             <View
                 style={[styles.diplayContainer]}

@@ -4,8 +4,10 @@ import { FontAwesome5, FontAwesome } from '@expo/vector-icons'; // Importation d
 import { Colors } from '../../style/color';
 import { Avatar } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
+import axiosInstance from '../../api/axiosInstance';
+import GestureRecognizer from "react-native-swipe-gestures";
 
-const ImagePanel = ({ avatars, type, show }) => {
+const ImagePanel = ({ avatars, type, show, onRefresh }) => {
   const [isModalVisible, setIsModalVisible] = useState(true);
   const navigation = useNavigation();
 
@@ -14,27 +16,25 @@ const ImagePanel = ({ avatars, type, show }) => {
     show(false);
   };
 
-  const onfollow = (id, follow) => {
-    if(type== 'artist'){
+  const onfollow = (id) => {
+    if(type == 'artist'){
       axiosInstance.post('/users/follow', { artistId: id })
       .then(res => {
+        onRefresh()
       }).catch(e => console.log('Une erreur interne à notre serveur est survenue. Réessayer plus tard !'));
     }else{
-      if (!follow) {
-        axiosInstance.post('/amis/follow', { amiIdUtilisateur: id })
-        .then(res => {
-        }).catch(e => console.log('Une erreur interne à notre serveur est survenue. Réessayer plus tard !'));
-      }else{
-        axiosInstance.post('/amis/unfollow', { amiIdUtilisateur: id })
-        .then(res => {
-        }).catch(e => console.log('Une erreur interne à notre serveur est survenue. Réessayer plus tard !'));
-      }
+      axiosInstance.post('/amis/unfollow', { amiIdUtilisateur: id })
+        onRefresh()
+      .then(res => {
+      }).catch(e => console.log('Une erreur interne à notre serveur est survenue. Réessayer plus tard !'));
     }
-    
   };
 
 
   return (
+    <GestureRecognizer
+      onSwipeDown={ closeModal}
+    >
     <Modal
       isVisible={isModalVisible}
       style={styles.modal}
@@ -42,11 +42,12 @@ const ImagePanel = ({ avatars, type, show }) => {
       onSwipeComplete={closeModal}
       onBackdropPress={closeModal}
       animationType="slide"
+      transparent={true}
     >
       <View style={styles.panelContainer}>
         <View style={{ paddingTop: 37 }}>
           <Pressable onPress={closeModal}>
-            <FontAwesome name="close" size={30} color={Colors.White} />
+            <FontAwesome name="close" size={30} color={Colors.Silver} />
           </Pressable>
         </View>
         <View style={styles.panelContent}>
@@ -65,7 +66,7 @@ const ImagePanel = ({ avatars, type, show }) => {
                 </View>
                 <Pressable style={styles.followButton}
                   activeOpacity={1}
-                  onPress={() => onfollow(item.id, type === 'user' ? true : item.doesUserFollow)}
+                  onPress={() => onfollow(item.id)}
                 >
                   {type === 'user' || item.doesUserFollow  ? <Text style={styles.buttonText}>Suivi(e)</Text> : <Text style={styles.buttonText}>+ Suivre</Text>  }
                 </Pressable>
@@ -75,6 +76,7 @@ const ImagePanel = ({ avatars, type, show }) => {
         </View>
       </View>
     </Modal>
+    </GestureRecognizer>
   );
 };
 
@@ -82,15 +84,16 @@ const ImagePanel = ({ avatars, type, show }) => {
 const styles = StyleSheet.create({
   modal: {
     justifyContent: 'flex-end',
-    margin: 0,
+    margin: 0, 
   },
   panelContainer: {
       flex: 1,
       backgroundColor: Colors.Jet,
       paddingLeft: 20,
       paddingRight: 20,
-      borderTopLeftRadius: 15,
-      borderTopRightRadius: 15,
+      borderTopLeftRadius: 30,
+      borderTopRightRadius: 30,
+      marginTop: 300
   },
   panelContent: {
       backgroundColor: Colors.Onyx,
@@ -104,6 +107,7 @@ const styles = StyleSheet.create({
       color: Colors.White,
       fontSize: 20,
       marginBottom: 20,
+      maxWidth: 185
   },
   buttonText: {
     color: Colors.White,

@@ -63,86 +63,83 @@ const Oeuvre = ({ data, artists, favoris, likeUser, setResponse, show }) => {
     >
       <View style={styles.overlay}>
         <View key={data.id} style={styles.profileContainer}>
-          <View style={[styles.section, {gap: Platform.OS === 'web' ? 20 : null, padding:  Platform.OS === 'web' ? 45 : null,}]}>
-            <View style={[styles.section, {gap: Platform.OS === 'web' ? 20 : null}]}>
-              <Pressable
-                  activeOpacity={1}
-                  onMouseEnter={handleImageMouseEnter}
-                  onMouseLeave={handleImageMouseLeave}
-                  style={[
-                  isImageHovered && styles.imageContainerHovered
-                  ]}
-              > 
-                <Image
-                  source={{ uri: data.type === 'track' ? data.album.image : data.image }}
-                  style={{ width: 164, height: 164, borderRadius: 5}}
-                />
-                <View style={styles.playButtonContainer}>
-                <Pressable onPress={linkto}><FontAwesome name="play" size={30} color={Colors.White}/></Pressable>
-                </View>    
-              </Pressable>
-              <View style={styles.section}>
-                <View style={[styles.section, {flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap'}]}>
-                 { data.type !== 'track' && <><Text style={{color: Colors.White, fontSize: Platform.OS  === 'web' ? 20 : 17, textShadowColor: 'rgba(0, 0, 0, 0.75)',
-                    textShadowOffset: {width: -1, height: 1},
-                    textShadowRadius: 10, textTransform: 'uppercase',}}>{data.type}</Text>
-                  <PointTrait point={true}/></>}
-                  <Text style={{color: Colors.White, fontSize: Platform.OS  === 'web' ? 20 : 17, textAlign: 'center',
-                    textShadowColor: 'rgba(0, 0, 0, 0.75)',
-                    textShadowOffset: {width: -1, height: 1},
-                    textShadowRadius: 10,}}>{data.type !== 'track' ? data.release_date.substring(0, 4) : data.album.release_date.substring(0, 4) }</Text>
-                  {data.total_tracks > 1 && <><PointTrait point={true}/>
-                  <Text  style={{color: Colors.White, fontSize: Platform.OS  === 'web' ? 20 : 17, textAlign: 'center', textShadowColor: 'rgba(0, 0, 0, 0.75)',
-                    textShadowOffset: {width: -1, height: 1},
-                    textShadowRadius: 10,}}>{data.total_tracks + ' titres'}</Text></>}
-                  <PointTrait point={true}/>
-                  {artists.length == 1  ? 
-                    <Pressable onPress={() => navigation.navigate('Artist', { id : artists[0].id })}>  
-                      <Image
-                        source={{ uri: artists[0].image }}
-                        style={{ width: Platform.OS === 'web' ? 64 : 40, height: Platform.OS === 'web' ? 64 : 40, borderRadius: 82}}
-                      />    
-                    </Pressable> 
-                  : 
-                    <Pressable  onPress={show}>
-                      <AvatarGroup avatars={artists} size={Platform.OS === 'web' ? 64 : 40} type='artist'/>
-                    </Pressable>
-                  }
-                </View>
-                {Platform.OS !== 'web' && <View style={styles.container}>
-                  <Text numberOfLines={2} style={styles.nameA}>{data.name}</Text>
-                </View>}
-              </View>
-            </View>
-            <View style={styles.sectionFollower}>
-              <Rating
-                type="custom"
-                ratingCount={5}
-                imageSize={35}
-                ratingColor={Colors.DarkSpringGreen}
-                tintColor={Colors.Silver}
-                ratingBackgroundColor={Colors.Onyx}
-                startingValue={data.rating}
-                readonly
-                showRating
+          <View style={[styles.section, {gap: Platform.OS === 'web' ? 20 : null}]}>
+            <Pressable
+                activeOpacity={1}
+                onMouseEnter={handleImageMouseEnter}
+                onMouseLeave={handleImageMouseLeave}
+                style={[
+                isImageHovered && styles.imageContainerHovered
+                ]}
+            > 
+              <Image
+                source={{ uri: data.type === 'track' ? data.album.image : data.image }}
+                style={{ width: 164, height: 164, borderRadius: 5}}
               />
-              <View style={styles.sectionIcon}>
-                <FontAwesome  name="pencil-square-o" size={30} color={Colors.DarkSpringGreen} regular/>
-                <Text style={{color: Colors.White, fontSize: 20, textAlign: Platform.OS !== 'web'? 'center' : undefined}}>{data.reviewCount ? data.reviewCount : 0}</Text>
+              <View style={styles.playButtonContainer}>
+              <Pressable onPress={linkto}><FontAwesome name="play" size={30} color={Colors.White}/></Pressable>
+              </View>    
+            </Pressable>
+            <View style={styles.section}>
+              <View style={[styles.section, {flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap'}]}>
+                { data.type !== 'track' && <><Text style={{color: Colors.White, fontSize: Platform.OS  === 'web' ? 20 : 17, textShadowColor: 'rgba(0, 0, 0, 0.75)',
+                  textShadowOffset: {width: -1, height: 1},
+                  textShadowRadius: 10, textTransform: 'uppercase',}}>{data.type}</Text>
+                <PointTrait point={true}/></>}
+                <Text style={{color: Colors.White, fontSize: Platform.OS  === 'web' ? 20 : 17, textAlign: 'center',
+                  textShadowColor: 'rgba(0, 0, 0, 0.75)',
+                  textShadowOffset: {width: -1, height: 1},
+                  textShadowRadius: 10,}}>{data.type !== 'track' ? data.release_date.substring(0, 4) : data.album.release_date.substring(0, 4) }</Text>
+                {data.total_tracks > 1 && <><PointTrait point={true}/>
+                <Text  style={{color: Colors.White, fontSize: Platform.OS  === 'web' ? 20 : 17, textAlign: 'center', textShadowColor: 'rgba(0, 0, 0, 0.75)',
+                  textShadowOffset: {width: -1, height: 1},
+                  textShadowRadius: 10,}}>{data.total_tracks + ' titres'}</Text></>}
+                <PointTrait point={true}/>
+                {artists.length == 1  ? 
+                  <Pressable onPress={() => navigation.navigate('Artist', { id : artists[0].id })}>  
+                    <Image
+                      source={{ uri: artists[0].image }}
+                      style={{ width: Platform.OS === 'web' ? 64 : 40, height: Platform.OS === 'web' ? 64 : 40, borderRadius: 82}}
+                    />    
+                  </Pressable> 
+                : 
+                  <Pressable  onPress={show}>
+                    <AvatarGroup avatars={artists} size={Platform.OS === 'web' ? 64 : 40} type='artist'/>
+                  </Pressable>
+                }
               </View>
-              <View style={styles.sectionIcon}>
-                  <Pressable onPress={onLike}>{like ?  <FontAwesome5 name="heart" size={30} color={Colors.DarkSpringGreen} solid  />: <FontAwesome5 name="heart" size={30} color={Colors.DarkSpringGreen} regular/>}</Pressable>
-                <Text style={{color: Colors.White, fontSize: 20, textAlign: Platform.OS !== 'web'? 'center' : undefined}}>{countlike}</Text>
-              </View>
-              <View style={styles.sectionIcon}>
-                <Pressable onPress={handleFavoris}>
-                  {fav ?  <FontAwesome5 name="bookmark" size={30} color={Colors.DarkSpringGreen} solid  />: <FontAwesome5 name="bookmark" size={25} color={Colors.DarkSpringGreen} regular/>}
-                </Pressable>
-                <Text/>
-              </View>
+              {Platform.OS !== 'web' && <View style={styles.container}>
+                <Text numberOfLines={2} style={styles.nameA}>{data.name}</Text>
+              </View>}
             </View>
           </View>
-        </View>
+          <View style={styles.sectionFollower}>
+            <Rating
+              type="custom"
+              ratingCount={5}
+              imageSize={35}
+              ratingColor={Colors.DarkSpringGreen}
+              tintColor={Colors.Silver}
+              ratingBackgroundColor={Colors.Onyx}
+              startingValue={data.rating}
+              readonly
+            />
+            <View style={styles.sectionIcon}>
+              <FontAwesome  name="pencil-square-o" size={30} color={Colors.DarkSpringGreen} regular/>
+              <Text style={{color: Colors.White, fontSize: 20, textAlign: Platform.OS !== 'web'? 'center' : undefined}}>{data.reviewCount ? data.reviewCount : 0}</Text>
+            </View>
+            <View style={styles.sectionIcon}>
+                <Pressable onPress={onLike}>{like ?  <FontAwesome5 name="heart" size={30} color={Colors.DarkSpringGreen} solid  />: <FontAwesome5 name="heart" size={30} color={Colors.DarkSpringGreen} regular/>}</Pressable>
+              <Text style={{color: Colors.White, fontSize: 20, textAlign: Platform.OS !== 'web'? 'center' : undefined}}>{countlike}</Text>
+            </View>
+            <View style={styles.sectionIcon}>
+              <Pressable onPress={handleFavoris}>
+                {fav ?  <FontAwesome5 name="bookmark" size={30} color={Colors.DarkSpringGreen} solid  />: <FontAwesome5 name="bookmark" size={25} color={Colors.DarkSpringGreen} regular/>}
+              </Pressable>
+              <Text/>
+            </View>
+          </View>
+          </View>
       </View>
     </ImageBackground>
   )
@@ -151,13 +148,11 @@ const Oeuvre = ({ data, artists, favoris, likeUser, setResponse, show }) => {
 const styles = StyleSheet.create({
   profileContainer: {
     display: 'flex',
-    flexWrap: 'wrap',
-    flexDirection:'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 20,
+    justifyContent: 'center',
+    alignItems: 'flex-start',
     gap:10,
-    color: Colors.White,
+    paddingLeft: 15,
+    paddingTop: 45
   },
   description:  {
     display: 'flex',
@@ -180,6 +175,7 @@ const styles = StyleSheet.create({
     padding: 10,
     gap: 15,
     shadowColor: Colors.Onyx,
+    maxWidth: Platform.OS !== 'web' ? 390 : null,
     shadowOpacity: 0.3,
     shadowRadius: 3,
     elevation: Platform.OS === 'android' ? 4 : 0, 
@@ -209,6 +205,7 @@ const styles = StyleSheet.create({
     color: Colors.White,
     fontWeight: 'bold',
     marginBottom: 10,
+    maxWidth: 390,
     flexWrap: 'wrap',
     textTransform: 'uppercase',
     textShadowColor: 'rgba(0, 0, 0, 0.5)',

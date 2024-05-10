@@ -3,17 +3,23 @@ import { Colors } from './color';
 
 const modalStyle = StyleSheet.create({
     modalContainer: {
-        padding: 20,
+        justifyContent: 'flex-end',
+        margin: 0,
     },
     modal : {
         backgroundColor : Colors.Onyx,
-        marginTop: 100,
+        marginTop: 60,
         borderRadius: 30,
         padding: 20,
-
         height : '100%',
         display: 'flex',
-        flexDirection: 'column',
+    },
+    messageText: {
+        fontSize: 20,
+        color: Colors.Silver,
+        paddingLeft: 15,
+        paddingRight: 15,
+        textAlign: 'justify'
     },
     modalHeader: {
         display: 'flex',
@@ -21,19 +27,26 @@ const modalStyle = StyleSheet.create({
         justifyContent: 'space-between',
         alignItems: 'center',
         marginBottom: 0,
+        paddingBottom: 10
     },
     modalTitle : {
-        color: Colors.White,
+        color: Colors.Silver,
         fontSize: 20,
     },
     reviewContainer : {
         display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        width: '100%',
-        height: 650,
-        padding: 10,
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    textContainer:{
+        display: 'flex',
+        backgroundColor: Colors.Jet,
+        borderRadius: 15,
+        paddingTop: 20,
+        paddingBottom: 20,
+        paddingLeft: 20,
+        paddingRight: 20,
+        marginTop: 5
     },
     musicItemContainer : {
         width: "100%",
@@ -42,23 +55,24 @@ const modalStyle = StyleSheet.create({
     },
     input : {
         backgroundColor: Colors.Jet,
-        color: Colors.Silver,
+        color: Colors.White,
+        fontSize: 16,
         fontFamily : "inter-regular",
         borderRadius: 10,
-        height: "65%",
-        width: "100%",
-        margin: 10,
-        paddingTop: 20,
-        paddingBottom: 20,
-        paddingLeft: 20,
-        paddingRight: 20,
+        height: "50%",
+        marginTop: 10,
+        marginBottom: 5,
+        paddingTop: 15,
+        paddingBottom: 10,
+        paddingLeft: 10,
+        paddingRight: 10,
         textAlignVertical: 'top',
-        borderColor: Colors.Jet,
+        textAlign: 'justify',
+        borderColor: Colors.Onyx,
         borderWidth: 1,
     },
     inputFocused : {
-        borderColor: Colors.Licorice,
-        borderWidth: 1,
+        borderColor: Colors.BattleShipGray,
     },
 });
 

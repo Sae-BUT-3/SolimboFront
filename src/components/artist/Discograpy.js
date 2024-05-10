@@ -36,8 +36,7 @@ const Discography = ({ items, id}) => {
             <Text style={[styles.filterText, filter === 'single']}>Singles</Text>
           </Pressable>
       </View> : null}
-      <View style={{marginBottom: 30}}> 
-        <View style={{display: 'flex', flexDirection: 'row', alignItems: 'flex-start', flexWrap: 'wrap'}}>
+        <View style={{marginBottom: 30, display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', flexWrap: 'wrap'}}>
           {items.length > 0 ? items.filter(item => filter === 'popularity' || item.type.toLowerCase().includes(filter.toLowerCase())).sort((a, b) => {
               if(filter !== 'popularity'){
                 const dateA = new Date(a.date);
@@ -50,8 +49,13 @@ const Discography = ({ items, id}) => {
             <View style={{display:'flex', margin: 30}}>
               <Text style={{color: Colors.White, fontSize:20, fontWeight:'normal'}}>Discographie vide pour le moment.</Text>
             </View>}
+            {Platform.OS !== 'web' && (
+            <View style={[styles.sectionFilter, {alignItems: 'center'}]}>
+              <Pressable style={styles.btn} onPress={()=>{navigation.navigate('Discographie', {id})}}>
+                <Text style={styles.filterText}>Voir toute la discographie</Text>
+              </Pressable>
+            </View>)}
         </View>
-      </View> 
     </>
   )
 }
@@ -93,9 +97,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     paddingVertical: 8,
     borderRadius: 9,
-    borderColor: Colors.SeaGreen,
+    borderColor: Colors.Silver,
     borderWidth: 1,
-    backgroundColor:  'transparent',
+    backgroundColor:  Colors.Jet,
     shadowColor: Colors.Onyx,
     shadowOpacity: 0.3,
     shadowRadius: 3,

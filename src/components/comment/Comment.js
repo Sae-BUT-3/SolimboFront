@@ -118,7 +118,7 @@ const Comment = ({ data, hide}) => {
     handle: handleDelete,
     color: 'red',
     text: 'Supprimer',
-    textColor: 'red',
+    textColor: '#d62828',
     solid: true,
     size: 24
   })]
@@ -126,10 +126,10 @@ const Comment = ({ data, hide}) => {
     <View style={styles.commentContainer}> 
     <Pressable onLongPress={() => setActive(!isActive)}>
       <View style={{display: 'flex', flexDirection:'row', justifyContent: 'space-between', alignItems: 'center'}}>
-        <Pressable>
+        <Pressable onPress={()=> navigation.navigate('user', {id: data.utilisateur.id_utilisateur })}>
           <Avatar.Image source={{ uri: data.utilisateur.photo}} size={Platform.OS === 'web'? 75 : 64}/>
         </Pressable>
-        <Pressable>
+        <Pressable onPress={()=> navigation.navigate('user', {id: data.utilisateur.id_utilisateur })}>
           <Text style={{color: Colors.DarkSpringGreen, fontSize:  19, fontWeight: 'normal'}}>{'@' + data.utilisateur.alias}</Text>
         </Pressable>
       </View>

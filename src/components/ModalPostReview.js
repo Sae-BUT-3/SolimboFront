@@ -1,46 +1,49 @@
-import React, {useEffect, useState, useCallback} from 'react';
-import { Modal, View, ScrollView, TextInput, Pressable, Alert } from 'react-native';
+import React, { useEffect, useState, useCallback } from 'react';
+import { Modal, View, ScrollView, Pressable, Text, Image, KeyboardAvoidingView, Platform } from 'react-native';
 import modalStyle from '../style/modalStyle';
-import { FontAwesome5 } from '@expo/vector-icons';
+import { FontAwesome } from '@expo/vector-icons';
 import { Colors } from '../style/color';
 import Searchbar from './search/Searchbar';
 import axiosInstance from '../api/axiosInstance';
 import SearchResult from './search/SearchResult';
-import searchStyle from '../style/searchStyle';
 import StarRating from 'react-native-star-rating-widget';
-import PressableBasic from './pressables/PressableBasic';
 import MultilineInput from './form/MultilineInput';
+import ErrorRequest from './common/ErrorRequest';
+import Loader from './common/Loader';
+import pressableBasicStyle from '../style/pressableBasicStyle';
+import Tokenizer from '../utils/Tokenizer';
+import PointTrait from './common/PointTrait';
+import { Avatar, Divider } from 'react-native-paper';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 const ModalPostReview = ({ visible, onClose }) => {
     const [filter, setFilter] = useState([]);
-    const [items, setItems] = useState([]);
-    const [messsageText, setMesssageText] = useState("Recherchez vos artistes, musiques ou amis");
-
-    // L'oeuvre concernée par la critique
-    //const [musicItem, setMusicItem] = useState([]);
-    const [musicItem, setMusicItem] = useState({"id": "6gBFPUFcJLzWGx4lenP6h2", "imageURL": "https://i.scdn.co/image/ab67616d0000b273f54b99bf27cda88f4a7403ce", "subtitle": "Travis Scott", "title": "goosebumps", "type": "track"});
-    
+    const [items, setItems] = useState(null);
+    const [messageText, setMessageText] = useState("Recherchez une œuvre ou un artiste pour rédiger une critique");
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState(null);
+    // L'œuvre concernée par la critique
+    const [musicItem, setMusicItem] = useState(null);
     const [rating, setRating] = useState(0);
-
     const [description, setDescription] = useState("");
-    
-    const [reviewObject, setReviewObject] = useState({
-        "idOeuvre": "",
-        "description": "",
-        "note": 0,
-        "type": ""
-    });
+    const [currentUser, setUser] = useState({});
+
+    const getData = async () => {
+        setUser(await Tokenizer.getCurrentUser());
+    }
 
     useEffect(() => {
+        getData();
         // Fetch search filters when the component mounts
         axiosInstance.get('/spotify/Searchfilters').then(response => {
-            setFilter(response.data);
+            setFilter(response.data.filter(item => item.id !== 'user'));
         });
     }, [])
 
-    function handleSerch(query){
-        if(!query.text.length) {
+    const handleSearch = useCallback((query) => {
+        if (!query.text.length) {
             setItems([])
+            setMessageText('Recherchez une œuvre ou un artiste pour rédiger une critique')
             return
         }
         const params = {
@@ -48,105 +51,149 @@ const ModalPostReview = ({ visible, onClose }) => {
             spotify_filter: query.filters.join(","),
             limit: 20
         }
-        axiosInstance.get("/spotify/search",{
+        axiosInstance.get("/spotify/search", {
             params
         }).then(response => {
             setItems(response.data)
-            if(response.data.length > 0){
-                setMesssageText(null)
+            if (response.data.length > 0) {
+                setMessageText(null)
                 return
             }
-            setMesssageText('Pas de résulat pour cette recherche')
+            setMessageText('Pas de résultat pour cette recherche')
         })
-    }
+        .catch(error => {
+            setError(error.response.data);
+        })
+    }, []);
 
     return (
-        <Modal
-        animationType="slide"
-        transparent={true}
-        visible={visible}
-        onRequestClose={onClose}
-        style={modalStyle.modalContainer}
-        >
-            <View style={modalStyle.modal}>
-                <View style={modalStyle.modalHeader}>
-                    <FontAwesome5 name="times" size={24} color={Colors.Silver} onPress={onClose} />
-                    {/* <Text style={modalStyle.modalTitle}>Post a review</Text> */}
-                </View>
-                <View>
-                {musicItem.length === 0 ? (
-                    <>
-                        <Searchbar filters={filter} keyPressHandler={query => handleSerch(query)} includeCancelButton={false}/>
-                        <ScrollView style={searchStyle.container}>
-                            {
-                                items.map((item, index) => (
-                                    <View
-                                    key={index}
-                                    style={searchStyle.resultItemContainer}>
-                                        <SearchResult
-                                            key={index}
-                                            imageURL={item.imageURL}
-                                            title={item.title}
-                                            subtitle={item.subtitle}
-                                            rounded={item.type === 'user' || item.type === 'artist'}
-                                            onPress={() => setMusicItem(item)}
-                                        />
+       
+            <Modal
+                animationType="slide"
+                transparent={true}
+                visible={visible}
+                onRequestClose={onClose}
+                style={modalStyle.modalContainer}
+            >
+                <KeyboardAvoidingView
+                    behavior={Platform.OS === "ios" ? "padding" : "height"}
+                    style={{ flex: 1 }}
+                >
+                    <View style={modalStyle.modal}>
+                        <View style={modalStyle.modalHeader}>
+                            <FontAwesome name="close" size={30} color={Colors.Silver} onPress={onClose} />
+                            <Text style={modalStyle.modalTitle}>Rédaction d'une critique</Text>
+                            <FontAwesome name="pencil-square-o" size={25} color={Colors.Silver} onPress={onClose} />
+                        </View>
+                        <Divider style={{ backgroundColor: Colors.BattleShipGray }} />
+                        {isLoading ? <Loader /> : <KeyboardAwareScrollView
+                            contentContainerStyle={{ flexGrow: 1 }}
+                            extraHeight={150}
+                            enableResetScrollToCoords={false}
+                            enableOnAndroid={true}
+                            enableAutomaticScroll={true}
+                            keyboardOpeningTime={0}
+                            style={{ flex: 1 }}
+                        >
+                            <View style={{ marginTop: 15 }}>
+                                {musicItem === null ? (
+                                    <>
+                                        <Searchbar filters={filter} keyPressHandler={handleSearch} includeCancelButton={false} />
+                                        <View style={{ backgroundColor: Colors.Jet, borderRadius: 15, paddingLeft: 5, paddingTop: 5, height: "100%" }}>
+                                            <ScrollView>
+                                                {
+                                                    items?.map((item, index) => (
+                                                        <SearchResult
+                                                            key={index}
+                                                            imageURL={item.imageURL}
+                                                            title={item.title}
+                                                            subtitle={item.subtitle}
+                                                            rounded={item.type === 'artist'}
+                                                            onPress={() => setMusicItem(item)}
+                                                        />
+                                                    ))
+                                                }
+                                                {messageText && <Text style={modalStyle.messageText}>{messageText}</Text>}
+                                            </ScrollView>
+                                        </View>
+                                    </>
+                                ) : (
+                                    <View style={modalStyle.reviewContainer}>
+                                        <View style={{ gap: 10, justifyContent: 'center', alignItems: 'center', marginTop: 20 }}>
+                                            <Image
+                                                source={{ uri: musicItem.imageURL || require('../assets/images/profil.png') }}
+                                                style={{ width: 150, height: 150, borderRadius: 5 }}
+                                            />
+                                            <View style={{ gap: 5, justifyContent: 'center', alignItems: 'center', flexDirection: 'row' }}>
+                                                <Text numberOfLines={1} style={{ color: Colors.White, fontSize: 20, fontWeight: 'normal', maxWidth: 210, paddingLeft: 5, textAlign: 'center' }}>{musicItem.title}</Text>
+                                                {musicItem.subtitle && (
+                                                    <>
+                                                        <PointTrait point={true} />
+                                                        <Text numberOfLines={1} style={{ color: Colors.Silver, fontSize: 19, fontWeight: 'normal', maxWidth: 150, textAlign: 'center' }}>{musicItem.subtitle}</Text>
+                                                    </>
+                                                )}
+                                            </View>
+                                        </View>
+
+                                        <View style={modalStyle.textContainer}>
+                                            <View style={{ display: 'flex', flexDirection: 'row', gap: 10, justifyContent: 'flex-start', alignItems: 'center', marginBottom: 5 }}>
+                                                <Avatar.Image source={{ uri: currentUser.photo || require('../assets/images/profil.png') }} size={45} accessibilityLabel={currentUser.pseudo} />
+                                                <Text style={{ color: Colors.SeaGreen, fontSize: 19, fontWeight: 'normal' }}>{'@' + currentUser.alias}</Text>
+                                            </View>
+                                            <StarRating
+                                                rating={rating}
+                                                onChange={setRating}
+                                                starSize={40}
+                                                color={Colors.DarkSpringGreen}
+                                                emptyColor={Colors.Onyx}
+                                                enableSwiping={true}
+                                            />
+                                            <MultilineInput
+                                                placeholder="Rédiger votre critique..."
+                                                value={description}
+                                                onChangeText={setDescription}
+                                                maxLength={1500}
+                                            />
+                                            <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
+                                                <Pressable
+                                                    style={[pressableBasicStyle.button, { width: 150 }]}
+                                                    onPress={() => {
+                                                        setIsLoading(true);
+                                                        axiosInstance.put('/review', { idOeuvre: musicItem.id, note: rating, description: description, type: musicItem.type })
+                                                        .then(response => {
+                                                            setMusicItem(null);
+                                                            setRating(0);
+                                                            setIsLoading(false);
+                                                        })
+                                                        .catch(error => {
+                                                            console.log(error)
+                                                            setIsLoading(false);
+                                                            setError(error.response.data);
+                                                        })
+                                                    }}
+                                                >
+                                                    <FontAwesome size={20} name='send-o' color={Colors.White} style={{ paddingRight: 10 }} />
+                                                    <Text style={pressableBasicStyle.button_text}>Poster</Text>
+                                                </Pressable>
+                                                <Pressable
+                                                    style={[pressableBasicStyle.button, { backgroundColor: '#d62828', width: 150 }]}
+                                                    onPress={() => { 
+                                                        setMusicItem(null); 
+                                                        setRating(0); 
+                                                    }}
+                                                >
+                                                    <FontAwesome size={20} name='close' color={Colors.White} style={{ paddingRight: 10 }} regular />
+                                                    <Text style={pressableBasicStyle.button_text}>Annuler</Text>
+                                                </Pressable>
+                                            </View>
+                                        </View>
                                     </View>
-                                ))
-                            }
-                        </ScrollView>
-                    </> 
-                ) : (
-                    
-                    <View style={modalStyle.reviewContainer}>
-                        
-                        <ScrollView style={modalStyle.musicItemContainer} scrollEnabled={false}>
-                                <SearchResult
-                                imageURL={musicItem.imageURL}
-                                title={musicItem.title}
-                                subtitle={musicItem.subtitle}
-                                rounded={false}
-                                // onPress={() => setMusicItem(item)}
-                                />
-                        </ScrollView> 
-                        
-                        <StarRating
-                            rating={rating}
-                            onChange={setRating}
-                            starSize={55}
-                            color={Colors.DarkSpringGreen}
-                            emptyColor={Colors.BattleShipGray}
-                            enableSwiping={true}
-                        />
-
-                        <MultilineInput
-                            placeholder="Indiquez votre avis ici"
-                            multiline={true}
-                            numberOfLines={4}
-                            value={description}
-                            onChangeText={setDescription}
-                        />
-
-                        <PressableBasic
-                            text="Poster ma review"
-                            onPress={() => {
-                                setReviewObject({ idOeuvre: musicItem.id, note: rating, description: description, type: musicItem.type })
-                                axiosInstance.put('/solimbo/review', reviewObject)
-                                .then(response => {
-                                    console.log(response)
-                                })
-                                .catch(error => {
-                                    console.log(error)
-                                    Alert.alert("Erreur", "Une erreur est survenue lors de l'envoi de votre critique +\n", error.response.data.message)
-                                })
-                            }}
-                        />
-
+                                )}
+                            </View>
+                        </KeyboardAwareScrollView>}
                     </View>
-                )}
-                </View>
-            </View>
-        </Modal>
+                </KeyboardAvoidingView>
+            </Modal>
     );
 };
 

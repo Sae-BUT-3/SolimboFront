@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {View, Text, TextInput, StyleSheet, useWindowDimensions, Platform} from 'react-native';
+import {View, Text, TextInput, StyleSheet, useWindowDimensions, Platform, ScrollView} from 'react-native';
 import Filter from "./Filter";
 import Svg, { Path } from 'react-native-svg';
 import {Colors} from "../../style/color";
@@ -12,31 +12,34 @@ function SearchBar({keyPressHandler, filters, includeCancelButton = true}) {
     const [inputValue, setInputValue] = useState('');
 
     const styles = StyleSheet.create({
-        container : {
-
-        },
         diplayContainer: {
             display: "flex",
             flexDirection: "row",
             width: "100%",
-            alignItems: "center"
+            alignItems:  "flex-start",
+            justifyContent: "flex-start",
+            marginBottom: 15,
         },
         SearchBarContainer: {
             paddingBottom: 10,
-            display:"flex",
-            justifyContent : "center"
+            backgroundColor: Colors.Jet,
+            borderRadius: 10,
+            justifyContent: 'flex-start',
+            alignItems: 'center',
+            paddingLeft: 10,
+            paddingTop: 10,
+            width: Platform.OS === "web" ? "90%" : "100%",
         },
         SearchBar: {
             display: "flex",
             flexDirection: "row",
-            width: Platform.OS === "web" ? "90%" : "75%",
+            alignSelf: 'flex-end',
             backgroundColor: Colors.Jet,
-            paddingTop: 10,
-            paddingLeft: 10,
-            paddingBottom: 10,
-            borderRadius:10,
+            width: Platform.OS === "web" ? "90%" : "75%",
             color: Colors.Silver,
-            marginHorizontal : 10
+            paddingTop: 5,
+            marginLeft: 10,
+            fontSize: 16
         },
         filters: {
             gap: 10,
@@ -88,7 +91,6 @@ function SearchBar({keyPressHandler, filters, includeCancelButton = true}) {
                 >
                     <Path fill="none" viewBox="0 0 20 20" strokeWidth="2" stroke={Colors.Silver} className="w-6 h-6" strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
                 </Svg>
-
                 <TextInput
                     style={styles.SearchBar}
                     placeholder="Chercher"

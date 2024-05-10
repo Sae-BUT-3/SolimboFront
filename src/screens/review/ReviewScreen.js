@@ -111,7 +111,7 @@ const ReviewScreen = () => {
                         </Animated.View>
                         <ScrollView
                             refreshControl={
-                                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+                                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[Colors.DarkSpringGreen]} tintColor={Colors.DarkSpringGreen} size='large' title='Actualisation...' titleColor={Colors.White}/>
                             }                       
                         >
                             <ScrollView style={styles.diplayContainer} horizontal={true}>
