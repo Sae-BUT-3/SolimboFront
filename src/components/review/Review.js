@@ -67,10 +67,13 @@ const Review = ({ data}) => {
   const goTo = (_id, type) => {
     if(_id && type){
       switch(type){
+          case 'track':
+            navigation.navigate('Oeuvre', {type:'track', id: _id });
+            break;
           case 'single':
           case 'album':
           case 'compliation':
-            navigation.navigate('Oeuvre', {type: 'album', id : data.oeuvre.id });
+            navigation.navigate('Oeuvre', {type: 'album', id : _id });
             break;
       }
     }
@@ -154,24 +157,24 @@ const Review = ({ data}) => {
     handle: handleDelete,
     color: 'red',
     text: 'Supprimer',
-    textColor: 'red',
+    textColor: '#d62828',
     solid: true,
     size: 24
   })]
   return (
-    <Pressable onLongPress={()=> setActive(!isActive)}>
+    <Pressable onLongPress={()=> setActive(!isActive)} onPress={handleCommentButtonClick}>
     <View key={data.id_review} style={styles.reviewContainer}>
         <View style={styles.reviewerInfo}>
           <View style={{display: 'flex', flexDirection: 'row', gap: 5}}>
                 <Pressable onPress={() => goTo(data.oeuvre.id, data.oeuvre.type)}>
-                  <Avatar source={{ uri: data.oeuvre.image }} size={Platform.OS === 'web'? 90 : 74} containerStyle={{  borderRadius: 10,shadowColor: Colors.Onyx,
+                  <Avatar source={{ uri: data.oeuvre.type === 'track' ? data.oeuvre.album.image : data.oeuvre.image }} size={Platform.OS === 'web'? 90 : 74} containerStyle={{  borderRadius: 10,shadowColor: Colors.Onyx,
                     shadowOpacity: 0.3,
                     shadowRadius: 3,
                     elevation: Platform.OS === 'android' ? 3 : 0, }} />
                 </Pressable>
-                <View style={{display: 'flex', paddingLeft: 10}}>
-                  <Text style={{color: Colors.White, fontSize: Platform.OS == 'web' ? 20 : 19, fontWeight: 'bold'}}>{toCapitalCase(data.oeuvre.name)}</Text>
-                  <Text style={{color: Colors.White, fontSize: Platform.OS == 'web' ? 20 : 19, fontWeight: 'normal' }}>{toCapitalCase(data.oeuvre.type)}</Text>
+                <View style={{display: 'flex', paddingLeft: 10, gap: 5, flexWrap: 'wrap'}}>
+                  <Text numberOfLines={3} style={{color: Colors.White, fontSize: Platform.OS == 'web' ? 20 : 19, fontWeight: 'bold',  maxWidth: 280}}>{toCapitalCase(data.oeuvre.name)}</Text>
+                  <Text style={{color: Colors.White, fontSize: Platform.OS == 'web' ? 20 : 19, fontWeight: 'normal' }}>{data.oeuvre.type === 'track' ? 'Titre' : toCapitalCase(data.oeuvre.type)}</Text>
                 </View>
           </View>
           <View style={{display: 'flex', gap: 9, flexDirection: Platform.OS == 'web' ? 'column' : 'row', alignItems: Platform.OS != 'web' ? 'center' : null}}>
@@ -186,7 +189,7 @@ const Review = ({ data}) => {
               readonly
             />
             {Platform.OS != 'web' && <PointTrait point={true}/>}
-            <Pressable><Text style={{color: Colors.DarkSpringGreen, fontSize: 20 , fontWeight: 'normal', textAlign: 'right' }}>{'@' + data.utilisateur.alias}</Text></Pressable>
+            <Pressable onPress={()=> navigation.navigate('user', {id: data.utilisateur.id_utilisateur })}><Text numberOfLines={1} style={{maxWidth: 200, color: Colors.DarkSpringGreen, fontSize: 20 , fontWeight: 'normal', textAlign: 'right' }}>{'@' + data.utilisateur.alias}</Text></Pressable>
           </View>
         </View>
         <View style={{margin: Platform.OS == 'web' ? 20: 5}}>

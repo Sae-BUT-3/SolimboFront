@@ -5,11 +5,11 @@ import HomeScreen from '../screens/HomeScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import SearchScreen from '../screens/search/SearchScreen';
 import { Colors } from '../style/color';
-import { TouchableOpacity } from 'react-native';
+import { TouchableOpacity, Modal } from 'react-native';
 import ActivityScreen from '../screens/AcvityScreen';
 import AddButtonScreen from '../screens/AddButtonScreen';
-import ModalPostReview from '../components/ModalPostReview';
 import GestureRecognizer from 'react-native-swipe-gestures';
+import ModalPostReview from '../components/ModalPostReview';
 
 const Tab = createBottomTabNavigator();
 
@@ -30,7 +30,7 @@ function TabNavigator() {
                 tabBarInactiveTintColor: Colors.CalPolyGreen,
                 tabBarShowLabel: false,
             })}
-            initialRouteName='Search'
+            initialRouteName='Home'
         >
             <Tab.Screen 
                 name="Home" 
@@ -59,9 +59,6 @@ function TabNavigator() {
                     title: 'Solimbo - Commenter une oeuvre',
                     tabBarIcon: ({ color, size }) => (
                         <TouchableOpacity
-                            onPress={() => {
-                                setModalVisible(true);
-                            }}
                             style={{
                                 width: 56,
                                 height: 56,
@@ -70,6 +67,7 @@ function TabNavigator() {
                                 justifyContent: 'center',
                                 alignItems: 'center',
                             }}
+                            onPress={() => setModalVisible(true)} // Afficher le modal lors du clic sur l'icône "plus"
                         >
                             <FontAwesome5 name="plus" size={24} color={Colors.Jet} />
                         </TouchableOpacity>
@@ -99,9 +97,7 @@ function TabNavigator() {
         </Tab.Navigator>
 
         <GestureRecognizer
-        // style={{flex: 1}}
-        // onSwipeUp={ () => setModalVisible(true) }
-        onSwipeDown={ () => setModalVisible(false) }
+            onSwipeDown={ () => setModalVisible(false) }
         >
             <ModalPostReview visible={modalVisible} onClose={() => setModalVisible(false)} />
         </GestureRecognizer>

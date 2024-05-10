@@ -94,7 +94,7 @@ const Response = ({data})=>{
         handle: handleDelete,
         color: 'red',
         text: 'Supprimer',
-        textColor: 'red',
+        textColor: '#d62828',
         solid: true,
         size: 24
       })]
@@ -128,8 +128,10 @@ const Response = ({data})=>{
         <List.Item
             title={
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', gap: 5, alignItems: 'center' }}>
-                    <Avatar.Image source={{ uri: data?.utilisateur.photo }} size={Platform.OS === 'web' ? 75 : 54} />
-                    <Pressable>
+                    <Pressable onPress={()=> navigation.navigate('user', {id: data.utilisateur.id_utilisateur })}>
+                        <Avatar.Image source={{ uri: data?.utilisateur.photo }} size={Platform.OS === 'web' ? 75 : 54} />
+                    </Pressable>
+                    <Pressable onPress={()=> navigation.navigate('user', {id: data.utilisateur.id_utilisateur })}>
                         <Text style={{ color: Colors.DarkSpringGreen, fontSize: Platform.OS === "web" ? 18 : 16, fontWeight: 'normal' }}>{'@' + data.utilisateur.alias}</Text>
                     </Pressable>
                 </View>

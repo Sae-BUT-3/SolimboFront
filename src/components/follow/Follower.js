@@ -6,17 +6,19 @@ import axiosInstance from '../../api/axiosInstance';
 import { Modal } from 'react-native';
 import { FontAwesome5, FontAwesome } from '@expo/vector-icons'; // Importation de FontAwesome5
 import Filter from '../search/Filter';
+import GestureRecognizer from 'react-native-swipe-gestures';
+import Tokenizer from '../../utils/Tokenizer';
 
 const Follower = ({id, type, isVisible}) => {
     const [searchQuery, setSearchQuery] = useState('');
     const  [data, setData] = useState([]);
     const [isModalVisible, setIsModalVisible] = useState(true);
-    const [onlyFriend, setOnlyFriends] = useState(false);
+    const [currentUser, setUser] = useState({});
 
-    const openModal = () => {
-      setIsModalVisible(true);
-    };
-  
+    const getData = async () => {
+        setUser(await Tokenizer.getCurrentUser());
+    }
+
     const closeModal = () => {
       setIsModalVisible(false);
       isVisible(false);
@@ -54,6 +56,7 @@ const Follower = ({id, type, isVisible}) => {
     }
 
     useEffect(() => {
+        getData();
        if(type == 'follower'){ 
             axiosInstance.get(`/artist/${id}/followers`)
             .then(response => {
@@ -63,6 +66,9 @@ const Follower = ({id, type, isVisible}) => {
     }, []);
 
     return (
+        <GestureRecognizer
+            onSwipeDown={ closeModal }
+        >
         <Modal
             isVisible={isModalVisible}
             style={styles.modal}
@@ -75,7 +81,7 @@ const Follower = ({id, type, isVisible}) => {
             <View style={styles.container}>
                 <View style={{ paddingTop: 37 }}>
                     <Pressable onPress={closeModal}>
-                        <FontAwesome name="close" size={30} color={Colors.White} />
+                        <FontAwesome name="close" size={30} color={Colors.Silver} />
                     </Pressable>
                 </View>
                 
@@ -103,18 +109,21 @@ const Follower = ({id, type, isVisible}) => {
                                     <Avatar.Image size={56} source={{ uri: item.photo }} />
                                     <Text style={styles.panelText}>{item.pseudo}</Text>
                                 </View>
-                                <Pressable style={styles.followButton}
-                                    activeOpacity={1}
-                                    onPress={() => handlePress(item.areFriends, item.id_utilisateur)}
-                                >
-                                    {item.areFriends ? <Text style={styles.buttonText}>Suivi(e)</Text> : <Text style={styles.buttonText}>+ Suivre</Text>  }
-                                </Pressable >
+                                {currentUser.id_utilisateur !== item.id_utilisateur &&
+                                    <Pressable style={styles.followButton}
+                                        activeOpacity={1}
+                                        onPress={() => handlePress(item.areFriends, item.id_utilisateur)}
+                                    >
+                                        {item.areFriends ? <Text style={styles.buttonText}>Suivi(e)</Text> : <Text style={styles.buttonText}>+ Suivre</Text>  }
+                                    </Pressable >
+                                }
                             </View>
                         }
                     />
                 </View>   
             </View>
         </Modal>
+        </GestureRecognizer>
     );
 };
 
@@ -128,8 +137,9 @@ const styles = StyleSheet.create({
         backgroundColor: Colors.Jet,
         paddingLeft: 20,
         paddingRight: 20,
-        borderTopLeftRadius: 15,
-        borderTopRightRadius: 15,
+        borderTopLeftRadius: 30,
+        borderTopRightRadius: 30,
+        marginTop: 200
     },
     panelContent: {
         backgroundColor: Colors.Onyx,

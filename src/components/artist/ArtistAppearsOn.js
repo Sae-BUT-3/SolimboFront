@@ -15,8 +15,7 @@ const ArtistAppearsOn = ({ items}) => {
           <Text style={[styles.filterText, filter === 'album']}>Albums</Text>
         </Pressable> 
       </View> : null}
-    <View style={{marginBottom: 30}}> 
-      <View style={{display: 'flex', flexWrap: 'wrap',flexDirection: 'row', alignItems: 'flex-start'}}>
+      <View style={{marginBottom: 30, display: 'flex', flexWrap: 'wrap',flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
         { items.length > 0 ? items.filter(item => item.type.toLowerCase().includes(filter.toLowerCase())).slice(0, Platform.OS === 'web' ? 6 : 4).sort((a, b) => {
             const dateA = new Date(a.date);
             const dateB = new Date(b.date);
@@ -26,7 +25,6 @@ const ArtistAppearsOn = ({ items}) => {
           <Text style={{color: Colors.White, fontSize:20, fontWeight:'normal'}}>Aucune apparution.</Text>
           </View>}
       </View>
-    </View> 
     </>
   )
 }

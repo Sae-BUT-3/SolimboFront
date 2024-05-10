@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { StyleSheet, View, Text, Pressable, Animated, Platform, ScrollView } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { FontAwesome5 } from '@expo/vector-icons'; // Importation de FontAwesome5
+import { FontAwesome5, FontAwesome } from '@expo/vector-icons'; // Importation de FontAwesome5
 import { Avatar, Provider as PaperProvider, TextInput } from 'react-native-paper';
 import { Colors } from '../../style/color';
 import { DataTable } from 'react-native-paper';
@@ -12,6 +12,8 @@ import Review from '../../components/review/Review';
 import ErrorRequest from '../../components/common/ErrorRequest';
 import Loader from '../../components/common/Loader';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'; // Importation de KeyboardAwareScrollView
+import pressableBasicStyle from '../../style/pressableBasicStyle';
 
 const ResponseScreen = () => {
     const route = useRoute();
@@ -87,7 +89,11 @@ const ResponseScreen = () => {
                         </Pressable>
                     </View>
                 </Animated.View>
-                <ScrollView>    
+                <KeyboardAwareScrollView // Remplacez ScrollView par KeyboardAwareScrollView
+                    contentContainerStyle={styles.scrollView}
+                    enableOnAndroid={true}
+                    extraScrollHeight={Platform.OS === 'ios' ? 0 : 120} // Ajustez cette valeur selon vos besoins
+                >   
                     <DataTable  style={{marginBottom: 30}}>
                         <DataTable.Header style={{borderBottomColor: Colors.Jet}}>
                             <View style={{marginBottom: 30}}>{type == "review" ?
@@ -95,7 +101,7 @@ const ResponseScreen = () => {
                             }</View>
                         </DataTable.Header>
                     </DataTable>
-                    <View style={{backgroundColor: Colors.Jet, display: 'flex', gap: 5, justifyContent:'flex-start', padding: 20}}>
+                    <View style={{backgroundColor: Colors.Jet, display: 'flex', gap: 5, justifyContent:'flex-start', padding: 20, borderTopLeftRadius: 15, borderTopRightRadius: 15}}>
                         <View style={{display: 'flex', flexDirection:'row', gap: 10, justifyContent: 'flex-start', alignItems: 'center'}}>
                             <Avatar.Image source={{ uri: currentUser.photo || require('../../assets/images/profil.png') }} size={64} accessibilityLabel={currentUser.pseudo} />
                             <Text style={{color: Colors.SeaGreen, fontSize: 19, fontWeight: 'normal'}}>{'@' + currentUser.alias}</Text>
@@ -103,7 +109,7 @@ const ResponseScreen = () => {
                         <TextInput
                             multiline
                             maxLength={1500}
-                            placeholder={type === 'review'? 'Ajouter un commentaire à la review...' : `Réponse au commentaire de ${data.utilisateur.alias}...`}
+                            placeholder={type === 'review'? 'Rédiger un commentaire à la critique...' : `Réponse au commentaire de ${data.utilisateur.alias}...`}
                             value={comment}
                             onChangeText={(text) => setText(text)}
                             underlineColor={Colors.Onyx}
@@ -112,13 +118,14 @@ const ResponseScreen = () => {
                             color={Colors.White}
                             cursorColor={Colors.SeaGreen}
                             selectionColor={Colors.SeaGreen}
-                            style={{ backgroundColor: Colors.Jet, fontSize: 18, padding: 10, marginBottom: 20}}
+                            style={styles.input} // Ajoutez le style input
                         />                                    
-                        <Pressable style={styles.button} onPress={addComment}>
+                        <Pressable style={[pressableBasicStyle.button, {width: 160}]} onPress={addComment}>
+                            <FontAwesome size={20} name='send-o' color={Colors.White} style={{ paddingRight: 10 }} />
                             <Text style={styles.text}>Commenter</Text>
                         </Pressable>
                     </View>
-                </ScrollView>
+                </KeyboardAwareScrollView>
             </PaperProvider>
         )}
         </View>
@@ -157,7 +164,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 15,
         paddingVertical: 8,
         borderRadius: 20,
-        width: 150,
+        width: 200,
         backgroundColor: Colors.DarkSpringGreen,
         shadowColor: Colors.Onyx,
         shadowOpacity: 0.3,
@@ -165,6 +172,16 @@ const styles = StyleSheet.create({
         elevation: Platform.OS === 'android' ? 3 : 0, 
         transition: 'background-color 0.3s ease'
     },
+    scrollView: {
+        flexGrow: 1, // Ajoutez flexGrow: 1 pour que le contenu puisse se faire défiler
+        justifyContent: 'space-between' // Ajustez cet espace comme vous le souhaitez
+    },
+    input: {
+        backgroundColor: Colors.Jet,
+        fontSize: 18,
+        padding: 10,
+        marginBottom: 20
+    }
 });
 
 export default ResponseScreen;

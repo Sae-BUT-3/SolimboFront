@@ -140,13 +140,13 @@ const ArtistScreen = () => {
                         onScroll={handleScroll}
                         scrollEventThrottle={16}
                         refreshControl={
-                            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+                            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[Colors.DarkSpringGreen]} tintColor={Colors.DarkSpringGreen} size='large' title='Actualisation...' titleColor={Colors.White}/>
                         }
                     >
                         <View style={{ height: showTitle ? (Platform.OS === 'web' ? 450 : 300 ): (Platform.OS === 'web' ? 650 : 500) }}>
                             <Profil data={artistProfile} friends_followers={friendsFollowers} follow={follow} followArtist={onfollowArtist} show={setShowAll}/>
                         </View>
-                        { friendsFollowers.length > 1 && showAll && <ImagePanel avatars={friendsFollowers} type={'user'} show={setShowAll}/>}
+                        { friendsFollowers.length > 1 && showAll && <ImagePanel avatars={friendsFollowers} type={'user'} show={setShowAll} onRefresh={updateData}/>}
                         <ScrollView
                             scrollEventThrottle={16}
                             onScroll={Animated.event(
@@ -156,13 +156,9 @@ const ArtistScreen = () => {
                         >
                             <View style={styles.sectionFilter}>
                                 <Text style={styles.sectionTitle}>Discographie</Text>
-                                {Platform.OS === 'web' && discography.length > 0 ? <Pressable onPress={handlePress}>
+                                {(Platform.OS === 'web' && discography.length > 0) && <Pressable onPress={handlePress}>
                                     <Text style={styles.buttonText}>Afficher plus</Text>
-                                </Pressable> :                             
-                                <Pressable onPress={handlePress}>
-                                    <FontAwesome5 name="list" size={25} color={Colors.SeaGreen} />
-                                </Pressable>
-                                }
+                                </Pressable>}
                             </View>
                             <Discography items={discography} id={id} />
                             {isDiscograpyPopupVisible && (
@@ -170,15 +166,11 @@ const ArtistScreen = () => {
                             )}
                             <View style={[styles.sectionFilter,  {marginBottom: 10}]}>
                                 <Text style={styles.sectionTitle}>Récentes reviews</Text>
-                                { reviews && reviews.length > 3 && (Platform.OS === 'web' ? <Pressable onPress={() => { navigation.navigate('Review', { id }) }}>
+                                { (reviews && reviews.length > 3 && Platform.OS === 'web') && <Pressable onPress={() => { navigation.navigate('Review', { id }) }}>
                                     <Text style={styles.buttonText}>Afficher plus</Text>
-                                </Pressable> : 
-                                <Pressable onPress={() => { navigation.navigate('Review', { id }) }}>
-                                    <FontAwesome5 name="list" size={25} color={Colors.SeaGreen} />
-                                </Pressable>)
-                                }
+                                </Pressable>}
                             </View>
-                            {reviews.length >= 3 && <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 10,marginBottom: 25, marginLeft: 30}}>
+                            {reviews && reviews.length > 3 && <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 10,marginBottom: 25, marginLeft: 30}}>
                                 <FontAwesome5 name="filter" size={20} color={Colors.SeaGreen} />
                                 <Filter 
                                     onPressHandler={()=>{setFilter(!filter)}}
@@ -186,10 +178,11 @@ const ArtistScreen = () => {
                                 />
                             </View>}
                             <ArtistReview items={reviews.filter(item => {
-                                if(filter) 
-                                    return item.made_by_friend
-                                return 1
-                            })} id={id} />
+                                    if(filter) 
+                                        return item.made_by_friend
+                                    return 1
+                                })} id={id} 
+                            />
                            
                             <View style={styles.sectionFilter}>
                                 <Text style={styles.sectionTitle}>Apparaît sur</Text>
@@ -259,7 +252,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'space-between',
         zIndex: 1,
-        paddingTop: Platform.OS === 'web' ? 10 : 35,
+        paddingTop: Platform.OS === 'web' ? 10 : 45,
         paddingLeft: 10,
         paddingBottom: 20,
     },

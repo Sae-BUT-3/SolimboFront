@@ -11,6 +11,7 @@ import axiosInstance from '../../api/axiosInstance';
 import Review from '../../components/review/Review';
 import ErrorRequest from '../../components/common/ErrorRequest';
 import Loader from '../../components/common/Loader';
+import { RefreshControl } from 'react-native';
 
 const numberOfItemsPerPageList = [25, 55, 100, 250];
 
@@ -26,7 +27,15 @@ const CommentScreen = () => {
     const [page, setPage] = useState(0);
     const [itemsPerPage, onItemsPerPageChange] = useState(numberOfItemsPerPageList[0]);
     const [count, setCount] = useState(0);
+    const [refreshing, setRefreshing] = useState(false);
 
+    const onRefresh = useCallback(() => {
+        updateComments(page, itemsPerPage);
+        setTimeout(() => {
+          setRefreshing(false);
+        }, 2000);
+    }, []);
+    
     useFocusEffect(
         useCallback(() => {
           updateComments(page, itemsPerPage);
@@ -102,7 +111,11 @@ const CommentScreen = () => {
                             <Text/>
                         </View>
                     </Animated.View>
-                    <ScrollView>    
+                    <ScrollView
+                        refreshControl={
+                            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[Colors.DarkSpringGreen]}  tintColor={Colors.DarkSpringGreen} size='large' title='Actualisation...' titleColor={Colors.White}/>
+                        }
+                    >    
                     {count > 0 ? 
                         <DataTable>
                             <DataTable.Header  style={{marginBottom: 30, borderBottomColor: Colors.Onyx}}>

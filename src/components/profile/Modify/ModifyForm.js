@@ -36,7 +36,6 @@ function ModifyForm({ user, checkPseudo, handleModify }) {
     setActualPseudo(user?.pseudo);
     setActualBio(user?.bio);
     setIsPrivate(user?.is_private);
-    console.log("is_private", user?.is_private);
 
     setUri(
       user?.photo ||

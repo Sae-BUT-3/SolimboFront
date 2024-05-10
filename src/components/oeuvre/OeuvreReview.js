@@ -12,6 +12,12 @@ const OeuvreReview = ({ items, id}) => {
         {items.slice(0,5).map((item) => (
           <Review key={item.id_review} data={item} />
         ))}
+        {(Platform.OS !== 'web' && items.length > 5) && ( 
+        <View style={styles.sectionFilter}>
+          <Pressable style={styles.btn} onPress={()=>{navigation.navigate('Review', {id})}}>
+            <Text style={styles.filterText}>Voir tous les critiques</Text>
+          </Pressable>
+        </View>)}
       </View>:
       <View style={{display:'flex', marginLeft: 30, marginBottom: 30, alignItems: 'flex-start'}}>
         <Text style={{color: Colors.White, fontSize:20, fontWeight:'normal'}}>Aucune critique disponible pour le moment.</Text>
@@ -21,10 +27,11 @@ const OeuvreReview = ({ items, id}) => {
 const styles = StyleSheet.create({
   container:{
     display:'flex',
-    alignItems: 'flex-start',
+    alignItems: Platform.OS === 'web' ? 'flex-start' : 'center',
+    justifyContent: Platform.OS === 'web' ? 'flex-start' : 'center',
     marginBottom: 30,
     marginLeft: 15,
-    marginRight: 10,
+    marginRight: 15,
   },
   sectionFilter: {
     display: 'flex',
@@ -42,9 +49,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     paddingVertical: 8,
     borderRadius: 9,
-    borderColor: Colors.SeaGreen,
+    borderColor: Colors.Silver,
     borderWidth: 1,
-    backgroundColor:  'transparent',
+    backgroundColor:  Colors.Jet,
     shadowColor: Colors.Onyx,
     shadowOpacity: 0.3,
     shadowRadius: 3,

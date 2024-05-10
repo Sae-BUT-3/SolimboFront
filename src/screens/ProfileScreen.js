@@ -16,14 +16,14 @@ import axiosInstance from "../api/axiosInstance";
 import Profile from "../components/profile/Profile";
 import ModifyProfile from "../components/profile/Modify/ModifyProfile";
 import Review from "../components/review/Review";
-import Item from "../components/common/Item";
 import { breakpoint } from "../style/breakpoint";
-import Loader from "../components/Loader";
-import ErrorRequest from "../components/ErrorRequest";
 import Tokenizer from "../utils/Tokenizer";
 
 import { StyleSheet, useWindowDimensions } from "react-native";
 import { Colors } from "../style/color";
+import Loader from "../components/common/Loader";
+import Item from "../components/artist/Item";
+import ErrorRequest from "../components/common/ErrorRequest";
 
 function ProfileScreen() {
   const [data, setData] = useState([]);

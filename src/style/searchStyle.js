@@ -13,7 +13,6 @@ const searchStyle = StyleSheet.create({
     searchContainer: {
         paddingBottom: 10,
         paddingTop: 10,
-        paddingLeft: 10,
         position: "sticky",
         top: 0,
         backgroundColor: Colors.Licorice,

@@ -12,6 +12,7 @@ import Oeuvre from '../../components/oeuvre/Oeuvre';
 import Trackgraphy from '../../components/oeuvre/Trackgraphy';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import ImagePanel from '../../components/common/ImagePanel';
+import Filter from '../../components/search/Filter';
 
 const OeuvreScreen = () => {
     const navigation = useNavigation();
@@ -29,6 +30,7 @@ const OeuvreScreen = () => {
     const [showTitle, setShowTitle] = useState(type === 'track');
     const [refreshing, setRefreshing] = useState(false);
     const [showAll, setShowAll] = useState(false);
+    const [filter, setFilter] =  useState(false);
 
     const handleShowAll = () => {
       setShowAll(true);
@@ -97,34 +99,42 @@ const OeuvreScreen = () => {
                     <ScrollView
                         onScroll={handleScroll}
                         scrollEventThrottle={16}
+                        refreshControl={
+                            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[Colors.DarkSpringGreen]} tintColor={Colors.DarkSpringGreen} size='large' title='Actualisation...' titleColor={Colors.White}/>
+                        }
                     >
                         <View style={{ height: showTitle && (type!== 'track' && reviews?.length > 2) ? 300 : 500 }}>
-                            <Oeuvre data={oeuvre} artists={artists} favoris={favoris} likeUser={like} setResponse={setResponse} show={handleShowAll}/>
+                            <Oeuvre data={oeuvre} artists={artists} favoris={favoris} likeUser={like} setResponse={setResponse} show={handleShowAll} />
                         </View>
-                        { (artists.length > 1 && showAll) && <ImagePanel avatars={artists} type={'artist'} show={setShowAll}/>}
+                        { (artists.length > 1 && showAll) && <ImagePanel avatars={artists} type={'artist'} show={setShowAll} onRefresh={updateData}/>}
                         <ScrollView
                             scrollEventThrottle={16}
                             onScroll={Animated.event(
                                 [{ nativeEvent: { contentOffset: { y: scrollY } } }],
                                 { useNativeDriver: true }
                             )}
-                            refreshControl={
-                                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-                            }
                         >
                             { type !== 'track' && (<Trackgraphy items={tracks} id={id} />)}
                             <View style={[styles.sectionFilter,  {marginBottom: 25}]}>
                                 <Text style={styles.sectionTitle}>Récentes reviews</Text>
-                                { reviews && reviews.length > 3 && (Platform.OS === 'web' ? 
+                                { (reviews && reviews.length > 3 && Platform.OS === 'web') &&
                                     <Pressable onPress={() => { navigation.navigate('Review', { id }) }}>
                                         <Text style={styles.buttonText}>Afficher plus</Text>
-                                    </Pressable> : 
-                                    <Pressable onPress={() => { navigation.navigate('Review', { id }) }}>
-                                        <FontAwesome5 name="list" size={25} color={Colors.SeaGreen} />
-                                    </Pressable>)
-                                }
+                                    </Pressable>}
                             </View>
-                            <OeuvreReview items={reviews} id={id} />  
+                            {reviews && reviews.length > 3 && <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 10,marginBottom: 25, marginLeft: 30}}>
+                                <FontAwesome5 name="filter" size={20} color={Colors.SeaGreen} />
+                                <Filter 
+                                    onPressHandler={()=>{setFilter(!filter)}}
+                                    text={"Suivis uniquement"}
+                                />
+                            </View>}
+                            <OeuvreReview items={reviews.filter(item => {
+                                    if(filter) 
+                                        return item.made_by_friend
+                                    return 1
+                                })} id={id} 
+                            />  
                         </ScrollView>
                     </ScrollView>
                   
@@ -189,7 +199,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'space-between',
         zIndex: 1,
-        paddingTop: Platform.OS === 'web' ? 10 : 35,
+        paddingTop: Platform.OS === 'web' ? 10 : 45,
         paddingLeft: 10,
         paddingBottom: 20,
     },
