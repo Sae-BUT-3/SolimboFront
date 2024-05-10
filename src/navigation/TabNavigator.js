@@ -8,7 +8,6 @@ import { Colors } from '../style/color';
 import { TouchableOpacity, Modal } from 'react-native';
 import ActivityScreen from '../screens/AcvityScreen';
 import AddButtonScreen from '../screens/AddButtonScreen';
-import GestureRecognizer from 'react-native-swipe-gestures';
 import ModalPostReview from '../components/ModalPostReview';
 import GestureRecognizer from 'react-native-swipe-gestures';
 const Tab = createBottomTabNavigator();

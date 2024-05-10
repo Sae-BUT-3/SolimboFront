@@ -24,9 +24,6 @@ import Tokenizer from "../utils/Tokenizer";
 
 import { StyleSheet, useWindowDimensions } from "react-native";
 import { Colors } from "../style/color";
-import Loader from "../components/common/Loader";
-import Item from "../components/artist/Item";
-import ErrorRequest from "../components/common/ErrorRequest";
 
 function ProfileScreen() {
   const [data, setData] = useState([]);

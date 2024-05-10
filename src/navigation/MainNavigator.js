@@ -19,7 +19,6 @@ import OeuvreScreen from "../screens/oeuvre/OeuvreScreen";
 import DiscograpyScreen from "../screens/artist/DicographyScreen";
 import ResponseScreen from "../screens/comment/ResponseScreen";
 import ProfileScreen from "../screens/ProfileScreen";
-import { useNavigation } from "@react-navigation/native";
 const Stack = createNativeStackNavigator();
 
 const MainNavigator = () => {
