@@ -175,6 +175,7 @@ const ModalPostReview = ({ visible, onClose }) => {
                                                             setMusicItem(null);
                                                             setRating(0);
                                                             setIsLoading(false);
+                                                            onClose();
                                                             Toast.show({
                                                                 type: 'sucess',
                                                                 text2: '✅ Votre critique a bien été postée.'
