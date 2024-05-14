@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { Modal, View, ScrollView, Pressable, Text, Image, KeyboardAvoidingView, Platform } from 'react-native';
+import { Modal, View, ScrollView, Pressable, Text, Image, KeyboardAvoidingView, Platform  } from 'react-native';
 import modalStyle from '../style/modalStyle';
 import { FontAwesome } from '@expo/vector-icons';
 import { Colors } from '../style/color';
@@ -15,6 +15,7 @@ import Tokenizer from '../utils/Tokenizer';
 import PointTrait from './common/PointTrait';
 import { Avatar, Divider } from 'react-native-paper';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import Toast from 'react-native-toast-message';
 
 const ModalPostReview = ({ visible, onClose }) => {
     const [filter, setFilter] = useState([]);
@@ -156,26 +157,6 @@ const ModalPostReview = ({ visible, onClose }) => {
                                             />
                                             <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
                                                 <Pressable
-                                                    style={[pressableBasicStyle.button, { width: 150 }]}
-                                                    onPress={() => {
-                                                        setIsLoading(true);
-                                                        axiosInstance.put('/review', { idOeuvre: musicItem.id, note: rating, description: description, type: musicItem.type })
-                                                        .then(response => {
-                                                            setMusicItem(null);
-                                                            setRating(0);
-                                                            setIsLoading(false);
-                                                        })
-                                                        .catch(error => {
-                                                            console.log(error)
-                                                            setIsLoading(false);
-                                                            setError(error.response.data);
-                                                        })
-                                                    }}
-                                                >
-                                                    <FontAwesome size={20} name='send-o' color={Colors.White} style={{ paddingRight: 10 }} />
-                                                    <Text style={pressableBasicStyle.button_text}>Poster</Text>
-                                                </Pressable>
-                                                <Pressable
                                                     style={[pressableBasicStyle.button, { backgroundColor: '#d62828', width: 150 }]}
                                                     onPress={() => { 
                                                         setMusicItem(null); 
@@ -184,6 +165,35 @@ const ModalPostReview = ({ visible, onClose }) => {
                                                 >
                                                     <FontAwesome size={20} name='close' color={Colors.White} style={{ paddingRight: 10 }} regular />
                                                     <Text style={pressableBasicStyle.button_text}>Annuler</Text>
+                                                </Pressable>
+                                                <Pressable
+                                                    style={[pressableBasicStyle.button, { width: 150 }]}
+                                                    onPress={() => {
+                                                        setIsLoading(true);
+                                                        axiosInstance.put('/review', { idOeuvre: musicItem.id, note: rating, description: description, type: musicItem.type })
+                                                        .then(response => {
+                                                            setMusicItem(null);
+                                                            setRating(0);
+                                                            setIsLoading(false);
+                                                            Toast.show({
+                                                                type: 'sucess',
+                                                                text2: '✅ Votre critique a bien été postée.'
+                                                            });
+                                                        })
+                                                        .catch(error => {
+                                                            console.log(error)
+                                                            setIsLoading(false);
+                                                            setError(error.response.data);
+                                                            onClose();
+                                                            Toast.show({
+                                                                type: 'error',
+                                                                text2: '❌ Votre critique n\'a pas pu être postée.'
+                                                            });
+                                                        })
+                                                    }}
+                                                >
+                                                    <FontAwesome size={20} name='send-o' color={Colors.White} style={{ paddingRight: 10 }} />
+                                                    <Text style={pressableBasicStyle.button_text}>Poster</Text>
                                                 </Pressable>
                                             </View>
                                         </View>

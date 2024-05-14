@@ -53,6 +53,8 @@
     "react-native-swipe-gestures": "^1.0.5",
     "react-native-switch": "1.5.1",
     "react-native-vector-icons": "^10.0.3",
+    "react-native-toast-message": "^2.2.0",
+    "react-native-vector-icons": "^10.0.3",
     "react-native-web": "~0.19.6",
     "rn-fetch-blob": "^0.12.0"
   },

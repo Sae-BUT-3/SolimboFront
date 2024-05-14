@@ -5,15 +5,26 @@ import HomeScreen from '../screens/HomeScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import SearchScreen from '../screens/search/SearchScreen';
 import { Colors } from '../style/color';
-import { TouchableOpacity, Modal } from 'react-native';
+import { Text, View, TouchableOpacity, Modal } from 'react-native';
 import ActivityScreen from '../screens/AcvityScreen';
 import AddButtonScreen from '../screens/AddButtonScreen';
 import ModalPostReview from '../components/ModalPostReview';
 import GestureRecognizer from 'react-native-swipe-gestures';
+import Toast, { BaseToast, ErrorToast } from 'react-native-toast-message';
 const Tab = createBottomTabNavigator();
 
 function TabNavigator() {
     const [modalVisible, setModalVisible] = useState(false);
+
+    const toastConfig = {
+        success: (props) => (
+            <BaseToast {...props} style={ {backgroundColor : Colors.Jet} } />
+        ),
+        error: (props) => (
+            <BaseToast {...props} style={ {backgroundColor : Colors.Jet} } />
+        ),
+    };
+    
     return (
         <>
         <Tab.Navigator
@@ -99,7 +110,7 @@ function TabNavigator() {
         >
             <ModalPostReview visible={modalVisible} onClose={() => setModalVisible(false)} />
         </GestureRecognizer>
-
+        <Toast config={toastConfig} />
         </>
     );
 }

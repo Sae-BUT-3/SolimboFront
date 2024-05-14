@@ -1,14 +1,13 @@
 import React, { useState } from 'react';
-import { Pressable, StyleSheet, Text, Image} from 'react-native';
+import { Pressable, StyleSheet, Text, ActivityIndicator } from 'react-native';
 import { Colors } from '../../style/color';
 import pressableBasicStyle from '../../style/pressableBasicStyle';
 import commonStyles from '../../style/commonStyle';
-// import fonts from '../config/fonts';
 
 /**
  * A basic pressable component.
  */
-const PressableBasic = ({ label, ...props }) => {
+const PressableBasic = ({ label, loading, ...props }) => {
     const [isPressed, setIsPressed] = useState(false);
     const disabled = props.disabled || false;
 
@@ -21,7 +20,7 @@ const PressableBasic = ({ label, ...props }) => {
     };
 
     const handlePress = () => {
-        if (disabled) {
+        if (disabled || loading) {
             return;
         }
         props.onPress();
@@ -29,18 +28,21 @@ const PressableBasic = ({ label, ...props }) => {
 
     return (
         <Pressable
-        style={[
-            pressableBasicStyle.button,
-            isPressed && pressableBasicStyle.buttonPressed,
-            disabled && pressableBasicStyle.buttonDisabled
-        ]}
-        onPress={handlePress}
-        onPressIn={handlePressIn}
-        onPressOut={handlePressOut}
+            style={[
+                pressableBasicStyle.button,
+                isPressed && pressableBasicStyle.buttonPressed,
+                disabled && pressableBasicStyle.buttonDisabled
+            ]}
+            onPress={handlePress}
+            onPressIn={handlePressIn}
+            onPressOut={handlePressOut}
+            disabled={disabled || loading}
         >
-
-        <Text style={pressableBasicStyle.button_text}>{props.text}</Text>
-        
+            {loading ? (
+                <ActivityIndicator color={Colors.primary} />
+            ) : (
+                <Text style={pressableBasicStyle.button_text}>{props.text}</Text>
+            )}
         </Pressable>
     );
 }
