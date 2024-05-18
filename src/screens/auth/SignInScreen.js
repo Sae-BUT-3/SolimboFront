@@ -1,5 +1,5 @@
 import React, { useEffect, useState }from 'react';
-import { View, Text, Image, Platform, StyleSheet } from 'react-native';
+import { View, Text, Image, Platform, StyleSheet, Keyboard } from 'react-native'; // Importez Keyboard
 import PressableBasic from '../../components/pressables/PressableBasic';
 import { useAuth } from '../../contexts/AuthContext';
 import commonStyles from '../../style/commonStyle';
@@ -77,10 +77,14 @@ function SignInScreen({ navigation }) {
       const { code } = response.params;
       navigation.navigate('ConfirmUser', { code, redirectUri });
     }
-}, [response]);
+  }, [response]);
+
+  const dismissKeyboard = () => {
+    Keyboard.dismiss();
+  };
 
   return (
-    <SafeAreaView style={[commonStyles.safeAreaContainer, {justifyContent : 'normal'} ]}>
+    <SafeAreaView style={[commonStyles.safeAreaContainer, {justifyContent : 'normal'} ]} onTouchStart={dismissKeyboard}>
         
         <View style={[commonStyles.columnCenterContainer, authStyle.formContainer]}>
           <View style={commonStyles.columnCenterContainer}>
