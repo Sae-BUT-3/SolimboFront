@@ -10,4 +10,5 @@ export const Colors = {
     Celadon: "#aff4c6",
     White: "#ffffff",
     GreyWhite: "#e3e3e3",
+    Red: '#d62828'
 };

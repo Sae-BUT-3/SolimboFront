@@ -103,25 +103,29 @@ const Comment = ({ data, hide}) => {
     textColor: Colors.White,
     solid: true,
     size: 30
-  },
-  (data.countComment > 0 &&{
-    name: 'comment-dots',
-    handle: displayReply,
-    color: Colors.SeaGreen,
-    text: replies ? "Masquer les réponses" : 'Afficher les réponses',
-    textColor: Colors.White,
-    solid: true,
-    size: 30
-  }),
- (currentUser.id_utilisateur === data.utilisateur.id_utilisateur && {
-    name: 'trash-alt',
-    handle: handleDelete,
-    color: 'red',
-    text: 'Supprimer',
-    textColor: '#d62828',
-    solid: true,
-    size: 24
-  })]
+  }]
+  if(data.countComment > 0){
+    actions.push({
+      name: 'comment-dots',
+      handle: displayReply,
+      color: Colors.SeaGreen,
+      text: replies ? "Masquer les réponses" : 'Afficher les réponses',
+      textColor: Colors.White,
+      solid: true,
+      size: 30
+    })
+  }
+  if(currentUser.id_utilisateur === data.utilisateur.id_utilisateur){
+    actions.push({
+      name: 'trash-alt',
+      handle: handleDelete,
+      color: 'red',
+      text: 'Supprimer',
+      textColor: '#d62828',
+      solid: true,
+      size: 24
+    })
+  }
   return (
     <View style={styles.commentContainer}> 
     <Pressable onLongPress={() => setActive(!isActive)}>
@@ -165,7 +169,7 @@ const Comment = ({ data, hide}) => {
                 <Pressable onPress={displayReply}>
                   <Text style={{color: Colors.DarkSpringGreen, fontSize: 19, fontWeight: 'normal'}}>{ replies ? "Masquer" : 'Voir les réponses '}</Text>
                 </Pressable>
-                <Pressable onPress={()=>{navigation.navigate('Response',{type: 'comment', id: data.id_com})}}>
+                <Pressable onPress={()=>{navigation.navigate('response',{type: 'comment', id: data.id_com})}}>
                   <Text style={{color: Colors.DarkSpringGreen, fontSize: 19, fontWeight: 'normal'}}> Répondre</Text>
                 </Pressable>
               </View>
@@ -173,7 +177,7 @@ const Comment = ({ data, hide}) => {
             <>
               <Divider  style={styles.divider}/>
               <View style={{marginTop: 10, alignItems: 'flex-end'}}>
-                <Pressable onPress={()=>{navigation.navigate('Response',{type: 'comment', id: data.id_com})}}><Text style={{color: Colors.DarkSpringGreen, fontSize: 19, fontWeight: 'normal'}}> Répondre</Text></Pressable>
+                <Pressable onPress={()=>{navigation.navigate('response',{type: 'comment', id: data.id_com})}}><Text style={{color: Colors.DarkSpringGreen, fontSize: 19, fontWeight: 'normal'}}> Répondre</Text></Pressable>
               </View>
             </>)
           }
@@ -193,7 +197,10 @@ const Comment = ({ data, hide}) => {
 const styles = StyleSheet.create({
   commentContainer: {
     display: 'flex',
-    padding: Platform.OS === 'web' ? 20 : 15,
+    padding: 20,
+    marginBottom: Platform.OS == 'web' ? 30 : 20,
+    marginLeft: Platform.OS  == "web" ? 20 : 0,
+    marginRight: Platform.OS  == "web" ? 20 : 0,
     width: Platform.OS != 'web' ? 386 : 950,
     backgroundColor: Colors.Jet,
     borderRadius: 15,

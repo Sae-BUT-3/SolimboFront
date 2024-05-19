@@ -103,7 +103,7 @@ const OeuvreScreen = () => {
                             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[Colors.DarkSpringGreen]} tintColor={Colors.DarkSpringGreen} size='large' title='Actualisation...' titleColor={Colors.White}/>
                         }
                     >
-                        <View style={{ height: showTitle && (type!== 'track' && reviews?.length > 2) ? 300 : 500 }}>
+                        <View style={{ height: showTitle && (type!== 'track' && reviews?.length > 2) ? 300 : 500, marginBottom: 25 }}>
                             <Oeuvre data={oeuvre} artists={artists} favoris={favoris} likeUser={like} setResponse={setResponse} show={handleShowAll} />
                         </View>
                         { (artists.length > 1 && showAll) && <ImagePanel avatars={artists} type={'artist'} show={setShowAll} onRefresh={updateData}/>}
@@ -118,7 +118,7 @@ const OeuvreScreen = () => {
                             <View style={[styles.sectionFilter,  {marginBottom: 25}]}>
                                 <Text style={styles.sectionTitle}>Récentes reviews</Text>
                                 { (reviews && reviews.length > 3 && Platform.OS === 'web') &&
-                                    <Pressable onPress={() => { navigation.navigate('Review', { id }) }}>
+                                    <Pressable onPress={() => { navigation.navigate('review', { id }) }}>
                                         <Text style={styles.buttonText}>Afficher plus</Text>
                                     </Pressable>}
                             </View>

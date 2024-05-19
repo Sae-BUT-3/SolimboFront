@@ -50,7 +50,7 @@ const ArtistScreen = () => {
         if(Platform.OS === 'web')
             setDiscograpyPopupVisible(true);
         else
-            navigation.navigate('Discographie', {id})
+            navigation.navigate('discographie', {id})
     };
 
     const handleClose = () => {
@@ -126,7 +126,7 @@ const ArtistScreen = () => {
         const offsetY = event.nativeEvent.contentOffset.y;
         setShowTitle(offsetY > 0);
     };
-
+    console.log(reviews)
     if (fail) {
         return <ErrorRequest err={fail} />;
     }
@@ -166,23 +166,18 @@ const ArtistScreen = () => {
                             )}
                             <View style={[styles.sectionFilter,  {marginBottom: 10}]}>
                                 <Text style={styles.sectionTitle}>Récentes reviews</Text>
-                                { (reviews && reviews.length > 3 && Platform.OS === 'web') && <Pressable onPress={() => { navigation.navigate('Review', { id }) }}>
+                                { (reviews.length > 3 && Platform.OS === 'web') && <Pressable onPress={() => { navigation.navigate('review', { id }) }}>
                                     <Text style={styles.buttonText}>Afficher plus</Text>
                                 </Pressable>}
                             </View>
-                            {reviews && reviews.length > 3 && <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 10,marginBottom: 25, marginLeft: 30}}>
+                            {reviews.length > 3 && <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 10,marginBottom: 25, marginLeft: 30}}>
                                 <FontAwesome5 name="filter" size={20} color={Colors.SeaGreen} />
                                 <Filter 
                                     onPressHandler={()=>{setFilter(!filter)}}
                                     text={"Suivis uniquement"}
                                 />
                             </View>}
-                            <ArtistReview items={reviews.filter(item => {
-                                    if(filter) 
-                                        return item.made_by_friend
-                                    return 1
-                                })} id={id} 
-                            />
+                            <ArtistReview items={reviews} id={id} />
                            
                             <View style={styles.sectionFilter}>
                                 <Text style={styles.sectionTitle}>Apparaît sur</Text>

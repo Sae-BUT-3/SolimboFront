@@ -1,24 +1,154 @@
 import React, { useState, useEffect } from "react";
-import {
-  View,
-  Text,
-  Image,
-  StyleSheet,
-  useWindowDimensions,
-  TouchableOpacity,
-} from "react-native";
+import { View, Text, Image, StyleSheet, useWindowDimensions, TouchableOpacity, Pressable } from "react-native";
 import { Switch } from "react-native-switch";
-import Svg, { Path } from "react-native-svg";
 import { Colors } from "../../../style/color";
 import { breakpoint } from "../../../style/breakpoint";
 import * as ImagePicker from "expo-image-picker";
 import axiosInstance from "../../../api/axiosInstance";
 import ModifyInput from "./ModifyInput";
 import hexToRgbA from "../../../utils/HexToRgbA";
-import PressableBasic from "../../pressables/PressableBasic";
+import pressableBasicStyle from "../../../style/pressableBasicStyle";
+import { FontAwesome, FontAwesome5 } from "@expo/vector-icons";
+import BasicInput from "../../form/BasicInput";
+import Toast from "react-native-toast-message";
+import { useAuth } from "../../../contexts/AuthContext";
+import { Divider } from "react-native-paper";
+import { useNavigation } from "@react-navigation/native";
+
 const MIN_PSEUDO = 3;
-function ModifyForm({ user, checkPseudo, handleModify }) {
-  const { height, width } = useWindowDimensions();
+
+const Update = ({ user }) => {
+  const [showPasswordInput, setShowPasswordInput] = useState(false);
+  const [showEmailInput, setShowEmailInput] = useState(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const { logout } = useAuth();
+  const navigation = useNavigation();
+  
+  const handleResetPassword = () => {
+    setShowPasswordInput(!showPasswordInput);
+  };
+
+  const handleUpdateEmail = () => {
+    setShowEmailInput(!showEmailInput);
+  };
+
+  const handleSubmitEmail = () => {
+    axiosInstance.post('users/sendResetEmail', { email })
+      .then(() => {
+        setShowEmailInput(false);
+        Toast.show({
+          type: 'success',
+          text1: '✅  Email bien modifiée',
+          text1Style: {color: Colors.White},
+          position: 'bottom'
+        });
+      })
+      .catch(() => {
+        // Handle error
+      });
+  };
+
+  const handleSubmitPassword = () => {
+    axiosInstance.post('users/resetPassword', { password, resetToken: user.reset_token })
+      .then(() => {
+        setShowPasswordInput(false);
+        Toast.show({
+          type: 'success',
+          text1: '✅  Mot de passe bien modifiée',
+          text1Style: {color: Colors.White},
+          position: 'bottom'
+        });
+      })
+      .catch(() => {
+        // Handle error
+      });
+  };
+
+  return (
+    <View style={{ justifyContent: "center"}}>
+      <View style={{ justifyContent: 'space-between', flexDirection: "row", alignItems: 'baseline', flexWrap: 'wrap', gap: 20 }}>
+        <Pressable onPress={handleUpdateEmail}>
+          <Text style={styles.buttonText}>Mettre à jour l'email</Text>
+        </Pressable>
+        <Divider style={styles.divider} />
+        <Pressable onPress={handleResetPassword}>
+          <Text style={styles.buttonText}>Réinitialiser le mot de passe</Text>
+        </Pressable>
+        <Pressable onPress={() => {
+          logout()
+          navigation.navigate('signin');
+        }}>
+          <Text style={[styles.text, { color: Colors.Red }]}>Se déconnecter</Text> 
+        </Pressable>
+      </View>  
+      
+      <View style={{justifyContent: "center", alignItems: 'center'}}>
+        {showEmailInput && (
+          <>
+            <BasicInput
+              autoCapitalize="none"
+              autoCorrect={false} 
+              placeholder="Nouvel email"
+              textContentType="emailAddress"
+              keyboardType="email-address"
+              value={email} 
+              onChangeText={setEmail}
+            />
+            <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
+              <Pressable
+                style={[pressableBasicStyle.button, { width: 120 }]}
+                onPress={handleSubmitEmail}
+              >
+                <FontAwesome size={20} name='pencil' color={Colors.White} style={{ paddingRight: 10 }} />
+                <Text style={pressableBasicStyle.button_text}>Modifier</Text>
+              </Pressable>
+              <Pressable
+                style={[pressableBasicStyle.button, { backgroundColor: Colors.Red, width: 120 }]}
+                onPress={() => setShowEmailInput(false)}
+              >
+                <FontAwesome size={20} name='close' color={Colors.White} style={{ paddingRight: 10 }} />
+                <Text style={pressableBasicStyle.button_text}>Annuler</Text>
+              </Pressable>
+            </View>
+          </>
+        )}
+        {showPasswordInput && (
+          <>
+            <BasicInput 
+              style={styles.input} 
+              placeholder="Nouveau mot de passe" 
+              secureTextEntry
+              onChangeText={setPassword} 
+              value={password}
+            />
+            <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
+              <Pressable
+                style={[pressableBasicStyle.button, { width: 120 }]}
+                onPress={handleSubmitPassword}
+              >
+                <FontAwesome size={20} name='pencil' color={Colors.White} style={{ paddingRight: 10 }} />
+                <Text style={pressableBasicStyle.button_text}>Modifier</Text>
+              </Pressable>
+              <Pressable
+                style={[pressableBasicStyle.button, { backgroundColor: Colors.Red, width: 120 }]}
+                onPress={() => setShowPasswordInput(false)}
+              >
+                <FontAwesome size={20} name='close' color={Colors.White} style={{ paddingRight: 10 }} />
+                <Text style={pressableBasicStyle.button_text}>Annuler</Text>
+              </Pressable>
+            </View>
+            
+          </>
+        )}
+      </View>
+    </View>
+  );
+};
+
+function ModifyForm({ user, checkPseudo, handleModify, isModify, setModify }) {
+  const windowDimensions = useWindowDimensions();
+  const width = windowDimensions ? windowDimensions.width : 0;
   const [imageHovered, setImageHovered] = useState(false);
   const [image, setImage] = useState("");
   const [uri, setUri] = useState("");
@@ -30,18 +160,22 @@ function ModifyForm({ user, checkPseudo, handleModify }) {
   const [isPseudoValid, setIsPseudoValid] = useState(true);
   const [isEnabled, setIsEnabled] = useState(false);
   const [isPrivate, setIsPrivate] = useState(false);
+  const [spotify, setAuthSpotify] = useState(false);
+
   const toggleSwitch = () => setIsEnabled((previousState) => !previousState);
+
   useEffect(() => {
     setActualAlias(user?.alias);
     setActualPseudo(user?.pseudo);
     setActualBio(user?.bio);
     setIsPrivate(user?.is_private);
-
+    setAuthSpotify(user?.auth_with_spotify)
     setUri(
       user?.photo ||
         "https://merriam-webster.com/assets/mw/images/article/art-wap-article-main/egg-3442-e1f6463624338504cd021bf23aef8441@1x.jpg"
     );
   }, [user]);
+
   const handleImagePickerPress = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -59,74 +193,43 @@ function ModifyForm({ user, checkPseudo, handleModify }) {
   const handleAliasChange = (value) => {
     setActualAlias(value);
   };
+
   const handlePseudoChange = async (value) => {
     setPseudoError("");
     setActualPseudo(value);
     setIsPseudoValid(true);
     if (value !== user.pseudo && !(await checkPseudo(value))) {
-      setPseudoError("Le pseudo est déjà pris");
+      setPseudoError("Le pseudo est déjà pris");
       setIsPseudoValid(false);
     }
   };
+
   const handleBioChange = (value) => {
     setActualBio(value);
   };
 
-  const styles = StyleSheet.create({
-    container: {
-      width: width - 100 > 500 ? 500 : width - 20,
-      display: "flex",
-      flexDirection: "column",
-      alignItems: "center",
-    },
-    formContainer: {},
-    imageContainer: {
-      position: "relative",
-      marginBottom: 10,
-    },
-    image: {
-      width: width > breakpoint.small ? 200 : 150,
-      height: width > breakpoint.small ? 200 : 150,
-      borderRadius: width < breakpoint.medium ? 100 : 75,
-    },
-    imageChangeContainer: {
-      position: "absolute",
-      top: 0,
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center",
-      backgroundColor: hexToRgbA(Colors.Jet, imageHovered ? 0.1 : 0.4),
-    },
-    imageChange: {
-      width: "70%",
-      height: "70%",
-    },
-  });
   const handleSubmit = async () => {
     let valid = true;
     if (!isPseudoValid) {
-      setPseudoError("Le pseudo est déjà pris");
+      setPseudoError("Le pseudo est déjà pris");
       valid = false;
     }
     if (actualAlias.length < MIN_PSEUDO) {
-      setAliasError("L'alias doit contenir au moins 3 caractères");
+      setAliasError("L'alias doit contenir au moins 3 caractères");
       valid = false;
     }
     if (actualPseudo.length < MIN_PSEUDO) {
-      setPseudoError("Le pseudo doit contenir au moins 3 caractères");
+      setPseudoError("Le pseudo doit contenir au moins 3 caractères");
       valid = false;
     }
     if (valid) {
       const formData = new FormData();
       if (image) {
         const binaryImg = atob(image.base64);
-        // Convert binary to Blob
         const blob = new Blob(
           [
             new Uint8Array(
-              Array.prototype.map.call(binaryImg, function (c) {
-                return c.charCodeAt(0);
-              })
+              Array.prototype.map.call(binaryImg, (c) => c.charCodeAt(0))
             ),
           ],
           { type: "image/jpeg" }
@@ -148,11 +251,48 @@ function ModifyForm({ user, checkPseudo, handleModify }) {
     }
   };
 
+  const styles = StyleSheet.create({
+    container: {
+      alignItems: "center",
+      backgroundColor: Colors.Licorice,
+    },
+    imageContainer: {
+      position: "relative",
+      marginBottom: 10,
+      backgroundColor: Colors.Licorice
+    },
+    image: {
+      width: width > breakpoint.small ? 200 : 150,
+      height: width > breakpoint.small ? 200 : 150,
+      borderRadius: width < breakpoint.medium ? 100 : 75,
+    },
+    imageChangeContainer: {
+      position: "absolute",
+      top: 0,
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      backgroundColor: hexToRgbA(Colors.Jet, imageHovered ? 0.1 : 0.4),
+    },
+    imageChange: {
+      width: "70%",
+      height: "70%",
+    },
+    switch: {
+      marginBottom: 10,
+    },
+    header:{
+      flex: 1,
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+    }
+  });
+
   return (
     <View style={styles.container}>
       <View style={styles.imageContainer}>
         <Image style={styles.image} source={{ uri: uri }} />
-        <TouchableOpacity
+       { isModify && <TouchableOpacity
           onPress={handleImagePickerPress}
           style={[styles.image, styles.imageChangeContainer]}
           onMouseEnter={() => setImageHovered(true)}
@@ -162,12 +302,12 @@ function ModifyForm({ user, checkPseudo, handleModify }) {
             style={styles.imageChange}
             source={require("../../../assets/images/photo.png")}
           />
-        </TouchableOpacity>
+        </TouchableOpacity>}
       </View>
       <Switch
         value={isPrivate}
         onValueChange={(val) => setIsPrivate(val)}
-        disabled={false}
+        disabled={!isModify}
         activeText={"Privé"}
         inActiveText={"Public"}
         backgroundActive={Colors.SeaGreen}
@@ -185,35 +325,70 @@ function ModifyForm({ user, checkPseudo, handleModify }) {
       <ModifyInput
         max={15}
         label="Alias"
-        // width={"100%"}
         error={aliasError}
-        value={user?.alias}
+        value={actualAlias}
         onChangeText={handleAliasChange}
         onFocus={() => setAliasError("")}
+        disabled={!isModify}
       />
       <ModifyInput
         max={15}
         label="Pseudo"
-        // width={"100%"}
-        value={user?.pseudo}
+        value={actualPseudo}
         error={pseudoError}
         onChangeText={handlePseudoChange}
         onFocus={() => setPseudoError("")}
+        disabled={!isModify}
       />
       <ModifyInput
         max={200}
         multiline={true}
         numberOfLines={4}
-        label="biographie"
-        // width={"100%"}
+        label="Biographie"
         height={100}
-        value={user?.bio}
+        value={actualBio}
         onChangeText={handleBioChange}
-        onFocus={() => {}}
+        disabled={!isModify}
       />
-      <PressableBasic text="Modifier" onPress={handleSubmit} />
+      {isModify &&
+        <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
+          <Pressable
+            style={[pressableBasicStyle.button, { width: 150 }]}
+            onPress={handleSubmit}
+          >
+            <FontAwesome size={20} name='pencil' color={Colors.White} style={{ paddingRight: 10 }} />
+            <Text style={pressableBasicStyle.button_text}>Modifier</Text>
+          </Pressable>
+          <Pressable
+            style={[pressableBasicStyle.button, { backgroundColor: Colors.Red, width: 150 }]}
+            onPress={() => setModify(false)}
+          >
+            <FontAwesome size={20} name='close' color={Colors.White} style={{ paddingRight: 10 }} />
+            <Text style={pressableBasicStyle.button_text}>Annuler</Text>
+          </Pressable>
+        </View>}
+      {!spotify && <Update user={user} />}
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  buttonText: {
+    color: Colors.White,
+    marginBottom: 10,
+  },
+  input: {
+    height: 40,
+    borderColor: 'gray',
+    borderWidth: 1,
+    marginBottom: 10,
+    paddingLeft: 8,
+  },
+  divider: {
+    height: 2,
+    borderColor: Colors.Silver,
+    marginVertical: 10,
+  },
+});
 
 export default ModifyForm;

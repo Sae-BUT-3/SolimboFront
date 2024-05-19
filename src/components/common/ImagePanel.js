@@ -16,14 +16,14 @@ const ImagePanel = ({ avatars, type, show, onRefresh }) => {
     show(false);
   };
 
-  const onfollow = (id) => {
-    if(type == 'artist'){
-      axiosInstance.post('/users/follow', { artistId: id })
+  const onfollow = (item) => {
+    if(type == 'artist' || item?.type === 'artist'){
+      axiosInstance.post('/users/follow', { artistId: item.id })
       .then(res => {
         onRefresh()
       }).catch(e => console.log('Une erreur interne à notre serveur est survenue. Réessayer plus tard !'));
     }else{
-      axiosInstance.post('/amis/unfollow', { amiIdUtilisateur: id })
+      axiosInstance.post('/amis/unfollow', { amiIdUtilisateur: item.id_utilisateur })
         onRefresh()
       .then(res => {
       }).catch(e => console.log('Une erreur interne à notre serveur est survenue. Réessayer plus tard !'));
@@ -58,20 +58,24 @@ const ImagePanel = ({ avatars, type, show, onRefresh }) => {
                 <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'flex-end', gap: 15 }}>
                   <Pressable onPress={() => { if(type === 'artist'){
                     closeModal();
-                    navigation.navigate('Artist', { id: item.id })
+                    navigation.navigate('artist', { id: item.id })
+                  }else{
+                    closeModal();
+                    navigation.navigate('user', { id: item.id_utilisateur })
                   }}}>
-                    <Avatar.Image size={56} source={{ uri: type === 'user' ? item?.photo : item?.image }} />
+                    <Avatar.Image size={56} source={{ uri: type === 'user' || item?.type === 'user' ? item?.photo : item?.image }} />
                   </Pressable>
-                  <Text numberOfLines={1} style={styles.panelText}>{type === 'user' ? item?.pseudo : item?.name}</Text>
+                  <Text numberOfLines={1} style={styles.panelText}>{type === 'user' || item?.type === 'user' ? item?.pseudo : item?.name}</Text>
                 </View>
                 <Pressable style={styles.followButton}
                   activeOpacity={1}
-                  onPress={() => onfollow(item.id)}
+                  onPress={() => onfollow(item)}
                 >
-                  {type === 'user' || item.doesUserFollow  ? <Text style={styles.buttonText}>Suivi(e)</Text> : <Text style={styles.buttonText}>+ Suivre</Text>  }
+                  {(type === 'user' || item?.type === 'user') || item.doesUserFollow  ? <Text style={styles.buttonText}>Suivi(e)</Text> : <Text style={styles.buttonText}>+ Suivre</Text>  }
                 </Pressable>
               </View>
             )}
+            showsVerticalScrollIndicator={true}
           />
         </View>
       </View>
@@ -126,9 +130,6 @@ const styles = StyleSheet.create({
     shadowRadius: 3,
     elevation: Platform.OS === 'android' ? 4 : 0, 
     transition: 'background-color 0.3s ease'
-  },
-  btnHovered: {
-      backgroundColor: Colors.SeaGreen, 
   },
 });
 

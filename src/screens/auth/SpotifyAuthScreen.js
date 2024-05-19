@@ -27,7 +27,7 @@ function SpotifyAuthScreen({ navigation }) {
     return (
         <SafeAreaView style={[commonStyles.safeAreaContainer ]}>
             <Text>Spotify Auth </Text>
-            <Button title="Connexion" onPress={() => navigation.navigate('SignIn')} />
+            <Button title="Connexion" onPress={() => navigation.navigate('signin')} />
         </SafeAreaView>
     );
 }

@@ -37,18 +37,18 @@ function SearchResult({id, type, imageURL, title, subtitle, rounded, onPress}) {
             if(id && type){
                 switch(type){
                     case 'artist':
-                        navigation.navigate('Artist', {id: id });
+                        navigation.navigate('artist', {id: id });
                         break;
                     case 'user':
                         navigation.navigate('user', {id: id });
                         break;
                     case 'track':
-                        navigation.navigate('Oeuvre', {type:'track', id: id });
+                        navigation.navigate('oeuvre', {type:'track', id: id });
                         break;
                     case 'album':
                     case 'single':
                     case 'compliation':
-                        navigation.navigate('Oeuvre', {type:'album', id: id });
+                        navigation.navigate('oeuvre', {type:'album', id: id });
                         break;
                 }
             }

@@ -61,22 +61,23 @@ const Review = ({ data}) => {
 
   const handleCommentButtonClick = () => {
     setActive(false);
-    navigation.navigate('Comment', {id: data.id_review})
+    navigation.navigate('comment', {id: data.id_review})
   };
 
-  const goTo = (_id, type) => {
-    if(_id && type){
-      switch(type){
-          case 'track':
-            navigation.navigate('Oeuvre', {type:'track', id: _id });
-            break;
-          case 'single':
-          case 'album':
-          case 'compliation':
-            navigation.navigate('Oeuvre', {type: 'album', id : _id });
-            break;
+  const goTo = () => {
+      switch(data.oeuvre.type){
+        case 'artist':
+          navigation.navigate('artist', {id: data.oeuvre.id });
+          break;
+        case 'track':
+          navigation.navigate('oeuvre', {type:'track', id: data.oeuvre.id });
+          break;
+        case 'single':
+        case 'album':
+        case 'compliation':
+          navigation.navigate('oeuvre', {type: 'album', id : data.oeuvre.id });
+          break;
       }
-    }
   }
 
   const deleteReview = () =>{
@@ -126,7 +127,7 @@ const Review = ({ data}) => {
     name: 'comment-medical',
     handle: ()=>{
       setActive(false); 
-      navigation.navigate('Response', {type: 'review', id: data.id_review})
+      navigation.navigate('response', {type: 'review', id: data.id_review})
     },
     color: Colors.SeaGreen,
     text: 'Commenter',
@@ -151,22 +152,26 @@ const Review = ({ data}) => {
     textColor: Colors.White,
     solid: true,
     size: 30
-  },
- (currentUser.id_utilisateur === data.utilisateur.id_utilisateur && {
-    name: 'trash-alt',
-    handle: handleDelete,
-    color: 'red',
-    text: 'Supprimer',
-    textColor: '#d62828',
-    solid: true,
-    size: 24
-  })]
+  }]
+  if(currentUser.id_utilisateur === data.utilisateur.id_utilisateur){
+    actions.push(
+      {
+        name: 'trash-alt',
+        handle: handleDelete,
+        color: Colors.Red,
+        text: 'Supprimer',
+        textColor: Colors.Red,
+        solid: true,
+        size: 24
+      }
+    )
+  }
   return (
     <Pressable onLongPress={()=> setActive(!isActive)} onPress={handleCommentButtonClick}>
     <View key={data.id_review} style={styles.reviewContainer}>
         <View style={styles.reviewerInfo}>
           <View style={{display: 'flex', flexDirection: 'row', gap: 5}}>
-                <Pressable onPress={() => goTo(data.oeuvre.id, data.oeuvre.type)}>
+                <Pressable onPress={() => goTo()}>
                   <Avatar source={{ uri: data.oeuvre.type === 'track' ? data.oeuvre.album.image : data.oeuvre.image }} size={Platform.OS === 'web'? 90 : 74} containerStyle={{  borderRadius: 10,shadowColor: Colors.Onyx,
                     shadowOpacity: 0.3,
                     shadowRadius: 3,
@@ -234,8 +239,7 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     padding: 20,
     justifyContent: 'space-between',
-    maxWidth: Platform.OS === 'web' ? 950 : null,
-    width: Platform.OS != 'web' ? 386 : null,
+    width: Platform.OS != 'web' ? 386 : 950,
     shadowColor: Colors.Onyx,
     shadowOpacity: 0.3,
     shadowRadius: 3,

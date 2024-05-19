@@ -33,7 +33,7 @@ export const AuthProvider = ({ children }) => {
       })
       .catch(error => {
         console.log("Error : /users/signin " + error.response.data)
-        setError("Une erreur interne est survenue, Veuillez ressayer plus tard !" );
+        setError("L'email/pseudo ou le mot de passe est incorrect, veuillez ressayer !" );
       });
       return response
   };
