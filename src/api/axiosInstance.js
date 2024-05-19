@@ -8,7 +8,7 @@ import Tokenizer from "../utils/Tokenizer";
  * @type {import('axios').AxiosInstance}
  */
 const instance = axios.create({
-    baseURL: API_URL, //Créer un fichier .env à la racine et ajouter la variable API_URL
+    baseURL: "http://172.20.10.3:3001", //Créer un fichier .env à la racine et ajouter la variable API_URL
     headers: {
         'Content-Type': 'application/json',
     },

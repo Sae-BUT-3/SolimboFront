@@ -45,6 +45,18 @@ const Response = ({data})=>{
         setCountLike(data.countLike)
     },[data]);
 
+    const displayReply = () => {
+        setActive(false);
+        if(replies === null) {
+            axiosInstance.get(`/comment/${data.id_com}`, {params: {page: 1, pageSize: data.countComment, orderByLike: false}})
+            .then(response => {
+              setReplies(response.data.comments);
+            }).catch(e =>  console.log(`comment/${id} : ${e.response.data}`));
+        }else{
+            setReplies(null)
+        }
+    }
+
     const deleteComment = () =>{
         axiosInstance.delete(`comment/${data.id_com}`)
           .then(res => {
@@ -72,7 +84,7 @@ const Response = ({data})=>{
         name: 'comment-medical',
         handle: ()=>{
           setActive(false); 
-          navigation.navigate('Response', {type: 'comment', id: data.id_com})
+          navigation.navigate('response', {type: 'comment', id: data.id_com})
         },
         color: Colors.SeaGreen,
         text: 'Répondre',
@@ -80,16 +92,20 @@ const Response = ({data})=>{
         solid: true,
         size: 30
       },
-      (data.countComment > 0 &&{
-        name: 'comment-dots',
-        handle: displayReply,
-        color: Colors.SeaGreen,
-        text: replies ? "Masquer les réponses" : 'Afficher les réponses',
-        textColor: Colors.White,
-        solid: true,
-        size: 30
-      }),
-     (currentUser.id_utilisateur === data.utilisateur.id_utilisateur && {
+    ]
+    if(data.countComment > 0){
+        actions.push({
+            name: 'comment-dots',
+            handle: displayReply,
+            color: Colors.SeaGreen,
+            text: replies ? "Masquer les réponses" : 'Afficher les réponses',
+            textColor: Colors.White,
+            solid: true,
+            size: 30
+        })
+    }
+    if(currentUser.id_utilisateur === data.utilisateur.id_utilisateur){
+        actions.push({
         name: 'trash-alt',
         handle: handleDelete,
         color: 'red',
@@ -97,7 +113,8 @@ const Response = ({data})=>{
         textColor: '#d62828',
         solid: true,
         size: 24
-      })]
+      })
+    }
     const handlePress = () =>{
       axiosInstance.post(`comment/${data.id_com}/like`)
         .then(res => {
@@ -111,109 +128,93 @@ const Response = ({data})=>{
         }).catch(e => console.log(`comment/${data.id_com}/like : ${e.response.data}`));
     }
 
-    const displayReply = () => {
-        setActive(false);
-        if(replies === null) {
-            axiosInstance.get(`/comment/${data.id_com}`, {params: {page: 1, pageSize: data.countComment, orderByLike: false}})
-            .then(response => {
-              setReplies(response.data.comments);
-            }).catch(e =>  console.log(`comment/${id} : ${e.response.data}`));
-        }else{
-            setReplies(null)
-        }
-    }
-
     return (
-        <Pressable onLongPress={()=>setActive(!isActive)}>
-        <List.Item
-            title={
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between', gap: 5, alignItems: 'center' }}>
-                    <Pressable onPress={()=> navigation.navigate('user', {id: data.utilisateur.id_utilisateur })}>
-                        <Avatar.Image source={{ uri: data?.utilisateur.photo }} size={Platform.OS === 'web' ? 75 : 54} />
-                    </Pressable>
-                    <Pressable onPress={()=> navigation.navigate('user', {id: data.utilisateur.id_utilisateur })}>
-                        <Text style={{ color: Colors.DarkSpringGreen, fontSize: Platform.OS === "web" ? 18 : 16, fontWeight: 'normal' }}>{'@' + data.utilisateur.alias}</Text>
-                    </Pressable>
+        <View style={styles.commentContainer}>
+        <Pressable onLongPress={() => setActive(!isActive)}>
+        <View style={{display: 'flex', flexDirection:'row', justifyContent: 'flex-start', gap: 10, alignItems: 'center'}}>
+          <Pressable onPress={()=> navigation.navigate('user', {id: data.utilisateur.id_utilisateur })}>
+            <Avatar.Image source={{ uri: data.utilisateur.photo}} size={Platform.OS === 'web'? 75 : 64}/>
+          </Pressable>
+          <Pressable onPress={()=> navigation.navigate('user', {id: data.utilisateur.id_utilisateur })}>
+            <Text style={{color: Colors.DarkSpringGreen, fontSize:  19, fontWeight: 'normal'}}>{'@' + data.utilisateur.alias}</Text>
+          </Pressable>
+        </View>
+        <View style={{margin: Platform.OS == 'web' ? 20: 10}}>
+          <ReadMore
+            numberOfLines={5}
+            renderTruncatedFooter={renderTruncatedFooter}
+            renderRevealedFooter={renderRevealedFooter}
+            onReady={() => setIsExpanded(false)}
+            onExpand={() => setIsExpanded(true)}
+          >
+            <Text style={{color: Colors.White, padding:10, fontSize: 19, fontWeight: 'normal' }}>{toCapitalCase(data.description)}</Text>
+          </ReadMore>
+        </View>
+        <View style={styles.commentInfo}>
+          <View style={{display: 'flex', flexDirection: 'row', gap: 10, justifyContent: 'space-between', alignItems: 'center', marginTop: 10, marginBottom: 10}}> 
+            <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}><View style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
+              <Pressable onPress={() => handlePress(data.id_com)}>
+                {like ? <FontAwesome5 name="heart" size={30} color={Colors.DarkSpringGreen} solid/> : <FontAwesome5 name="heart" size={30} color={Colors.DarkSpringGreen} regular/>}</Pressable>
+              <Text style={{color: Colors.White, padding:10, fontSize:  19, fontWeight: 'normal' }}>{countlike}</Text>
+            </View> 
+            <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
+                <FontAwesome5 name="comments" size={30} color={Colors.DarkSpringGreen} regular/>
+              <Text style={{color: Colors.White, padding:10, fontSize:  19, fontWeight: 'normal' }}>{data?.countComment}</Text>
+            </View>
+            </View>
+            <DateT dateString={data?.createdAt}/>
+          </View>
+          {data.countComment > 0 ? 
+              <>
+                <Divider  style={{ backgroundColor: Colors.Onyx}}/>
+                <View style={{display: 'flex', flexDirection:'row', gap: 10, alignItems: 'center', justifyContent: 'space-between',marginTop: 10}}>
+                  <Pressable onPress={displayReply}>
+                    <Text style={{color: Colors.DarkSpringGreen, fontSize: 19, fontWeight: 'normal'}}>{ replies ? "Masquer" : 'Voir les réponses '}</Text>
+                  </Pressable>
+                  <Pressable onPress={()=>{navigation.navigate('response',{type: 'comment', id: data.id_com})}}>
+                    <Text style={{color: Colors.DarkSpringGreen, fontSize: 19, fontWeight: 'normal'}}> Répondre</Text>
+                  </Pressable>
                 </View>
-            }
-            description={
-                <View>
-                    <ReadMore
-                        numberOfLines={5}
-                        renderTruncatedFooter={renderTruncatedFooter}
-                        renderRevealedFooter={renderRevealedFooter}
-                        onReady={() => setIsExpanded(false)}
-                        onExpand={() => setIsExpanded(true)}
-                    >
-                        <Text style={{color: Colors.White, padding:10, fontSize: 19, fontWeight: 'normal' }}>{toCapitalCase(data.description)}</Text>
-                    </ReadMore>                                
-                    <View style={styles.commentInfo}>
-                        <View style={{display: 'flex', flexDirection: 'row', gap: 10, justifyContent: 'space-between', alignItems: 'center', marginTop: 10}}> 
-                            <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
-                                <Pressable onPress={handlePress}>{like ? <FontAwesome5 name="heart" size={30} color={Colors.DarkSpringGreen} solid/> : <FontAwesome5 name="heart" size={30} color={Colors.DarkSpringGreen} regular/>}</Pressable>
-                                <Text style={{color: Colors.White, padding:10, fontSize:  19, fontWeight: 'normal' }}>{countlike}</Text>
-                            </View> 
-                            <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
-                                <FontAwesome5 name="comments" size={30} color={Colors.DarkSpringGreen} regular/>
-                                <Text style={{color: Colors.White, padding:10, fontSize:  19, fontWeight: 'normal' }}>{data?.countComment}</Text>
-                            </View>
-                        </View>   
-                        <DateT dateString={data?.createdAt}/>
-                    </View>
-                    {data.countComment > 0 ? 
-                        <>
-                        <Divider  style={[styles.divider, {backgroundColor: Colors.Onyx}]}/>
-                        <View style={{display: 'flex', flexDirection:'row', gap: 10, alignItems: 'baseline', justifyContent: 'space-between', marginTop: 9}}>
-                            <Pressable onPress={displayReply}>
-                            <Text style={{color: Colors.DarkSpringGreen, fontSize: 19, fontWeight: 'normal'}}>{ replies ? "Masquer" : ' Voir les réponses '}</Text>
-                            </Pressable>
-                            <Pressable onPress={()=>{navigation.navigate('Response',{type: 'comment', id: data.id_com})}}>
-                            <Text style={{color: Colors.DarkSpringGreen, fontSize:  19, fontWeight: 'normal'}}> Répondre</Text>
-                            </Pressable>
-                        </View>
-                        </> : 
-                        <>
-                        <Divider  style={styles.divider}/>
-                        <View style={{marginTop: 9, alignItems: 'flex-start'}}>
-                            <Pressable onPress={()=>{navigation.navigate('Response',{type: 'comment', id: data.id_com})}}><Text style={{color: Colors.DarkSpringGreen, fontSize: 19, fontWeight: 'normal'}}> Répondre</Text></Pressable>
-                        </View>
-                        </>
-                    }
+              </> : 
+              <>
+                <Divider  style={{ backgroundColor: Colors.Onyx}}/>
+                <View style={{marginTop: 10, alignItems: 'flex-end'}}>
+                  <Pressable onPress={()=>{navigation.navigate('response',{type: 'comment', id: data.id_com})}}><Text style={{color: Colors.DarkSpringGreen, fontSize: 19, fontWeight: 'normal'}}> Répondre</Text></Pressable>
                 </View>
+              </>
             }
-        />
-        {replies && (<><Divider style={styles.divider} /><CommentResponse items={replies}/></>)}
-        {isActive && <ActionsPanel actions={actions}/>}
+        </View>
         </Pressable>
+        {replies && (<><Divider style={[styles.divider, {marginTop: 10}]} /><CommentResponse items={replies}/></>)}
+        {isActive && <ActionsPanel actions={actions}/>}
+        </View>
     )
 }
 
 const CommentResponse = ({items}) => {  
     return (
-        <List.Section style={styles.list}>
-            {items.map((data, index) => (
-                <React.Fragment>
+        items.map((data, index) => (
+                <>
                     <Response key={index} data={data}/>
                     {index < items.length - 1 ? <Divider style={styles.divider}   /> : null}
-                </React.Fragment>
-            ))}
-        </List.Section>
+                </>
+            ))
     );
 }
 
 const styles = StyleSheet.create({
-    list: {
-        maxWidth: Platform.OS === 'web' ? 950 : 360,
+    commentContainer: {
         display: 'flex',
-        flexDirection: 'column'
+        backgroundColor: Colors.Jet,
+        marginBottom: 10,
+        marginTop: 5
     },
     divider: {
-        backgroundColor: Colors.BattleShipGray,
+        backgroundColor: Colors.Onyx,
+        marginBottom: 10
     },
     commentInfo: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'baseline',
+        display: 'flex'
     },
     icon: {
         fontSize: Platform.OS === "web" ? 24 : 20,

@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {Text, Pressable, Platform, View, StyleSheet} from 'react-native';
 import Review from '../review/Review';
 import { Colors } from '../../style/color';
@@ -12,9 +12,9 @@ const ArtistReview = ({ items, id}) => {
         {items.slice(0,5).map((item) => (
           <Review key={item.id_review} data={item} />
         ))}
-        {(Platform.OS !== 'web' && items.length > 5) && ( 
+        {(Platform.OS !== 'web' ) && ( 
           <View style={styles.sectionFilter}>
-            <Pressable style={styles.btn} onPress={()=>{navigation.navigate('Review', {id})}}>
+            <Pressable style={styles.btn} onPress={()=>{navigation.navigate('review', {id})}}>
               <Text style={styles.filterText}>Voir tous les critiques</Text>
             </Pressable>
           </View>

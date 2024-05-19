@@ -109,7 +109,7 @@ function ConfirmUserScreen({ route, navigation }) {
               console.log(
                 "Erreur lors de la connexion post-inscription de l utilisateur"
               );
-              navigation.navigate("SignIn");
+              navigation.navigate("signin");
             }
           })
           .catch((error) => console.log("error /users/authWithSpotify", error));

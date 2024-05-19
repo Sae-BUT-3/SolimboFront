@@ -25,7 +25,7 @@ const Oeuvre = ({ data, artists, favoris, likeUser, setResponse, show }) => {
   };
 
   const handleFavoris = () =>  {
-    axiosInstance.post('/users/oeuvreFav', { idOeuvre: data.id })
+    axiosInstance.post('/users/oeuvreFav', { idOeuvre: data.id, type: data.type })
     .then(res => {
         if (!fav) {
             setFavoris(true);
@@ -96,7 +96,7 @@ const Oeuvre = ({ data, artists, favoris, likeUser, setResponse, show }) => {
                   textShadowRadius: 10,}}>{data.total_tracks + ' titres'}</Text></>}
                 <PointTrait point={true}/>
                 {artists.length == 1  ? 
-                  <Pressable onPress={() => navigation.navigate('Artist', { id : artists[0].id })}>  
+                  <Pressable onPress={() => navigation.navigate('artist', { id : artists[0].id })}>  
                     <Image
                       source={{ uri: artists[0].image }}
                       style={{ width: Platform.OS === 'web' ? 64 : 40, height: Platform.OS === 'web' ? 64 : 40, borderRadius: 82}}

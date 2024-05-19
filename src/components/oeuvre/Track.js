@@ -39,7 +39,7 @@ const Track = ({data}) => {
     };
 
     const openReview =  ()=>{
-        navigation.navigate('Review', {type: data.type, id: data.id})   
+        navigation.navigate('review', {type: data.type, id: data.id})   
     }
     
     useEffect( ()=>{  
@@ -94,8 +94,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
         paddingVertical: 20,
         borderRadius: 15,
-        maxWidth: Platform.OS === 'web' ? 950 : null,
-        width: Platform.OS != 'web' ? 386 : null,
+        width: Platform.OS != 'web' ? 386 : 950,
         shadowColor: Colors.Onyx,
         shadowOpacity: 0.3,
         shadowRadius: 3,

@@ -37,7 +37,7 @@ const ModalPostReview = ({ visible, onClose }) => {
         getData();
         // Fetch search filters when the component mounts
         axiosInstance.get('/spotify/Searchfilters').then(response => {
-            setFilter(response.data.filter(item => item.id !== 'user'));
+            setFilter(response.data.filter(item => item.id !== 'user' && item.id !== 'artist'));
         });
     }, [])
 
@@ -49,7 +49,7 @@ const ModalPostReview = ({ visible, onClose }) => {
         }
         const params = {
             query: query.text,
-            spotify_filter: query.filters.join(","),
+            spotify_filter: "album,track,playlist",
             limit: 20
         }
         axiosInstance.get("/spotify/search", {
@@ -68,143 +68,146 @@ const ModalPostReview = ({ visible, onClose }) => {
     }, []);
 
     return (
-       
-            <Modal
-                animationType="slide"
-                transparent={true}
-                visible={visible}
-                onRequestClose={onClose}
-                style={modalStyle.modalContainer}
+        <Modal
+            animationType="slide"
+            transparent={true}
+            visible={visible}
+            onRequestClose={onClose}
+            style={modalStyle.modalContainer}
+        >
+            <KeyboardAvoidingView
+                behavior={Platform.OS === "ios" ? "padding" : "height"}
+                style={{ flex: 1 }}
             >
-                <KeyboardAvoidingView
-                    behavior={Platform.OS === "ios" ? "padding" : "height"}
-                    style={{ flex: 1 }}
-                >
-                    <View style={modalStyle.modal}>
-                        <View style={modalStyle.modalHeader}>
-                            <FontAwesome name="close" size={30} color={Colors.Silver} onPress={onClose} />
-                            <Text style={modalStyle.modalTitle}>Rédaction d'une critique</Text>
-                            <FontAwesome name="pencil-square-o" size={25} color={Colors.Silver} onPress={onClose} />
-                        </View>
-                        <Divider style={{ backgroundColor: Colors.BattleShipGray }} />
-                        {isLoading ? <Loader /> : <KeyboardAwareScrollView
-                            contentContainerStyle={{ flexGrow: 1 }}
-                            extraHeight={150}
-                            enableResetScrollToCoords={false}
-                            enableOnAndroid={true}
-                            enableAutomaticScroll={true}
-                            keyboardOpeningTime={0}
-                            style={{ flex: 1 }}
-                        >
-                            <View style={{ marginTop: 15 }}>
-                                {musicItem === null ? (
-                                    <>
-                                        <Searchbar filters={filter} keyPressHandler={handleSearch} includeCancelButton={false} />
-                                        <View style={{ backgroundColor: Colors.Jet, borderRadius: 15, paddingLeft: 5, paddingTop: 5, height: "100%" }}>
-                                            <ScrollView>
-                                                {
-                                                    items?.map((item, index) => (
-                                                        <SearchResult
-                                                            key={index}
-                                                            imageURL={item.imageURL}
-                                                            title={item.title}
-                                                            subtitle={item.subtitle}
-                                                            rounded={item.type === 'artist'}
-                                                            onPress={() => setMusicItem(item)}
-                                                        />
-                                                    ))
-                                                }
-                                                {messageText && <Text style={modalStyle.messageText}>{messageText}</Text>}
-                                            </ScrollView>
-                                        </View>
-                                    </>
-                                ) : (
-                                    <View style={modalStyle.reviewContainer}>
-                                        <View style={{ gap: 10, justifyContent: 'center', alignItems: 'center', marginTop: 20 }}>
-                                            <Image
-                                                source={{ uri: musicItem.imageURL || require('../assets/images/profil.png') }}
-                                                style={{ width: 150, height: 150, borderRadius: 5 }}
-                                            />
-                                            <View style={{ gap: 5, justifyContent: 'center', alignItems: 'center', flexDirection: 'row' }}>
-                                                <Text numberOfLines={1} style={{ color: Colors.White, fontSize: 20, fontWeight: 'normal', maxWidth: 210, paddingLeft: 5, textAlign: 'center' }}>{musicItem.title}</Text>
-                                                {musicItem.subtitle && (
-                                                    <>
-                                                        <PointTrait point={true} />
-                                                        <Text numberOfLines={1} style={{ color: Colors.Silver, fontSize: 19, fontWeight: 'normal', maxWidth: 150, textAlign: 'center' }}>{musicItem.subtitle}</Text>
-                                                    </>
-                                                )}
-                                            </View>
-                                        </View>
-
-                                        <View style={modalStyle.textContainer}>
-                                            <View style={{ display: 'flex', flexDirection: 'row', gap: 10, justifyContent: 'flex-start', alignItems: 'center', marginBottom: 5 }}>
-                                                <Avatar.Image source={{ uri: currentUser.photo || require('../assets/images/profil.png') }} size={45} accessibilityLabel={currentUser.pseudo} />
-                                                <Text style={{ color: Colors.SeaGreen, fontSize: 19, fontWeight: 'normal' }}>{'@' + currentUser.alias}</Text>
-                                            </View>
-                                            <StarRating
-                                                rating={rating}
-                                                onChange={setRating}
-                                                starSize={40}
-                                                color={Colors.DarkSpringGreen}
-                                                emptyColor={Colors.Onyx}
-                                                enableSwiping={true}
-                                            />
-                                            <MultilineInput
-                                                placeholder="Rédiger votre critique..."
-                                                value={description}
-                                                onChangeText={setDescription}
-                                                maxLength={1500}
-                                            />
-                                            <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
-                                                <Pressable
-                                                    style={[pressableBasicStyle.button, { backgroundColor: '#d62828', width: 150 }]}
-                                                    onPress={() => { 
-                                                        setMusicItem(null); 
-                                                        setRating(0); 
-                                                    }}
-                                                >
-                                                    <FontAwesome size={20} name='close' color={Colors.White} style={{ paddingRight: 10 }} regular />
-                                                    <Text style={pressableBasicStyle.button_text}>Annuler</Text>
-                                                </Pressable>
-                                                <Pressable
-                                                    style={[pressableBasicStyle.button, { width: 150 }]}
-                                                    onPress={() => {
-                                                        setIsLoading(true);
-                                                        axiosInstance.put('/review', { idOeuvre: musicItem.id, note: rating, description: description, type: musicItem.type })
-                                                        .then(response => {
-                                                            setMusicItem(null);
-                                                            setRating(0);
-                                                            setIsLoading(false);
-                                                            onClose();
-                                                            Toast.show({
-                                                                type: 'sucess',
-                                                                text2: '✅ Votre critique a bien été postée.'
-                                                            });
-                                                        })
-                                                        .catch(error => {
-                                                            console.log(error)
-                                                            setIsLoading(false);
-                                                            setError(error.response.data);
-                                                            onClose();
-                                                            Toast.show({
-                                                                type: 'error',
-                                                                text2: '❌ Votre critique n\'a pas pu être postée.'
-                                                            });
-                                                        })
-                                                    }}
-                                                >
-                                                    <FontAwesome size={20} name='send-o' color={Colors.White} style={{ paddingRight: 10 }} />
-                                                    <Text style={pressableBasicStyle.button_text}>Poster</Text>
-                                                </Pressable>
-                                            </View>
+                <View style={modalStyle.modal}>
+                    <View style={modalStyle.modalHeader}>
+                        <FontAwesome name="close" size={30} color={Colors.Silver} onPress={onClose} />
+                        <Text style={modalStyle.modalTitle}>Rédaction d'une critique</Text>
+                        <FontAwesome name="pencil-square-o" size={25} color={Colors.Silver} onPress={onClose} />
+                    </View>
+                    <Divider style={{ backgroundColor: Colors.BattleShipGray }} />
+                    {isLoading ? <Loader /> : <KeyboardAwareScrollView
+                        contentContainerStyle={{ flexGrow: 1 }}
+                        extraHeight={150}
+                        enableResetScrollToCoords={false}
+                        enableOnAndroid={true}
+                        enableAutomaticScroll={true}
+                        keyboardOpeningTime={0}
+                        style={{ flex: 1 }}
+                    >
+                        <View style={{ marginTop: 15 }}>
+                            {musicItem === null ? (
+                                <>
+                                    <Searchbar filters={filter} keyPressHandler={handleSearch} includeCancelButton={false} />
+                                    <View style={{ backgroundColor: Colors.Jet, borderRadius: 15, paddingLeft: 5, paddingTop: 5, height: "100%" }}>
+                                        <ScrollView>
+                                            {
+                                                items?.map((item, index) => (
+                                                    <SearchResult
+                                                        key={index}
+                                                        imageURL={item.imageURL}
+                                                        title={item.title}
+                                                        subtitle={item.subtitle}
+                                                        rounded={false}
+                                                        onPress={() => setMusicItem(item)}
+                                                    />
+                                                ))
+                                            }
+                                            {messageText && <Text style={modalStyle.messageText}>{messageText}</Text>}
+                                        </ScrollView>
+                                    </View>
+                                </>
+                            ) : (
+                                <View style={modalStyle.reviewContainer}>
+                                    <View style={{ gap: 10, justifyContent: 'center', alignItems: 'center', marginTop: 20 }}>
+                                        <Image
+                                            source={{ uri: musicItem.imageURL || require('../assets/images/profil.png') }}
+                                            style={{ width: 150, height: 150, borderRadius: 5 }}
+                                        />
+                                        <View style={{ gap: 5, justifyContent: 'center', alignItems: 'center', flexDirection: 'row' }}>
+                                            <Text numberOfLines={1} style={{ color: Colors.White, fontSize: 20, fontWeight: 'normal', maxWidth: 210, paddingLeft: 5, textAlign: 'center' }}>{musicItem.title}</Text>
+                                            {musicItem.subtitle && (
+                                                <>
+                                                    <PointTrait point={true} />
+                                                    <Text numberOfLines={1} style={{ color: Colors.Silver, fontSize: 19, fontWeight: 'normal', maxWidth: 150, textAlign: 'center' }}>{musicItem.subtitle}</Text>
+                                                </>
+                                            )}
                                         </View>
                                     </View>
-                                )}
-                            </View>
-                        </KeyboardAwareScrollView>}
-                    </View>
-                </KeyboardAvoidingView>
-            </Modal>
+
+                                    <View style={modalStyle.textContainer}>
+                                        <View style={{ display: 'flex', flexDirection: 'row', gap: 10, justifyContent: 'flex-start', alignItems: 'center', marginBottom: 5 }}>
+                                            <Avatar.Image source={{ uri: currentUser.photo || require('../assets/images/profil.png') }} size={45} accessibilityLabel={currentUser.pseudo} />
+                                            <Text style={{ color: Colors.SeaGreen, fontSize: 19, fontWeight: 'normal' }}>{'@' + currentUser.alias}</Text>
+                                        </View>
+                                        <StarRating
+                                            rating={rating}
+                                            onChange={setRating}
+                                            starSize={40}
+                                            color={Colors.DarkSpringGreen}
+                                            emptyColor={Colors.Onyx}
+                                            enableSwiping={true}
+                                        />
+                                        <MultilineInput
+                                            placeholder="Rédiger votre critique..."
+                                            value={description}
+                                            onChangeText={setDescription}
+                                            maxLength={1500}
+                                        />
+                                        <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
+                                            <Pressable
+                                                style={[pressableBasicStyle.button, { width: 150 }]}
+                                                onPress={() => {
+                                                    setIsLoading(true);
+                                                    axiosInstance.put('/review', { idOeuvre: musicItem.id, note: rating, description: description, type: musicItem.type })
+                                                    .then(response => {
+                                                        setMusicItem(null);
+                                                        setRating(0);
+                                                        setDescription("");
+                                                        setIsLoading(false);
+                                                        onClose();
+                                                        Toast.show({
+                                                            type: 'success',
+                                                            text1: '✅  Votre critique a bien été postée.',
+                                                            text1Style: {color: Colors.White}
+                                                        });
+                                                    })
+                                                    .catch(error => {
+                                                        console.log(error)
+                                                        setIsLoading(false);
+                                                        setError(error.response.data);
+                                                        onClose();
+                                                        Toast.show({
+                                                            type: 'error',
+                                                            text1: '❌  Votre critique n\'a pas pu être postée.',
+                                                            text1Style: {color: Colors.White}
+                                                        });
+                                                    })
+                                                }}
+                                            >
+                                                <FontAwesome size={20} name='send-o' color={Colors.White} style={{ paddingRight: 10 }} />
+                                                <Text style={pressableBasicStyle.button_text}>Poster</Text>
+                                            </Pressable>
+                                            <Pressable
+                                                style={[pressableBasicStyle.button, { backgroundColor: Colors.Red, width: 150 }]}
+                                                onPress={() => { 
+                                                    setMusicItem(null); 
+                                                    setRating(0); 
+                                                    setDescription("");
+                                                }}
+                                            >
+                                                <FontAwesome size={20} name='close' color={Colors.White} style={{ paddingRight: 10 }} regular />
+                                                <Text style={pressableBasicStyle.button_text}>Annuler</Text>
+                                            </Pressable>
+                                        </View>
+                                    </View>
+                                </View>
+                            )}
+                        </View>
+                    </KeyboardAwareScrollView>}
+                </View>
+            </KeyboardAvoidingView>
+        </Modal>
     );
 };
 

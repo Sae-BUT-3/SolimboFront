@@ -8,21 +8,27 @@ import {
   Platform,
   Pressable,
 } from "react-native";
-import Svg, { Path } from "react-native-svg";
 import { Colors } from "../../style/color";
 import { breakpoint } from "../../style/breakpoint";
-import PressableBasic from "../pressables/PressableBasic";
 import commonStyles from "../../style/commonStyle";
+import ReadMore from 'react-native-read-more-text';
+import ImagePanel from "../common/ImagePanel";
+
+const toCapitalCase = (mot) => {
+  if(mot == 'artist') mot =  mot + 'e'
+  return mot ? mot.charAt(0).toUpperCase() + mot.slice(1) : mot;
+}
+
 const getFollowValues = (user, relation) => {
-  if (!user) return ["+ suivre", "suivi"];
-  let afterFollow = "suivi";
-  let beforeFollow = "+ suivre";
+  if (!user) return ["+ Suivre", "Suivi"];
+  let afterFollow = "Suivi";
+  let beforeFollow = "+ Suivre";
 
   if (user.is_private && (relation.isWaited || !relation.isFollowed)) {
-    afterFollow = "en attente";
+    afterFollow = "En attente";
   }
   if (relation.doesFollows) {
-    beforeFollow = "+ suivre en retour";
+    beforeFollow = "Suivre en retour";
   }
   if (relation.doesFollow) {
   }
@@ -35,12 +41,28 @@ function SearchBar({
   isCurrent,
   relation,
   handleFollow,
-  handleModifier,
+  followed,
+  followers,
+  onRefresh
 }) {
   const { height, width } = useWindowDimensions();
-  const [followText, setFollowText] = useState(["+ suivre", "suivi"]);
+  const [followText, setFollowText] = useState(["+ Suivre", "Suivi"]);
   const [isFollowHovered, setIsFollowHovered] = useState(false);
-  const [isModifierHovered, setIsModifierHovered] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [visible, isVisible] = useState(false);
+  const [showAll, setShowAll] = useState(false);
+
+  const renderTruncatedFooter = (handlePress) => (
+    <Text onPress={handlePress} style={{ color: Colors.SeaGreen, fontSize: Platform.OS == 'web' ? 20 : 17, fontWeight: 'normal' }}>
+      Lire plus
+    </Text>
+  );
+
+  const renderRevealedFooter = (handlePress) => (
+    <Text onPress={handlePress} style={{ color: Colors.SeaGreen, fontSize: Platform.OS == 'web' ? 20 : 17, fontWeight: 'normal' }}>
+      Lire moins
+    </Text>
+  );
 
   useEffect(() => {
     setFollowText(getFollowValues(user, relation));
@@ -53,14 +75,6 @@ function SearchBar({
     setIsFollowHovered(false);
   };
 
-  const handleModifierMouseEnter = () => {
-    setIsModifierHovered(true);
-  };
-
-  const handleModifierMouseLeave = () => {
-    setIsModifierHovered(false);
-  };
-
   const onFollowPress = () => {
     handleFollow().then(() => {
       setFollowText([followText[1], followText[0]]);
@@ -68,70 +82,54 @@ function SearchBar({
   };
   const styles = StyleSheet.create({
     container: {
-      display: "flex",
-      flexDirection: "row",
-      width: "100%",
       gap: 10,
-      alignItems: "center",
+      marginBottom: 15,
+      paddingHorizontal: 10
     },
     diplayContainer: {
-      display: "flex",
-      flexDirection: "row",
-      width: "100%",
-      alignItems: "center",
+      alignItems: "flex-start",
       justifyContent: "space-between",
     },
     image: {
-      width: width < breakpoint.medium ? 70 : 80,
-      height: width < breakpoint.medium ? 70 : 80,
+      width: width < breakpoint.medium ? 75 : 80,
+      height: width < breakpoint.medium ? 75 : 80,
       borderRadius: width < breakpoint.medium ? 35 : 40,
     },
     imageContainer: {
-      display: "flex",
-      flexDirection: "column",
+      flexDirection: 'row',
+      justifyContent: 'space-between',
       alignItems: "center",
+      gap: 10,
+      paddingLeft: 9
     },
 
     infoContainer: {
       flex: 1,
-      display: "flex",
-      flexDirection: "column",
-      justifyContent: "space-between",
-      width: "100%",
+      justifyContent: "center",
     },
     numberContainer: {
-      paddingTop: 10,
-      display: "flex",
       flexDirection: "row",
-      width: "100%",
       justifyContent:
         width < breakpoint.mobile ? "space-between" : "space-around",
     },
     followText: {
       fontWeight: "600",
       textAlign: "center",
-      color: Colors.Silver,
+      color: Colors.White,
     },
     followButton: {
-      backgroundColor: Colors.Onyx,
-      paddingVertical: 2,
-      paddingHorizontal: 10,
-      borderRadius: 20,
+      backgroundColor: Colors.SeaGreen,
+      paddingVertical: 10,
+      paddingHorizontal: 20,
+      borderRadius: 15,
       marginTop: 10,
-      boxShadow:
-        "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
-      transition: "background-color 0.3s ease",
-    },
-    ModifierButton: {
-      backgroundColor: Colors.BattleShipGray,
-      paddingVertical: 2,
-      paddingHorizontal: 10,
-      borderRadius: 20,
-      marginTop: 10,
-      color: "#FFFFFF",
-      boxShadow:
-        "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
-      transition: "background-color 0.3s ease",
+      shadowColor: Colors.Onyx,
+      shadowOpacity: 0.3,
+      shadowRadius: 3,
+      maxWidth: 250,
+      elevation: Platform.OS === 'android' ? 3 : 0, 
+      transition: 'background-color 0.3s ease',
+      width: 150
     },
     btnFollowHovered: {
       backgroundColor: Colors.Jet,
@@ -140,109 +138,110 @@ function SearchBar({
       backgroundColor: Colors.SeaGreen,
     },
     aliasText: {
-      fontSize: 35,
+      fontSize: Platform.OS === 'web' ? 35 : 25,
       fontWeight: "500",
       color: Colors.Celadon,
     },
     pseudoText: {
-      color: Colors.CalPolyGreen,
+      color: Colors.SeaGreen,
       fontSize: 12,
       fontWeight: "600",
     },
-    numberText: {
-      fontSize: 12,
-      color: Colors.Silver,
+    followText:{
+      color: Colors.White,
+      fontWeight: 'bold',
+      textAlign: 'center',
+      alignItems: 'center',
+      fontSize: 15
     },
-    reviewText: {
-      // display: width < 300 ? "none" : "block",
+    numberText: {
+      fontSize: 15,
+      color: Colors.White,
     },
     numberValue: {
+      color: Colors.White,
       fontWeight: "bold",
+      fontSize: 17,
     },
     bioText: {
-      color: Colors.Silver,
+      color: Colors.White,
+      textAlign: 'left',
+      fontSize: Platform.OS === 'web' ? 20 : 15
     },
   });
 
-  return (
+  return (<>
     <View style={[styles.container]}>
       <View style={[styles.imageContainer]}>
-        <Image
-          style={styles.image}
-          source={{
-            uri:
-              user?.photo ||
-              "https://merriam-webster.com/assets/mw/images/article/art-wap-article-main/egg-3442-e1f6463624338504cd021bf23aef8441@1x.jpg",
-          }}
-        />
-        {isCurrent ? null : (
-          <Pressable
-            style={[
-              commonStyles.text,
-              styles.followButton,
-              isFollowHovered ? styles.btnFollowHovered : null,
-            ]}
-            activeOpacity={1}
-            onMouseEnter={handleFollowMouseEnter}
-            onMouseLeave={handleFollowMouseLeave}
-            onPress={onFollowPress}
-          >
-            {!false ? (
-              <Text style={[commonStyles.text, styles.followText]}>
-                {followText[0]}
-              </Text>
-            ) : (
-              <Text style={[commonStyles.text, styles.followText]}>Suivi</Text>
-            )}
-          </Pressable>
-        )}
-      </View>
-      <View style={[styles.infoContainer]}>
-        <View>
-          <View style={[styles.diplayContainer]}>
-            <Text style={[commonStyles.text, styles.aliasText]}>
-              {user?.alias}
-            </Text>
-            {isCurrent && (
-              <Pressable
-                style={[
-                  commonStyles.text,
-                  styles.ModifierButton,
-                  isModifierHovered ? styles.btnModiferHovered : null,
-                ]}
-                activeOpacity={1}
-                onMouseEnter={handleModifierMouseEnter}
-                onMouseLeave={handleModifierMouseLeave}
-                onPress={handleModifier}
-              >
-                <Text>modifier</Text>
-              </Pressable>
-            )}
+          <View style={{justifyContent: 'space-around', alignItems: 'flex-start', flexDirection: 'row', gap: 35}}>
+            <Image
+              style={styles.image}
+              source={{
+                uri:
+                  user?.photo ||
+                  "https://merriam-webster.com/assets/mw/images/article/art-wap-article-main/egg-3442-e1f6463624338504cd021bf23aef8441@1x.jpg",
+              }}
+            />        
+            <View style={[styles.diplayContainer]}>
+              <Text style={[commonStyles.text, styles.aliasText]}>{user?.alias}</Text>
+              <Text style={[commonStyles.text, styles.pseudoText]}> @{user?.pseudo}</Text>
+            </View>
           </View>
-          <Text style={[commonStyles.text, styles.pseudoText]}>
-            @{user?.pseudo}
-          </Text>
-          <Text style={[commonStyles.text, styles.bioText]}>{user?.bio}</Text>
+          {isCurrent ? null : (
+            <Pressable
+              style={[
+                styles.followButton,
+                {backgroundColor : relation?.isWaited ? Colors.Jet : Colors.DarkSpringGreen},
+                isFollowHovered ? styles.btnFollowHovered : null,
+              ]}
+              activeOpacity={1}
+              onMouseEnter={handleFollowMouseEnter}
+              onMouseLeave={handleFollowMouseLeave}
+              onPress={onFollowPress}
+            >
+              {!false ? (
+                <Text numberOfLines={1} style={styles.followText}>
+                  {followText[0]}
+                </Text>
+              ) : (
+                <Text numberOfLines={1} style={styles.followText}>Suivi</Text>
+              )}
+            </Pressable>
+          )}    
+      </View>
+      <ReadMore
+        numberOfLines={3}
+        renderTruncatedFooter={renderTruncatedFooter}
+        renderRevealedFooter={renderRevealedFooter}
+        onReady={() => setIsExpanded(false)}
+        onExpand={() => setIsExpanded(true)}
+      >
+        <Text style={{color: Colors.White, padding:10, fontSize: Platform.OS == 'web' ? 20 : 16, fontWeight: 'normal' }}>{toCapitalCase(user?.bio)}</Text>
+      </ReadMore>
+      <View style={styles.numberContainer}>
+        <View style={styles.followText}>
+          <Text style={styles.numberValue}>{user?.review_count}</Text>
+          <Text style={styles.numberText}>Critique</Text>
         </View>
-
-        <View style={[styles.numberContainer]}>
-          <Text
-            style={[commonStyles.text, styles.numberText, styles.reviewText]}
-          >
-            <Text style={[styles.numberValue]}>{user?.review_count}</Text>{" "}
-            <Text style={[styles.numberLabel]}>reviews</Text>
-          </Text>
-          <Text style={[commonStyles.text, styles.numberText]}>
-            <Text style={[styles.numberValue]}>{user?.follower_count}</Text>{" "}
-            <Text style={[styles.numberLabel]}>followers</Text>
-          </Text>
-          <Text style={[commonStyles.text, styles.numberText]}>
-            <Text style={[styles.numberValue]}>{user?.following_count}</Text>{" "}
-            <Text style={[styles.numberLabel]}>suivi(e)s</Text>
-          </Text>
-        </View>
+        <Pressable onPress={()=> isVisible(!visible)}>
+          <View style={styles.followText}>
+            <Text style={styles.numberValue}>{user?.follower_count}</Text>
+            <Text style={styles.numberText}>Abonné</Text>
+          </View>
+        </Pressable>
+        
+        <Pressable onPress={()=> setShowAll(!showAll)}>
+          <View style={styles.followText}>
+            <Text style={styles.numberValue}>{user?.following_count}</Text>
+            <Text style={styles.numberText}>Abonnement</Text>
+          </View>
+        </Pressable>
+       
       </View>
     </View>
+    { (user?.follower_count > 0 && visible) && <ImagePanel avatars={followers} type={'user'} show={isVisible} onRefresh={onRefresh}/>}
+    { (user?.following_count > 0 && showAll) && <ImagePanel avatars={followed} show={setShowAll} onRefresh={onRefresh} />}
+    </>
   );
 }
 

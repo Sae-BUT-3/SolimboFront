@@ -75,7 +75,7 @@ function SignInScreen({ navigation }) {
   useEffect(() => {
     if (response?.type === 'success') {
       const { code } = response.params;
-      navigation.navigate('ConfirmUser', { code, redirectUri });
+      navigation.navigate('confirm-user', { code, redirectUri });
     }
   }, [response]);
 
@@ -140,7 +140,7 @@ function SignInScreen({ navigation }) {
         <View style={commonStyles.row} >
           <Text style={[commonStyles.text, authStyle.noAccount]}>Pas encore de compte ? </Text>
           <Text style={commonStyles.textLink} 
-            onPress={() => navigation.navigate('SignUp')}
+            onPress={() => navigation.navigate('signup')}
           >S'inscire</Text>
         </View>
         {error && (

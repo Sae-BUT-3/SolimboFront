@@ -1,25 +1,17 @@
-import * as React from 'react';
+import React, { useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { AuthProvider } from './src/contexts/AuthContext';
 import MainNavigator from './src/navigation/MainNavigator';
-import { useEffect, useState } from 'react';
 import * as Font from 'expo-font';
 import * as Linking from 'expo-linking';
-import { Text } from 'react-native';
-const prefix = Linking.createURL('/');
-export default function App() {
-  const [fontsLoaded, setFontsLoaded] = useState(false);
-  // useEffect(() => {
-  //   makeServer();
+import { Text, View, ActivityIndicator, StyleSheet } from 'react-native';
+import Loader from './src/components/common/Loader';
 
-  //   // Nettoyez le serveur lorsque le composant est démonté
-  //   return () => {
-  //       shutdownServer();
-  //   };
-  // }, []);
+const App = () => {
+  const [fontsLoaded, setFontsLoaded] = useState(false);
 
   const linking = {
-    prefixes: ["solimbo://"],
+    prefixes: [Linking.createURL('/'), 'solimbo://'],
     config: {
       screens: {
         SignIn: 'signin',
@@ -33,6 +25,7 @@ export default function App() {
         Review: 'review',
         Oeuvre: 'oeuvre',
         Artist: 'artist',
+        Setting: 'setting',
         navigate: {
           screens: {
             Search: 'search',
@@ -47,36 +40,48 @@ export default function App() {
 
   useEffect(() => {
     const loadFonts = async () => {
-      await Font.loadAsync({
-        'inter-regular': require('./src/assets/fonts/Inter-Regular.ttf'),
-        'inter-bold': require('./src/assets/fonts/Inter-Bold.ttf'),
-        'inter-medium': require('./src/assets/fonts/Inter-Medium.ttf'),
-        'inter-light': require('./src/assets/fonts/Inter-Light.ttf'),
-        'inter-thin': require('./src/assets/fonts/Inter-Thin.ttf'),
-        'inter-extra-light': require('./src/assets/fonts/Inter-ExtraLight.ttf'),
-        'inter-black': require('./src/assets/fonts/Inter-Black.ttf'),
-        'inter-extra-bold': require('./src/assets/fonts/Inter-ExtraBold.ttf'),
-        'inter-semi-bold': require('./src/assets/fonts/Inter-SemiBold.ttf'),
-      });
-
-      setFontsLoaded(true);
+      try {
+        await Font.loadAsync({
+          'inter-regular': require('./src/assets/fonts/Inter-Regular.ttf'),
+          'inter-bold': require('./src/assets/fonts/Inter-Bold.ttf'),
+          'inter-medium': require('./src/assets/fonts/Inter-Medium.ttf'),
+          'inter-light': require('./src/assets/fonts/Inter-Light.ttf'),
+          'inter-thin': require('./src/assets/fonts/Inter-Thin.ttf'),
+          'inter-extra-light': require('./src/assets/fonts/Inter-ExtraLight.ttf'),
+          'inter-black': require('./src/assets/fonts/Inter-Black.ttf'),
+          'inter-extra-bold': require('./src/assets/fonts/Inter-ExtraBold.ttf'),
+          'inter-semi-bold': require('./src/assets/fonts/Inter-SemiBold.ttf'),
+        });
+        setFontsLoaded(true);
+      } catch (error) {
+        console.error('Error loading fonts', error);
+      }
     };
 
     loadFonts();
   }, []);
-  
-  if (!fontsLoaded) {
-    // Vous pouvez afficher un écran de chargement ici ou tout autre composant indiquant que les polices sont en cours de chargement.
-    return null;
-  }
 
- 
+  if (!fontsLoaded) {
+    return (
+      <Loader/>
+    );
+  }
 
   return (
     <AuthProvider>
-      <NavigationContainer linking={linking} fallback={<Text>Loading...</Text>}>
+      <NavigationContainer linking={linking} fallback={<Loader/>}>
         <MainNavigator />
       </NavigationContainer>
     </AuthProvider>
   );
-}
+};
+
+const styles = StyleSheet.create({
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+});
+
+export default App;

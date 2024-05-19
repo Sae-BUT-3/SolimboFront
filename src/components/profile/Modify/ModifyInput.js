@@ -5,6 +5,7 @@ import { Colors } from "../../../style/color";
 import { breakpoint } from "../../../style/breakpoint";
 import BasicInput from "../../form/BasicInput";
 import commonStyles from "../../../style/commonStyle";
+import modalStyle from "../../../style/modalStyle";
 function ModifyInput({
   max,
   label,
@@ -40,15 +41,15 @@ function ModifyInput({
 
   const styles = StyleSheet.create({
     label: {
-      fontWeight: "bold",
+      color: Colors.White,
+      fontSize: 18,
     },
     input: {
       width: width || "100%",
       height: height || 40,
       outline: "none",
-      borderColor: "#FF0000",
-      borderWidth: 2,
-      borderColor: error ? "#FF0000" : Colors.Jet,
+      borderWidth: 1,
+      borderColor: error ? Colors.Red : Colors.BattleShipGray,
       marginLeft: 0,
     },
     labelContainer: {
@@ -61,16 +62,16 @@ function ModifyInput({
       paddingRight: 10,
     },
     error: {
-      color: "#FF0000",
+      color: Colors.Red,
       marginLeft: 10,
       marginBottom: 10,
     },
   });
 
   return (
-    <View style={{ width: "100%" }}>
+    <View style={{ width: 380 }}>
       <View style={[styles.labelContainer]}>
-        <Text style={[styles.label, commonStyles.text, commonStyles.label]}>
+        <Text style={styles.label}>
           {label}
         </Text>
         {focused && (
@@ -86,12 +87,10 @@ function ModifyInput({
         onChangeText={handleTextChange}
         onFocus={handleFocus}
         onBlur={handleBlur}
-        placeholderTextColor={Colors.BattleShipGray}
+        placeholderTextColor={Colors.Silver}
         theme={{ colors: { primary: "green", underlineColor: "transparent" } }}
         style={[
-          commonStyles.input,
-          //   focused && commonStyles.inputFocused,
-          styles.input,
+          modalStyle.input, focused && modalStyle.inputFocused
         ]}
       />
       <Text style={[commonStyles.text, styles.error]}>{error}</Text>

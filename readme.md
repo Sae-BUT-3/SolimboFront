@@ -14,5 +14,6 @@
 > npm install react-native-read-more-text
 > npm install react-native-keyboard-aware-scroll-view
 > npm install react-native-app-intro-slider
+> npm install react-native-onboarding-swiper
 ```
 

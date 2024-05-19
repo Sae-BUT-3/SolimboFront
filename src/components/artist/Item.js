@@ -13,15 +13,15 @@ const Item = ({data}) => {
     const [isHovered, setIsHovered] = useState(false);
     const navigation = useNavigation();
 
-    const handlePress = (_id, type) => {
-        if(_id && type){
-            switch(type){
-                case 'single':
-                case 'album':
-                case 'compilation':
-                    navigation.navigate('Oeuvre', {type: 'album', id : data.id });
-                    break;
-            }
+    const handlePress = () => {
+        switch(data.type){
+            case 'single':
+            case 'album':
+            case 'compilation':
+                navigation.navigate('oeuvre', {type: 'album', id : data.id });
+                break;
+            default:
+                navigation.navigate('oeuvre', {type: data.type, id : data.id });
         }
     };
 
@@ -35,7 +35,7 @@ const Item = ({data}) => {
 
     return (data != null ?
         <Pressable
-            onPress={() => handlePress(data.id, data.type)}
+            onPress={handlePress}
             activeOpacity={1}
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}

@@ -17,6 +17,7 @@ const modalStyle = StyleSheet.create({
     messageText: {
         fontSize: 20,
         color: Colors.Silver,
+        paddingTop: 30,
         paddingLeft: 15,
         paddingRight: 15,
         textAlign: 'justify'

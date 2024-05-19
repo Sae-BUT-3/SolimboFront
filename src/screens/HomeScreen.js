@@ -1,137 +1,127 @@
-import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
-import { Animated, Image, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { SafeAreaView } from 'react-native';
-import commonStyles from '../style/commonStyle';
-import { Colors } from '../style/color';
-import { FontAwesome5 } from '@expo/vector-icons';
-import { Avatar, DataTable, Divider, Provider } from 'react-native-paper';
-import { RefreshControl } from 'react-native';
-import Tokenizer from '../utils/Tokenizer';
-import { useNavigation } from '@react-navigation/native';
-import Review from '../components/review/Review';
-import Loader from '../components/common/Loader';
+import React, { useCallback, useEffect, useState } from 'react';
+import { FlatList, Image, RefreshControl, ImageBackground, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Avatar, Divider} from 'react-native-paper';
 import axiosInstance from '../api/axiosInstance';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import Tokenizer from '../utils/Tokenizer';
+import Loader from '../components/common/Loader';
+import Review from '../components/review/Review';
+import { Colors } from '../style/color';
 
 const baseImageURL = "https://merriam-webster.com/assets/mw/images/article/art-wap-article-main/egg-3442-e1f6463624338504cd021bf23aef8441@1x.jpg"
 
-const numberOfItemsPerPageList = [50];
-
-function HomeScreen() {
+const HomeScreen = () => {
     const [refreshing, setRefreshing] = useState(false);
-    const [currentUser, setUser] =  useState({});
-    const [reviews, setReviews] = useState(null);
-    const [count, setCount] = useState(0);
-    const navigation = useNavigation();
-    const [isLoading, setIsLoading] = useState(true);
+    const [currentUser, setUser] = useState({});
+    const [reviews, setReviews] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
+    const [hasMore, setHasMore] = useState(true);
     const [error, setError] = useState(null);
-    const [page, setPage] = useState(0);
+    const [page, setPage] = useState(1);
 
-    const getData = async ()=>{
+    const navigation = useNavigation();
+
+    const getData = async () => {
         setUser(await Tokenizer.getCurrentUser());
-    }
-
-    const onRefresh = useCallback(() => {
-      setRefreshing(true);
-      getData();
-      updateReviews(page);
-      setTimeout(() => {
-        setRefreshing(false);
-      }, 2000);
-    }, []);
-
-    const updateReviews = (newPage, orderByLike=false) => {
-        axiosInstance.get('/review/timeline', { params: { page: newPage, pageSize: 50, orderByLike: orderByLike } })
-        .then(response => {
-            setReviews(response.data.data);
-            setCount(response.data.count);
-            setIsLoading(false);
-        }).catch(e => {
-            setIsLoading(false);
-            setError(e.response.data.message);
-        });
-    }
-
-    const handleChangePage = (newPage) => {
-        setIsLoading(true);
-        setPage(newPage);
-        updateReviews(newPage);
     };
 
-    useEffect(() => {
-        getData()
-        axiosInstance.get('/review/timeline', { params: { page: page + 1, pageSize: 50, orderByLike: false } })
-        .then(response => {
-            setReviews(response.data.data);
-            setCount(response.data.count);
-            setIsLoading(false);
-        }).catch(e => {
-            setError(e.response.data.message);
-            setIsLoading(false);
-        });
+    const onRefresh = useCallback(() => {
+        setRefreshing(true);
+        getData();
+        setPage(1); // Remise à zéro de la pagination
+        setReviews([]); // Remise à zéro des reviews
+        setTimeout(() => {
+            setRefreshing(false);
+        }, 2000);
     }, []);
 
-   
+    const updateReviews = () => {
+        if (isLoading) return;
+        setIsLoading(true);
+        axiosInstance.get('/review/timeline', { params: { page: page, pageSize: 50, orderByLike: false } })
+            .then(response => {
+                setReviews(prevReviews => [...prevReviews, ...response.data.reviews]);
+                setHasMore(response.data.count > reviews.length);
+                setIsLoading(false);
+            }).catch(e => {
+                console.error('Erreur lors de la récupération des reviews:', e);
+                setIsLoading(false);
+                setError(e.response.data.message);
+            });
+    };
 
-    return ( 
-        <Provider>
-            <View style={styles.container}>
-                <Animated.View style={[styles.header]}>
-                    <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                        <Image
-                            source={require('../assets/images/main_logo_no_bg.png')}
-                            style={{ width: 45, height: 45, borderRadius: 5}}
-                        />
-                        <Text style={styles.name}>SOLIMBO</Text>
-                    </View>
-                    <Pressable onPress={() => { navigation.navigate('user', {id: currentUser.id_utilisateur}) }}>
-                        <Avatar.Image source={ { uri: currentUser.photo || baseImageURL }} size={Platform.OS === 'web' ? 65 : 45} accessibilityLabel={currentUser.pseudo} />
-                    </Pressable>
-                </Animated.View>
-                <Divider style={{backgroundColor: Colors.Onyx}} />
-                <ScrollView
-                    refreshControl={
-                        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[Colors.DarkSpringGreen]}  tintColor={Colors.DarkSpringGreen} size='large' title='Actualisation...' titleColor={Colors.White}/>
-                    }  
-                    style={{paddingTop: 15}}                     
+    const loadMoreReviews = () => {
+        if (hasMore && !isLoading) {
+            setPage(prevPage => prevPage + 1);
+        }
+    };
+
+    const renderFooter = () => {
+        if (!isLoading) return null;
+        return <Loader />;
+    };
+
+    useFocusEffect(
+        useCallback(() => {
+            getData();
+            updateReviews();
+        }, [])
+    );
+
+    return (
+        <View style={styles.container}>
+            <View style={styles.header}>
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <Image
+                        source={require('../assets/images/main_logo_no_bg.png')}
+                        style={{ width: 45, height: 45, borderRadius: 5 }}
+                    />
+                    <Text style={styles.name}>SOLIMBO</Text>
+                </View>
+                <Pressable onPress={() => { 
+                    setPage(1);
+                    setReviews([]);
+                    navigation.navigate('Profile') }}
                 >
-                    { isLoading ? <Loader /> :
-                      reviews && reviews.length > 0 ? 
-                        <DataTable style={{marginLeft: 0, marginRight: 0, marginBottom: 30}}>
-                            {reviews.map((item, index) => (
-                                <DataTable.Row key={index} style={{borderBottomWidth: 0,  marginLeft: Platform.OS === 'web' ? 50 : null, marginRight: Platform.OS === 'web' ? 50 : null ,width: Platform.OS !== 'web' ? 390 : null}}>
-                                    <DataTable.Cell style={{margin: 'auto'}}>
-                                        <Review data={item}/>
-                                    </DataTable.Cell>
-                                </DataTable.Row>
-                            ))}
-                            {count > 50 && <DataTable.Pagination
-                            page={page}
-                            numberOfPages={Math.ceil(count / 50)}
-                            onPageChange={page => {handleChangePage(page)}}
-                            label={`${page * 50 + 1}-${Math.min((page + 1) * 50, count)} à ${count}`}
-                            numberOfItemsPerPageList={numberOfItemsPerPageList}
-                            showFastPaginationControls
-                            paginationControlRippleColor={Colors.White}
-                            dropdownItemRippleColor={Colors.White}
-                            selectPageDropdownRippleColor={Colors.Jet}
-                            style={{backgroundColor: Colors.Jet}}
-                            />}
-                        </DataTable> :
-                        <View style={{alignContent: 'space-around', gap: 55, alignItems: 'center'}}>
-                            <Text/>
-                            <Image
-                                source={require('../assets/images/main_logo_v1_500x500.png')}
-                                style={{ width: 165, height: 165, opacity: 0.1}}
-                            />
-                            <Text style={styles.text}>
-                                Abonner vous à des artistes ou utilisateurs pour suivre les derniers critiques rédigées !
-                            </Text>
-                        </View>
-                                       
-                }
-                </ScrollView>
+                    <Avatar.Image source={{ uri: currentUser.photo || baseImageURL }} size={Platform.OS === 'web' ? 65 : 45} accessibilityLabel={currentUser.pseudo} />
+                </Pressable>
             </View>
-        </Provider>
+            <FlatList
+                data={reviews}
+                keyExtractor={(item, index) => index.toString()}
+                renderItem={({ item }) => (
+                    <View style={styles.itemContainer}>
+                        <Review data={item} />
+                    </View>
+                )}
+                onEndReached={loadMoreReviews}
+                onEndReachedThreshold={0.5}
+                refreshControl={
+                    <RefreshControl
+                      refreshing={refreshing}
+                      onRefresh={onRefresh}
+                      colors={[Colors.SeaGreen]} 
+                      tintColor={Colors.SeaGreen} 
+                    />
+                }
+                ListFooterComponent={renderFooter}
+                ListEmptyComponent={
+                    <View style={{ justifyContent: 'space-around', gap: 55, alignItems: 'center' }}>
+                        <Text />
+                        <ImageBackground
+                            source={require('../assets/images/main_logo_v1_500x500.png')}
+                            style={{ width: 165, height: 165, opacity: 0.3 }}
+                        />
+                       {!isLoading ? <Text style={styles.text}>
+                            Abonnez-vous à des artistes ou utilisateurs pour suivre les derniers critiques rédigées !
+                        </Text> : null}
+                    </View>
+                    
+                }
+                showsVerticalScrollIndicator={false}
+                style={{paddingTop: 20}}
+            /> 
+        </View>
     )
 }
 
@@ -153,26 +143,32 @@ const styles = StyleSheet.create({
         left: 0,
         right: 0,
         zIndex: 1,
-        backgroundColor: 'rgba(43, 43, 43, 0.5)', 
-
+        backgroundColor: 'rgba(43, 43, 43, 0.5)',
+        borderBottomWidth: 1,
+        borderBottomColor: Colors.Onyx
     },
-    name:{
+    name: {
         fontSize: Platform.OS === 'web' ? 30 : 20,
         color: Colors.Celadon,
         fontWeight: 'bold',
         marginBottom: 10,
         textTransform: 'uppercase',
         textShadowColor: 'rgba(0, 0, 0, 0.5)',
-        textShadowOffset: {width: -1, height: 1},
+        textShadowOffset: { width: -1, height: 1 },
         textShadowRadius: 10,
     },
-    text:{
+    text: {
         fontSize: Platform.OS === 'web' ? 20 : 16,
         color: Colors.Celadon,
         marginBottom: 10,
+        textAlign: 'center',
         textShadowColor: 'rgba(0, 0, 0, 0.5)',
-        textShadowOffset: {width: -1, height: 1},
+        textShadowOffset: { width: -1, height: 1 },
         textShadowRadius: 10,
+    },
+    itemContainer: {
+        width: '100%',
+        alignItems: 'center',
     },
 });
 

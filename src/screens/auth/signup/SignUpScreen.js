@@ -117,7 +117,7 @@ function SignUpScreen({ navigation }) {
             <View style={commonStyles.row} >
                 <Text style={[commonStyles.text, authStyle.noAccount]}>Déja un compte ? </Text>
                 <Text style={commonStyles.textLink} 
-                    onPress={() => navigation.navigate('SignIn')}
+                    onPress={() => navigation.navigate('signin')}
                 >Se connecter</Text>
             </View>
         </SafeAreaView>

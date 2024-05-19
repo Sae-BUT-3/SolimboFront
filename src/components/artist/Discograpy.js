@@ -51,7 +51,7 @@ const Discography = ({ items, id}) => {
             </View>}
             {Platform.OS !== 'web' && (
             <View style={[styles.sectionFilter, {alignItems: 'center'}]}>
-              <Pressable style={styles.btn} onPress={()=>{navigation.navigate('Discographie', {id})}}>
+              <Pressable style={styles.btn} onPress={()=>{navigation.navigate('discographie', {id})}}>
                 <Text style={styles.filterText}>Voir toute la discographie</Text>
               </Pressable>
             </View>)}

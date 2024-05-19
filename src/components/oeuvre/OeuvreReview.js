@@ -14,7 +14,7 @@ const OeuvreReview = ({ items, id}) => {
         ))}
         {(Platform.OS !== 'web' && items.length > 5) && ( 
         <View style={styles.sectionFilter}>
-          <Pressable style={styles.btn} onPress={()=>{navigation.navigate('Review', {id})}}>
+          <Pressable style={styles.btn} onPress={()=>{navigation.navigate('review', {id})}}>
             <Text style={styles.filterText}>Voir tous les critiques</Text>
           </Pressable>
         </View>)}

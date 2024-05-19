@@ -14,6 +14,7 @@ import Loader from '../../components/common/Loader';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'; // Importation de KeyboardAwareScrollView
 import pressableBasicStyle from '../../style/pressableBasicStyle';
+import Toast from 'react-native-toast-message';
 
 const ResponseScreen = () => {
     const route = useRoute();
@@ -63,13 +64,37 @@ const ResponseScreen = () => {
             if(type === 'review'){
                 axiosInstance.put(`/review/${id}/comment`, {description: comment})
                 .then(response => {
+                    Toast.show({
+                        type: 'success',
+                        text1: '✅ Votre commentaire a bien été postée.',
+                        text1Style: {color: Colors.White}
+                    });
                     handleGoBack()
-                }).catch(e => setError(e.response.data));
+                }).catch(e =>{ 
+                    Toast.show({
+                        type: 'error',
+                        text1: '❌ Votre commentaire n\'a pas pu être postée.',
+                        text1Style: {color: Colors.White}
+                    }); 
+                    handleGoBack()
+                });
             }else{
                 axiosInstance.put(`/comment/${id}`, {description: comment})
                 .then(response => {
+                    Toast.show({
+                        type: 'success',
+                        text1: '✅ Votre commentaire a bien été postée.',
+                        text1Style: {color: Colors.White}
+                    });
                     handleGoBack()
-                }).catch(e => setError(e.response.data));
+                }).catch(e => {
+                    Toast.show({
+                        type: 'error',
+                        text1: '❌ Votre commentaire n\'a pas pu être postée.',
+                        text1Style: {color: Colors.White}
+                    }); 
+                    handleGoBack()
+                });
             }
         }
     }
