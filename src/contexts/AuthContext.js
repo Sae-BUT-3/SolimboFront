@@ -18,13 +18,14 @@ export const AuthProvider = ({ children }) => {
   }
 
   const signIn = (credentials) => {
-    axiosInstance.post("/users/signin", credentials)
+    return axiosInstance.post("/users/signin", credentials)
       .then(response => {
         if(response.data) {
           Tokenizer.setToken(response.data.token);
           Tokenizer.setUser(response.data.user)
           setIsAuthenticated(true); // Marquer l'utilisateur comme authentifié
           console.log("🚀 ~ Connexion ~ authentification réussie")
+          console.log(response.data.user)
         }
         else {
           console.log("Connection failed, Token and data user not found in response.")

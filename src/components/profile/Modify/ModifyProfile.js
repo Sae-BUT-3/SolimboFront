@@ -1,22 +1,24 @@
 import React, { useState, useEffect } from "react";
-import { View, StyleSheet, Text, Platform} from "react-native";
+import { View, StyleSheet, Text, Platform, ScrollView } from "react-native";
 import { Colors } from "../../../style/color";
 import axiosInstance from "../../../api/axiosInstance";
 import ModifyForm from "./ModifyForm";
 import { FontAwesome } from "@expo/vector-icons";
 import modalStyle from "../../../style/modalStyle";
-import { useNavigation } from "@react-navigation/native";
-
-function ModifyProfile({ id }) {
+import { useNavigation, useRoute } from "@react-navigation/native";
+function ModifyProfile({}) {
   const [data, setData] = useState([]);
   const navigation = useNavigation();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [isModify, setModify] = useState(false);
-
+  const route = useRoute();
+  const id = route.params?.id || null;
   const checkPseudo = async (pseudo) => {
     try {
-      const response = await axiosInstance.get(`/users/isUser?pseudo=${pseudo}`);
+      const response = await axiosInstance.get(
+        `/users/isUser?pseudo=${pseudo}`
+      );
       return !response.data.isUser;
     } catch (e) {
       console.error(e);
@@ -29,11 +31,10 @@ function ModifyProfile({ id }) {
       "Content-Type": "multipart/form-data",
     };
     try {
-      const response = await axiosInstance.post("/users/modify", formData, { headers });
-      setData((prevData) => ({
-        ...prevData,
-        user: response.data,
-      }));
+      const response = await axiosInstance.post("/users/modify", formData, {
+        headers,
+      });
+      setData(response.data);
     } catch (e) {
       console.error(e);
     }
@@ -46,13 +47,15 @@ function ModifyProfile({ id }) {
       pageSize: 20,
       orderByLike: true,
     };
-    axiosInstance.get(`/users/${id}/page`, { params: query })
-    .then(() => {
-      setData(response.data.user);
-    }).catch( (e) => {
-      console.error(e);
-      setError(e.response?.data);
-    });
+    axiosInstance
+      .get(`/users/${id}/page`, { params: query })
+      .then((response) => {
+        setData(response.data.user);
+      })
+      .catch((e) => {
+        console.error(e);
+        setError(e.response?.data);
+      });
   };
 
   useEffect(() => {
@@ -62,17 +65,29 @@ function ModifyProfile({ id }) {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <FontAwesome name="chevron-left" size={25} color={Colors.Silver} onPress={() => navigation.goBack()} />
+        <FontAwesome
+          name="chevron-left"
+          size={25}
+          color={Colors.Silver}
+          onPress={() => navigation.goBack()}
+        />
         <Text style={modalStyle.modalTitle}></Text>
-        <FontAwesome name="pencil" size={25} color={Colors.Silver} onPress={()=> setModify(true)} />      
+        <FontAwesome
+          name="pencil"
+          size={25}
+          color={Colors.Silver}
+          onPress={() => setModify(true)}
+        />
       </View>
-      <ModifyForm
-        user={data}
-        checkPseudo={checkPseudo}
-        handleModify={handleModify}
-        isModify={isModify}
-        setModify={setModify}
-      />
+      <ScrollView style={{ height: 100 }}>
+        <ModifyForm
+          user={data}
+          checkPseudo={checkPseudo}
+          handleModify={handleModify}
+          isModify={isModify}
+          setModify={setModify}
+        />
+      </ScrollView>
     </View>
   );
 }
@@ -96,20 +111,20 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     paddingLeft: 10,
     paddingRight: 10,
     paddingBottom: 20,
-    paddingTop: Platform.OS === 'web' ? 25 : 55,
-    position: 'relative',
+    paddingTop: Platform.OS === "web" ? 25 : 55,
+    position: "relative",
     top: 0,
     left: 0,
     right: 0,
     zIndex: 1,
     borderBottomWidth: 1,
-    backgroundColor: 'rgba(43, 43, 43, 0.3)',
+    backgroundColor: "rgba(43, 43, 43, 0.3)",
     marginBottom: 25,
     borderBottomColor: Colors.Onyx,
   },

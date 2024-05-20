@@ -84,7 +84,7 @@ const HomeScreen = () => {
                     setReviews([]);
                     navigation.navigate('Profile') }}
                 >
-                    <Avatar.Image source={{ uri: currentUser.photo || baseImageURL }} size={Platform.OS === 'web' ? 65 : 45} accessibilityLabel={currentUser.pseudo} />
+                    <Avatar.Image source={{ uri: currentUser?.photo || baseImageURL }} size={Platform.OS === 'web' ? 65 : 45} accessibilityLabel={currentUser.pseudo} />
                 </Pressable>
             </View>
             <FlatList

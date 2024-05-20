@@ -47,7 +47,6 @@ function ModifyInput({
     input: {
       width: width || "100%",
       height: height || 40,
-      outline: "none",
       borderWidth: 1,
       borderColor: error ? Colors.Red : Colors.BattleShipGray,
       marginLeft: 0,
@@ -69,7 +68,7 @@ function ModifyInput({
   });
 
   return (
-    <View style={{ width: 380 }}>
+    <View style={{ width: 380}}>
       <View style={[styles.labelContainer]}>
         <Text style={styles.label}>
           {label}
@@ -90,7 +89,8 @@ function ModifyInput({
         placeholderTextColor={Colors.Silver}
         theme={{ colors: { primary: "green", underlineColor: "transparent" } }}
         style={[
-          modalStyle.input, focused && modalStyle.inputFocused
+          modalStyle.input, focused && modalStyle.inputFocused,
+          styles.input,
         ]}
       />
       <Text style={[commonStyles.text, styles.error]}>{error}</Text>

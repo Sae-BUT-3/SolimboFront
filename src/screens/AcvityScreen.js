@@ -50,7 +50,6 @@ function ActivityScreen() {
             });
         })
         .catch(e => {
-            console.log(e)
             Toast.show({
               type: 'error',
               text1: '❌  Une erreur interne est survenue.',

@@ -56,9 +56,12 @@ function SignInScreen({ navigation }) {
       email: email,
       password: password,
     };
-    const res = signIn(credentials)
-    navigation.navigate("navigate");
-    setError(res);
+    signIn(credentials).then(() => {
+      navigation.navigate("navigate");
+    }).catch(error => {
+      setError(error);
+    });
+    
   };
   const handleClose = () => {
     setError(null);

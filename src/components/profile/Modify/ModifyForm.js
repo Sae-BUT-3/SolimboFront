@@ -1,5 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, Image, StyleSheet, useWindowDimensions, TouchableOpacity, Pressable } from "react-native";
+import {
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  useWindowDimensions,
+  TouchableOpacity,
+  Pressable,
+} from "react-native";
 import { Switch } from "react-native-switch";
 import { Colors } from "../../../style/color";
 import { breakpoint } from "../../../style/breakpoint";
@@ -14,17 +22,17 @@ import Toast from "react-native-toast-message";
 import { useAuth } from "../../../contexts/AuthContext";
 import { Divider } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
-
+import { Buffer } from "buffer";
 const MIN_PSEUDO = 3;
 
 const Update = ({ user }) => {
   const [showPasswordInput, setShowPasswordInput] = useState(false);
   const [showEmailInput, setShowEmailInput] = useState(false);
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const { logout } = useAuth();
   const navigation = useNavigation();
-  
+
   const handleResetPassword = () => {
     setShowPasswordInput(!showPasswordInput);
   };
@@ -34,14 +42,15 @@ const Update = ({ user }) => {
   };
 
   const handleSubmitEmail = () => {
-    axiosInstance.post('users/sendResetEmail', { email })
+    axiosInstance
+      .post("users/sendResetEmail", { email })
       .then(() => {
         setShowEmailInput(false);
         Toast.show({
-          type: 'success',
-          text1: '✅  Email bien modifiée',
-          text1Style: {color: Colors.White},
-          position: 'bottom'
+          type: "success",
+          text1: "✅  Email bien modifiée",
+          text1Style: { color: Colors.White },
+          position: "bottom",
         });
       })
       .catch(() => {
@@ -50,14 +59,15 @@ const Update = ({ user }) => {
   };
 
   const handleSubmitPassword = () => {
-    axiosInstance.post('users/resetPassword', { password, resetToken: user.reset_token })
+    axiosInstance
+      .post("users/resetPassword", { password, resetToken: user.reset_token })
       .then(() => {
         setShowPasswordInput(false);
         Toast.show({
-          type: 'success',
-          text1: '✅  Mot de passe bien modifiée',
-          text1Style: {color: Colors.White},
-          position: 'bottom'
+          type: "success",
+          text1: "✅  Mot de passe bien modifiée",
+          text1Style: { color: Colors.White },
+          position: "bottom",
         });
       })
       .catch(() => {
@@ -66,8 +76,16 @@ const Update = ({ user }) => {
   };
 
   return (
-    <View style={{ justifyContent: "center"}}>
-      <View style={{ justifyContent: 'space-between', flexDirection: "row", alignItems: 'baseline', flexWrap: 'wrap', gap: 20 }}>
+    <View style={{ justifyContent: "center" }}>
+      <View
+        style={{
+          justifyContent: "space-between",
+          flexDirection: "row",
+          alignItems: "baseline",
+          flexWrap: "wrap",
+          gap: 20,
+        }}
+      >
         <Pressable onPress={handleUpdateEmail}>
           <Text style={styles.buttonText}>Mettre à jour l'email</Text>
         </Pressable>
@@ -75,39 +93,56 @@ const Update = ({ user }) => {
         <Pressable onPress={handleResetPassword}>
           <Text style={styles.buttonText}>Réinitialiser le mot de passe</Text>
         </Pressable>
-        <Pressable onPress={() => {
-          logout()
-          navigation.navigate('signin');
-        }}>
-          <Text style={[styles.text, { color: Colors.Red }]}>Se déconnecter</Text> 
+        <Pressable
+          onPress={() => {
+            logout();
+            navigation.navigate("signin");
+          }}
+        >
+          <Text style={[styles.text, { color: Colors.Red }]}>
+            Se déconnecter
+          </Text>
         </Pressable>
-      </View>  
-      
-      <View style={{justifyContent: "center", alignItems: 'center'}}>
+      </View>
+
+      <View style={{ justifyContent: "center", alignItems: "center" }}>
         {showEmailInput && (
           <>
             <BasicInput
               autoCapitalize="none"
-              autoCorrect={false} 
+              autoCorrect={false}
               placeholder="Nouvel email"
               textContentType="emailAddress"
               keyboardType="email-address"
-              value={email} 
+              value={email}
               onChangeText={setEmail}
             />
-            <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
+            <View style={{ flexDirection: "row", justifyContent: "center" }}>
               <Pressable
                 style={[pressableBasicStyle.button, { width: 120 }]}
                 onPress={handleSubmitEmail}
               >
-                <FontAwesome size={20} name='pencil' color={Colors.White} style={{ paddingRight: 10 }} />
+                <FontAwesome
+                  size={20}
+                  name="pencil"
+                  color={Colors.White}
+                  style={{ paddingRight: 10 }}
+                />
                 <Text style={pressableBasicStyle.button_text}>Modifier</Text>
               </Pressable>
               <Pressable
-                style={[pressableBasicStyle.button, { backgroundColor: Colors.Red, width: 120 }]}
+                style={[
+                  pressableBasicStyle.button,
+                  { backgroundColor: Colors.Red, width: 120 },
+                ]}
                 onPress={() => setShowEmailInput(false)}
               >
-                <FontAwesome size={20} name='close' color={Colors.White} style={{ paddingRight: 10 }} />
+                <FontAwesome
+                  size={20}
+                  name="close"
+                  color={Colors.White}
+                  style={{ paddingRight: 10 }}
+                />
                 <Text style={pressableBasicStyle.button_text}>Annuler</Text>
               </Pressable>
             </View>
@@ -115,30 +150,42 @@ const Update = ({ user }) => {
         )}
         {showPasswordInput && (
           <>
-            <BasicInput 
-              style={styles.input} 
-              placeholder="Nouveau mot de passe" 
+            <BasicInput
+              style={styles.input}
+              placeholder="Nouveau mot de passe"
               secureTextEntry
-              onChangeText={setPassword} 
+              onChangeText={setPassword}
               value={password}
             />
-            <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
+            <View style={{ flexDirection: "row", justifyContent: "center" }}>
               <Pressable
                 style={[pressableBasicStyle.button, { width: 120 }]}
                 onPress={handleSubmitPassword}
               >
-                <FontAwesome size={20} name='pencil' color={Colors.White} style={{ paddingRight: 10 }} />
+                <FontAwesome
+                  size={20}
+                  name="pencil"
+                  color={Colors.White}
+                  style={{ paddingRight: 10 }}
+                />
                 <Text style={pressableBasicStyle.button_text}>Modifier</Text>
               </Pressable>
               <Pressable
-                style={[pressableBasicStyle.button, { backgroundColor: Colors.Red, width: 120 }]}
+                style={[
+                  pressableBasicStyle.button,
+                  { backgroundColor: Colors.Red, width: 120 },
+                ]}
                 onPress={() => setShowPasswordInput(false)}
               >
-                <FontAwesome size={20} name='close' color={Colors.White} style={{ paddingRight: 10 }} />
+                <FontAwesome
+                  size={20}
+                  name="close"
+                  color={Colors.White}
+                  style={{ paddingRight: 10 }}
+                />
                 <Text style={pressableBasicStyle.button_text}>Annuler</Text>
               </Pressable>
             </View>
-            
           </>
         )}
       </View>
@@ -151,7 +198,7 @@ function ModifyForm({ user, checkPseudo, handleModify, isModify, setModify }) {
   const width = windowDimensions ? windowDimensions.width : 0;
   const [imageHovered, setImageHovered] = useState(false);
   const [image, setImage] = useState("");
-  const [uri, setUri] = useState("");
+  const [uri, setUri] = useState(undefined);
   const [actualAlias, setActualAlias] = useState("");
   const [actualPseudo, setActualPseudo] = useState("");
   const [actualBio, setActualBio] = useState("");
@@ -169,7 +216,7 @@ function ModifyForm({ user, checkPseudo, handleModify, isModify, setModify }) {
     setActualPseudo(user?.pseudo);
     setActualBio(user?.bio);
     setIsPrivate(user?.is_private);
-    setAuthSpotify(user?.auth_with_spotify)
+    setAuthSpotify(user?.auth_with_spotify);
     setUri(
       user?.photo ||
         "https://merriam-webster.com/assets/mw/images/article/art-wap-article-main/egg-3442-e1f6463624338504cd021bf23aef8441@1x.jpg"
@@ -225,15 +272,13 @@ function ModifyForm({ user, checkPseudo, handleModify, isModify, setModify }) {
     if (valid) {
       const formData = new FormData();
       if (image) {
-        const binaryImg = atob(image.base64);
-        const blob = new Blob(
-          [
-            new Uint8Array(
-              Array.prototype.map.call(binaryImg, (c) => c.charCodeAt(0))
-            ),
-          ],
-          { type: "image/jpeg" }
-        );
+        // Convertir binaire en un tableau d'octets
+        const binaryImg = Buffer.from(image.base64, "base64");
+
+        // Convertir binaire en un tableau d'octets
+        const arrayBuffer = Uint8Array.from(binaryImg);
+
+        const blob = new Blob([arrayBuffer], { type: "image/jpeg" });
 
         formData.append("photo", blob, "image.jpeg");
       }
@@ -259,7 +304,7 @@ function ModifyForm({ user, checkPseudo, handleModify, isModify, setModify }) {
     imageContainer: {
       position: "relative",
       marginBottom: 10,
-      backgroundColor: Colors.Licorice
+      backgroundColor: Colors.Licorice,
     },
     image: {
       width: width > breakpoint.small ? 200 : 150,
@@ -281,28 +326,30 @@ function ModifyForm({ user, checkPseudo, handleModify, isModify, setModify }) {
     switch: {
       marginBottom: 10,
     },
-    header:{
+    header: {
       flex: 1,
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-    }
+      flexDirection: "row",
+      justifyContent: "space-between",
+    },
   });
 
   return (
     <View style={styles.container}>
       <View style={styles.imageContainer}>
         <Image style={styles.image} source={{ uri: uri }} />
-       { isModify && <TouchableOpacity
-          onPress={handleImagePickerPress}
-          style={[styles.image, styles.imageChangeContainer]}
-          onMouseEnter={() => setImageHovered(true)}
-          onMouseLeave={() => setImageHovered(false)}
-        >
-          <Image
-            style={styles.imageChange}
-            source={require("../../../assets/images/photo.png")}
-          />
-        </TouchableOpacity>}
+        {isModify && (
+          <TouchableOpacity
+            onPress={handleImagePickerPress}
+            style={[styles.image, styles.imageChangeContainer]}
+            onMouseEnter={() => setImageHovered(true)}
+            onMouseLeave={() => setImageHovered(false)}
+          >
+            <Image
+              style={styles.imageChange}
+              source={require("../../../assets/images/photo.png")}
+            />
+          </TouchableOpacity>
+        )}
       </View>
       <Switch
         value={isPrivate}
@@ -350,23 +397,37 @@ function ModifyForm({ user, checkPseudo, handleModify, isModify, setModify }) {
         onChangeText={handleBioChange}
         disabled={!isModify}
       />
-      {isModify &&
-        <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
+      {isModify && (
+        <View style={{ flexDirection: "row", justifyContent: "center" }}>
           <Pressable
             style={[pressableBasicStyle.button, { width: 150 }]}
             onPress={handleSubmit}
           >
-            <FontAwesome size={20} name='pencil' color={Colors.White} style={{ paddingRight: 10 }} />
+            <FontAwesome
+              size={20}
+              name="pencil"
+              color={Colors.White}
+              style={{ paddingRight: 10 }}
+            />
             <Text style={pressableBasicStyle.button_text}>Modifier</Text>
           </Pressable>
           <Pressable
-            style={[pressableBasicStyle.button, { backgroundColor: Colors.Red, width: 150 }]}
+            style={[
+              pressableBasicStyle.button,
+              { backgroundColor: Colors.Red, width: 150 },
+            ]}
             onPress={() => setModify(false)}
           >
-            <FontAwesome size={20} name='close' color={Colors.White} style={{ paddingRight: 10 }} />
+            <FontAwesome
+              size={20}
+              name="close"
+              color={Colors.White}
+              style={{ paddingRight: 10 }}
+            />
             <Text style={pressableBasicStyle.button_text}>Annuler</Text>
           </Pressable>
-        </View>}
+        </View>
+      )}
       {!spotify && <Update user={user} />}
     </View>
   );
@@ -379,7 +440,7 @@ const styles = StyleSheet.create({
   },
   input: {
     height: 40,
-    borderColor: 'gray',
+    borderColor: "gray",
     borderWidth: 1,
     marginBottom: 10,
     paddingLeft: 8,

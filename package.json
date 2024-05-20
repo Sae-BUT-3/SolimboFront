@@ -21,6 +21,7 @@
     "@react-navigation/native-stack": "^6.9.17",
     "@types/react": "~18.2.45",
     "axios": "^1.6.2",
+    "base-64": "^1.0.0",
     "crypto": "^1.0.1",
     "expo": "^50.0.6",
     "expo-auth-session": "~5.4.0",
@@ -38,6 +39,7 @@
     "react-native-config": "^1.5.1",
     "react-native-elements": "^3.4.3",
     "react-native-floating-label-input": "^1.4.3",
+    "react-native-keyboard-aware-scroll-view": "^0.9.5",
     "react-native-keychain": "^8.1.2",
     "react-native-modal": "^13.0.1",
     "react-native-pagination": "^1.5.5",
@@ -52,7 +54,6 @@
     "react-native-swipe-gestures": "^1.0.5",
     "react-native-switch": "1.5.1",
     "react-native-toast-message": "^2.2.0",
-    "react-native-keyboard-aware-scroll-view": "^0.9.5",
     "react-native-vector-icons": "^10.0.3",
     "react-native-web": "~0.19.6",
     "rn-fetch-blob": "^0.12.0"

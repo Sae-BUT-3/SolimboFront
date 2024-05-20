@@ -37,11 +37,12 @@ function ConfirmUserScreen({ route, navigation }) {
           console.log("Erreur lors de la connexion de l utilisateur");
         }
       })
-      .catch((error) =>
+      .catch((error) => {
         console.log(
           "error /users/authWithSpotify" + error,
           JSON.stringify(error)
         )
+      }
       );
   }, []);
 
@@ -94,14 +95,9 @@ function ConfirmUserScreen({ route, navigation }) {
           bio: "",
           confirmToken: confirmtoken,
         };
-        console.log(userData);
-        console.log(pseudo.trim());
-        console.log(user.alias || pseudo.trim());
-        console.log(confirmtoken);
         axiosInstance
           .post("/users/confirmUser", userData)
           .then((response) => {
-            console.log("confirmUser", response.data);
             if (response.data.token) {
               signInViaToken(response.data.token);
               Tokenizer.setUser(response.data.user);

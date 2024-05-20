@@ -25,7 +25,6 @@ const Review = ({ data}) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [currentUser, setUser] =  useState({});
   const [isActive, setActive] = useState(false);
-
   const renderTruncatedFooter = (handlePress) => (
     <Text onPress={handlePress} style={{ color: Colors.SeaGreen, fontSize: Platform.OS == 'web' ? 20 : 17, fontWeight: 'normal' }}>
       Lire plus

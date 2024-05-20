@@ -10,10 +10,14 @@ import {
   Animated,
   ImageBackground,
   StyleSheet,
-  useWindowDimensions
+  useWindowDimensions,
 } from "react-native";
 import { useAuth } from "../contexts/AuthContext";
-import { useFocusEffect, useNavigation, useRoute } from "@react-navigation/native";
+import {
+  useFocusEffect,
+  useNavigation,
+  useRoute,
+} from "@react-navigation/native";
 import axiosInstance from "../api/axiosInstance";
 import Profile from "../components/profile/Profile";
 import ModifyProfile from "../components/profile/Modify/ModifyProfile";
@@ -41,7 +45,7 @@ const ProfileScreen = () => {
   const [error, setError] = useState(null);
   const [isModify, setIsModify] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
-  const [tab, setTab] = useState('posts');
+  const [tab, setTab] = useState("posts");
   const [currentUser, setCurrentUser] = useState({});
   const [isModifierHovered, setIsModifierHovered] = useState(false);
   const [hasMore, setHasMore] = useState(true);
@@ -52,7 +56,7 @@ const ProfileScreen = () => {
   const getData = async () => {
     const user = await Tokenizer.getCurrentUser();
     setCurrentUser(await user);
-    return user
+    return user;
   };
 
   const updateData = (user) => {
@@ -61,19 +65,22 @@ const ProfileScreen = () => {
       pageSize: 20,
       orderByLike: true,
     };
-    const id_utilisateur = id || currentUser?.id_utilisateur || user?.id_utilisateur; 
-    axiosInstance.get(`/users/${id_utilisateur}/page`, { params: query })
+    const id_utilisateur =
+      id || currentUser?.id_utilisateur || user?.id_utilisateur;
+    axiosInstance
+      .get(`/users/${id_utilisateur}/page`, { params: query })
       .then((response) => {
         setData(response.data);
-        const newReview = response.data.reviews || []
-        setReviews((prev) => [...prev, ... newReview]);
-
+        const newReview = response.data.reviews || [];
+        setReviews((prev) => {
+          return [...prev, ...newReview];
+        });
+        console.log(response.data.oeuvres);
         setHasMore(response.data.reviewsCount > reviews.length);
-        setFavoris(response.data.favoris);
+        setFavoris(response.data.oeuvres);
         setFollowed(response.data.allFollowed);
         setFollowers(response.data.followers);
         setIsLoading(false);
-
       })
       .catch((e) => setError(e.response.data))
       .finally(() => setIsLoading(false));
@@ -82,9 +89,9 @@ const ProfileScreen = () => {
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     const refreshData = async () => {
-      await getData().then((user)=>{
+      await getData().then((user) => {
         updateData(user);
-      })
+      });
     };
     refreshData();
     setTimeout(() => setRefreshing(false), 2000);
@@ -92,22 +99,25 @@ const ProfileScreen = () => {
 
   const handleFollow = () => {
     const url = data.relation.isFollowed ? "/amis/unfollow" : "/amis/follow";
-    axiosInstance.post(url, { amiIdUtilisateur: data.user.id_utilisateur })
+    axiosInstance
+      .post(url, { amiIdUtilisateur: data.user.id_utilisateur })
       .then(() => {
         Toast.show({
-          type: 'success',
-          text1: data.relation.isFollowed ? '✅  Vous êtes désabonné à cet utilisateur.' : '✅  Vous êtes abonné à cet utilisateur.',
+          type: "success",
+          text1: data.relation.isFollowed
+            ? "✅  Vous êtes désabonné à cet utilisateur."
+            : "✅  Vous êtes abonné à cet utilisateur.",
           text1Style: { color: Colors.White },
-          position: 'bottom'
+          position: "bottom",
         });
         updateData();
       })
       .catch(() => {
         Toast.show({
-          type: 'error',
-          text1: '❌  Une erreur interne est survenue.',
+          type: "error",
+          text1: "❌  Une erreur interne est survenue.",
           text1Style: { color: Colors.White },
-          position: 'bottom'
+          position: "bottom",
         });
       });
   };
@@ -124,11 +134,11 @@ const ProfileScreen = () => {
   };
 
   useFocusEffect(
-    useCallback(() => {    
+    useCallback(() => {
       const fetchData = async () => {
-        await getData().then((user)=>{
+        await getData().then((user) => {
           updateData(user);
-        })
+        });
       };
       fetchData();
     }, [])
@@ -150,18 +160,26 @@ const ProfileScreen = () => {
           <View style={styles.headerCenter}>
             <Text />
           </View>
-          {data?.isCurrent ? <Pressable
-            style={[
-              commonStyles.text,
-              styles.ModifierButton,
-              isModifierHovered ? styles.btnModifierHovered : null,
-            ]}
-            onMouseEnter={() => setIsModifierHovered(true)}
-            onMouseLeave={() => setIsModifierHovered(false)}
-            onPress={() => navigation.navigate('setting', { id: id || currentUser.id_utilisateur })}
-          >
-            <FontAwesome name="gear" color={Colors.Silver} size={25} />
-          </Pressable> : <Text/>}
+          {data?.isCurrent ? (
+            <Pressable
+              style={[
+                commonStyles.text,
+                styles.ModifierButton,
+                isModifierHovered ? styles.btnModifierHovered : null,
+              ]}
+              onMouseEnter={() => setIsModifierHovered(true)}
+              onMouseLeave={() => setIsModifierHovered(false)}
+              onPress={() =>
+                navigation.navigate("setting", {
+                  id: id || currentUser.id_utilisateur,
+                })
+              }
+            >
+              <FontAwesome name="gear" color={Colors.Silver} size={25} />
+            </Pressable>
+          ) : (
+            <Text />
+          )}
         </View>
         <Profile
           user={data.user}
@@ -174,60 +192,73 @@ const ProfileScreen = () => {
         />
         <NavBar setTab={setTab} />
       </Animated.View>
-      <View style={[styles.subcontainer, { width: width > breakpoint.medium ? 1200 : "100%"}] }>
-        
-        {data.forbidden && !data.isCurrent ? 
-          <ForbiddenContent /> : <>
-            {tab === 'fav' && (
+      <View
+        style={[
+          styles.subcontainer,
+          { width: width > breakpoint.medium ? 1200 : "100%",flex: 1 },
+        ]}
+      >
+        {data.forbidden && !data.isCurrent ? (
+          <ForbiddenContent />
+        ) : (
+          <>
+            {tab === "fav" && (
               <FlatList
                 data={favoris}
                 keyExtractor={(item, index) => index.toString()}
-                renderItem={({ item }) => {
-                  <View style={{width: "100%", alignItems: 'center'}}>
-                    <Item data={item} />
-                  </View>
-                }}
-                ListEmptyComponent={<EmptyList />}
+                renderItem={({ item, index }) =>
+                  index !== favoris.length - 1 ? (
+                    <View style={{ width: "100%", alignItems: "center" }}>
+                      <Item data={item} />
+                    </View>
+                  ) : (
+                    <View
+                      style={{
+                        width: "100%",
+                        alignItems: "center",
+                        paddingBottom: 50,
+                      }}
+                    >
+                      <Item data={item} />
+                    </View>
+                  )
+                }
                 refreshControl={
                   <RefreshControl
                     refreshing={refreshing}
                     onRefresh={onRefresh}
-                    colors={[Colors.SeaGreen]} 
-                    tintColor={Colors.SeaGreen} 
+                    colors={[Colors.SeaGreen]}
+                    tintColor={Colors.SeaGreen}
                   />
                 }
               />
             )}
-            {tab === 'posts' &&  (
+            {tab === "posts" && (
               <FlatList
                 data={reviews}
                 keyExtractor={(item, index) => index.toString()}
-                renderItem={({ item }) => {
-                  <View style={{width: "100%", alignItems: 'center'}}>
+                renderItem={({ item }) => (
+                  <View style={{ width: "100%", alignItems: "center" }}>
                     <Review data={item} />
                   </View>
-                }}
+                )}
                 onEndReached={loadMoreReviews}
                 onEndReachedThreshold={0.5}
-                ListFooterComponent={renderFooter}
                 ListEmptyComponent={<EmptyList />}
                 refreshControl={
                   <RefreshControl
                     refreshing={refreshing}
                     onRefresh={onRefresh}
-                    colors={[Colors.SeaGreen]} 
-                    tintColor={Colors.SeaGreen} 
+                    colors={[Colors.SeaGreen]}
+                    tintColor={Colors.SeaGreen}
                   />
                 }
               />
             )}
-        </>}
+          </>
+        )}
       </View>
-      {isModify && (
-        <ModifyProfile
-          id={data.user.id_utilisateur}
-        />
-      )}
+      {isModify && <ModifyProfile id={data} />}
     </View>
   );
 };
@@ -235,7 +266,12 @@ const ProfileScreen = () => {
 const ForbiddenContent = () => (
   <View style={styles.forbiddenContainer}>
     <Text />
-    <FontAwesome5 name='lock' color={Colors.SeaGreen} size={160} style={{ opacity: 0.5 }} />
+    <FontAwesome5
+      name="lock"
+      color={Colors.SeaGreen}
+      size={160}
+      style={{ opacity: 0.5 }}
+    />
     <Text style={styles.text}>
       Abonnez-vous à cet utilisateur pour pouvoir voir ses critiques.
     </Text>
@@ -246,7 +282,7 @@ const EmptyList = () => (
   <View style={styles.emptyListContainer}>
     <Text />
     <ImageBackground
-      source={require('../assets/images/main_logo_v1_500x500.png')}
+      source={require("../assets/images/main_logo_v1_500x500.png")}
       style={styles.emptyImage}
     />
     <Text />
@@ -259,12 +295,12 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.Licorice,
   },
   subcontainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     marginTop: 30,
   },
   albumContainer: {
-    alignItems: 'center',
+    alignItems: "center",
     justifyContent: "space-around",
   },
   commentContainer: {
@@ -281,12 +317,12 @@ const styles = StyleSheet.create({
     zIndex: 1,
   },
   text: {
-    fontSize: Platform.OS === 'web' ? 20 : 16,
+    fontSize: Platform.OS === "web" ? 20 : 16,
     color: Colors.Celadon,
     marginBottom: 10,
     padding: 10,
-    textAlign: 'center',
-    textShadowColor: 'rgba(0, 0, 0, 0.5)',
+    textAlign: "center",
+    textShadowColor: "rgba(0, 0, 0, 0.5)",
     textShadowOffset: { width: -1, height: 1 },
     textShadowRadius: 10,
   },
@@ -300,25 +336,25 @@ const styles = StyleSheet.create({
     transition: "background-color 0.3s ease",
   },
   header: {
-    justifyContent: 'space-around',
-    alignItems: Platform.OS !== 'web' ? 'center' : 'stretch',
-    paddingTop: Platform.OS !== 'web' ? 30 : 0,
-    position: 'relative',
+    justifyContent: "space-around",
+    alignItems: Platform.OS !== "web" ? "center" : "stretch",
+    paddingTop: Platform.OS !== "web" ? 30 : 0,
+    position: "relative",
     top: 0,
     left: 0,
     right: 0,
     zIndex: 1,
-    backgroundColor: 'rgba(43, 43, 43, 0.3)',
+    backgroundColor: "rgba(43, 43, 43, 0.3)",
   },
   title: {
     fontSize: Platform.OS === "web" ? 25 : 20,
     color: Colors.Silver,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     paddingTop: 15,
   },
   headerContent: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
     paddingBottom: 15,
     paddingTop: 10,
   },
@@ -327,17 +363,17 @@ const styles = StyleSheet.create({
   },
   headerCenter: {
     flex: 1,
-    alignItems: 'center',
+    alignItems: "center",
   },
   forbiddenContainer: {
-    alignContent: 'space-around',
+    alignContent: "space-around",
     gap: 55,
-    alignItems: 'center',
+    alignItems: "center",
   },
   emptyListContainer: {
-    alignContent: 'space-around',
+    alignContent: "space-around",
     gap: 55,
-    alignItems: 'center',
+    alignItems: "center",
   },
   emptyImage: {
     width: 165,
