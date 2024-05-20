@@ -10,7 +10,8 @@ import {
   Animated,
   ImageBackground,
   StyleSheet,
-  useWindowDimensions
+  useWindowDimensions,
+  ScrollView
 } from "react-native";
 import { useAuth } from "../contexts/AuthContext";
 import { useFocusEffect, useNavigation, useRoute } from "@react-navigation/native";
@@ -32,6 +33,7 @@ const ProfileScreen = () => {
   const windowDimensions = useWindowDimensions();
   const width = windowDimensions ? windowDimensions.width : 0;
   const [data, setData] = useState([]);
+  const [user, setUser] = useState({});
   const [reviews, setReviews] = useState([]);
   const [favoris, setFavoris] = useState([]);
   const [followed, setFollowed] = useState([]);
@@ -52,19 +54,22 @@ const ProfileScreen = () => {
   const getData = async () => {
     const user = await Tokenizer.getCurrentUser();
     setCurrentUser(await user);
+    return user
   };
 
-  const updateData = () => {
+  const updateData = (user) => {
     const query = {
       page: page,
       pageSize: 20,
       orderByLike: true,
     };
-    const id_utilisateur = 53; 
+    const id_utilisateur = id || currentUser?.id_utilisateur || user?.id_utilisateur;; 
     axiosInstance.get(`/users/${id_utilisateur}/page`, { params: query })
       .then((response) => {
         setData(response.data);
-        setReviews((prev) => [...prev, ...response.data.reviews]);
+        setUser(response.data.user);
+        const newReview = response.data.reviews || []
+        setReviews((prev) => [...prev, ... newReview]);
         setHasMore(response.data.reviewsCount > reviews.length);
         setFavoris(response.data.favoris);
         setFollowed(response.data.allFollowed);
@@ -78,8 +83,9 @@ const ProfileScreen = () => {
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     const refreshData = async () => {
-      await getData();
-      updateData();
+      await getData().then((user)=>{
+        updateData(user);
+      })
     };
     refreshData();
     setTimeout(() => setRefreshing(false), 2000);
@@ -119,8 +125,9 @@ const ProfileScreen = () => {
   useFocusEffect(
     useCallback(() => {    
       const fetchData = async () => {
-        await getData();
-        updateData();
+        await getData().then((user)=>{
+          updateData(user);
+        })
       };
       fetchData();
     }, [])
@@ -134,7 +141,7 @@ const ProfileScreen = () => {
         <View style={styles.headerContent}>
           <FontAwesome
             name="chevron-left"
-            size={20}
+            size={25}
             color={Colors.Silver}
             onPress={() => navigation.goBack()}
             style={styles.chevronIcon}
@@ -142,18 +149,20 @@ const ProfileScreen = () => {
           <View style={styles.headerCenter}>
             <Text />
           </View>
-          {data?.isCurrent ? <Pressable
-            style={[
-              commonStyles.text,
-              styles.ModifierButton,
-              isModifierHovered ? styles.btnModifierHovered : null,
-            ]}
-            onMouseEnter={() => setIsModifierHovered(true)}
-            onMouseLeave={() => setIsModifierHovered(false)}
-            onPress={() => navigation.navigate('setting', { id: id || currentUser.id_utilisateur })}
-          >
-            <FontAwesome name="gear" color={Colors.Silver} size={25} />
-          </Pressable> : <Text/>}
+          {data?.isCurrent ? (
+            <Pressable
+              style={[
+                commonStyles.text,
+                styles.ModifierButton,
+                isModifierHovered ? styles.btnModifierHovered : null,
+              ]}
+              onMouseEnter={() => setIsModifierHovered(true)}
+              onMouseLeave={() => setIsModifierHovered(false)}
+              onPress={() => navigation.navigate('setting', { id: id || currentUser.id_utilisateur })}
+            >
+              <FontAwesome name="gear" color={Colors.Silver} size={25} />
+            </Pressable>
+          ) : <Text />}
         </View>
         <Profile
           user={data.user}
@@ -166,19 +175,24 @@ const ProfileScreen = () => {
         />
         <NavBar setTab={setTab} />
       </Animated.View>
-      <View style={[styles.subcontainer, { width: width > breakpoint.medium ? 1200 : "100%"}] }>
-        
-        {data.forbidden ? 
-          <ForbiddenContent /> : <>
+      <View style={[styles.subcontainer, { width: width > breakpoint.medium ? 1200 : "100%" }]}>
+        <ScrollView
+          refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[Colors.DarkSpringGreen]} tintColor={Colors.DarkSpringGreen} size='large' title='Actualisation...' titleColor={Colors.White}/>
+          }
+        >
+          {data.forbidden ? 
+          <ForbiddenContent /> : 
+          <>
             {tab === 'fav' && (
               <FlatList
                 data={favoris}
                 keyExtractor={(item, index) => index.toString()}
-                renderItem={({ item }) => {
-                  <View style={{width: "100%", alignItems: 'center'}}>
+                renderItem={({ item }) => (
+                  <View style={{ width: "100%", alignItems: 'center' }}>
                     <Item data={item} />
                   </View>
-                }}
+                )}
                 ListEmptyComponent={<EmptyList />}
                 refreshControl={
                   <RefreshControl
@@ -190,15 +204,15 @@ const ProfileScreen = () => {
                 }
               />
             )}
-            {tab === 'posts' &&  (
+            {tab === 'posts' && (
               <FlatList
                 data={reviews}
                 keyExtractor={(item, index) => index.toString()}
-                renderItem={({ item }) => {
-                  <View style={{width: "100%", alignItems: 'center'}}>
+                renderItem={({ item }) => (
+                  <View style={{ width: "100%", alignItems: 'center' }}>
                     <Review data={item} />
                   </View>
-                }}
+                )}
                 onEndReached={loadMoreReviews}
                 onEndReachedThreshold={0.5}
                 ListFooterComponent={renderFooter}
@@ -213,11 +227,13 @@ const ProfileScreen = () => {
                 }
               />
             )}
-        </>}
+          </>
+        }
+      </ScrollView>
       </View>
       {isModify && (
         <ModifyProfile
-          user={data.user}
+          user={user}
         />
       )}
     </View>
@@ -294,7 +310,7 @@ const styles = StyleSheet.create({
   header: {
     justifyContent: 'space-around',
     alignItems: Platform.OS !== 'web' ? 'center' : 'stretch',
-    paddingTop: Platform.OS !== 'web' ? 30 : 0,
+    paddingTop: Platform.OS !== 'web' ? 25 : 0,
     position: 'relative',
     top: 0,
     left: 0,
@@ -311,8 +327,8 @@ const styles = StyleSheet.create({
   headerContent: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingBottom: 15,
-    paddingTop: 10,
+    alignItems: 'baseline',
+    marginBottom: 10,
   },
   chevronIcon: {
     paddingLeft: 15,

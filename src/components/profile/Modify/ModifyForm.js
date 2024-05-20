@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, Image, StyleSheet, useWindowDimensions, TouchableOpacity, Pressable } from "react-native";
+import { View, Text, Image, StyleSheet, useWindowDimensions, TouchableOpacity, Pressable, ScrollView, Platform } from "react-native";
 import { Switch } from "react-native-switch";
 import { Colors } from "../../../style/color";
 import { breakpoint } from "../../../style/breakpoint";
@@ -37,6 +37,7 @@ const Update = ({ user }) => {
     axiosInstance.post('users/sendResetEmail', { email })
       .then(() => {
         setShowEmailInput(false);
+        setEmail('');
         Toast.show({
           type: 'success',
           text1: '✅  Email bien modifiée',
@@ -44,8 +45,13 @@ const Update = ({ user }) => {
           position: 'bottom'
         });
       })
-      .catch(() => {
-        // Handle error
+      .catch((e) => {
+        console.error(e);
+        Toast.show({
+          type: 'error',
+          text1: '❌  Une erreur interne est survenue.',
+          position: 'bottom'
+        });
       });
   };
 
@@ -53,6 +59,7 @@ const Update = ({ user }) => {
     axiosInstance.post('users/resetPassword', { password, resetToken: user.reset_token })
       .then(() => {
         setShowPasswordInput(false);
+        setPassword('');
         Toast.show({
           type: 'success',
           text1: '✅  Mot de passe bien modifiée',
@@ -60,18 +67,23 @@ const Update = ({ user }) => {
           position: 'bottom'
         });
       })
-      .catch(() => {
-        // Handle error
+      .catch((e) => {
+        console.error(e);
+        Toast.show({
+          type: 'error',
+          text1: '❌  Une erreur interne est survenue.',
+          position: 'bottom'
+        });
       });
   };
 
   return (
     <View style={{ justifyContent: "center"}}>
-      <View style={{ justifyContent: 'space-between', flexDirection: "row", alignItems: 'baseline', flexWrap: 'wrap', gap: 20 }}>
+      <View style={{ justifyContent: 'center', flexDirection: "row-reverse", alignItems: 'baseline', flexWrap: 'wrap', gap: 15, marginBottom: 30}}>
         <Pressable onPress={handleUpdateEmail}>
           <Text style={styles.buttonText}>Mettre à jour l'email</Text>
         </Pressable>
-        <Divider style={styles.divider} />
+       <Divider style={styles.divider} />
         <Pressable onPress={handleResetPassword}>
           <Text style={styles.buttonText}>Réinitialiser le mot de passe</Text>
         </Pressable>
@@ -262,8 +274,8 @@ function ModifyForm({ user, checkPseudo, handleModify, isModify, setModify }) {
       backgroundColor: Colors.Licorice
     },
     image: {
-      width: width > breakpoint.small ? 200 : 150,
-      height: width > breakpoint.small ? 200 : 150,
+      width: width > breakpoint.small ? 200 : 95,
+      height: width > breakpoint.small ? 200 : 95,
       borderRadius: width < breakpoint.medium ? 100 : 75,
     },
     imageChangeContainer: {
@@ -275,8 +287,8 @@ function ModifyForm({ user, checkPseudo, handleModify, isModify, setModify }) {
       backgroundColor: hexToRgbA(Colors.Jet, imageHovered ? 0.1 : 0.4),
     },
     imageChange: {
-      width: "70%",
-      height: "70%",
+      width: Platform.OS === 'web' ? "70%" : 85,
+      height: Platform.OS === 'web' ? "70%" : 85,
     },
     switch: {
       marginBottom: 10,
@@ -290,7 +302,6 @@ function ModifyForm({ user, checkPseudo, handleModify, isModify, setModify }) {
 
   return (
     <View style={styles.container}>
-      <ScrollView>
       <View style={styles.imageContainer}>
         <Image style={styles.image} source={{ uri: uri }} />
        { isModify && <TouchableOpacity
@@ -330,7 +341,7 @@ function ModifyForm({ user, checkPseudo, handleModify, isModify, setModify }) {
         value={actualAlias}
         onChangeText={handleAliasChange}
         onFocus={() => setAliasError("")}
-        disabled={!isModify}
+        editable={!isModify}
       />
       <ModifyInput
         max={15}
@@ -339,7 +350,7 @@ function ModifyForm({ user, checkPseudo, handleModify, isModify, setModify }) {
         error={pseudoError}
         onChangeText={handlePseudoChange}
         onFocus={() => setPseudoError("")}
-        disabled={!isModify}
+        editable={!isModify}
       />
       <ModifyInput
         max={200}
@@ -349,7 +360,7 @@ function ModifyForm({ user, checkPseudo, handleModify, isModify, setModify }) {
         height={100}
         value={actualBio}
         onChangeText={handleBioChange}
-        disabled={!isModify}
+        editable={!isModify}
       />
       {isModify &&
         <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
@@ -369,7 +380,6 @@ function ModifyForm({ user, checkPseudo, handleModify, isModify, setModify }) {
           </Pressable>
         </View>}
       {!spotify && <Update user={user} />}
-      </ScrollView>
     </View>
   );
 }

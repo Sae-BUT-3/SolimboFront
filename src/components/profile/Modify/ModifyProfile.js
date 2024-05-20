@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { View, StyleSheet, Text, Platform} from "react-native";
+import { View, StyleSheet, Text, Platform, ScrollView} from "react-native";
 import { Colors } from "../../../style/color";
 import axiosInstance from "../../../api/axiosInstance";
 import ModifyForm from "./ModifyForm";
 import { FontAwesome } from "@expo/vector-icons";
 import modalStyle from "../../../style/modalStyle";
 import { useNavigation } from "@react-navigation/native";
+import Toast from "react-native-toast-message";
 
 function ModifyProfile({ user }) {
   const navigation = useNavigation();
@@ -31,8 +32,19 @@ function ModifyProfile({ user }) {
         ...prevData,
         user: response.data,
       }));
+      Toast.show({
+        type: 'success',
+        text1: '✅  Profil bien modifiée',
+        text1Style: {color: Colors.White},
+        position: 'bottom'
+      });
     } catch (e) {
       console.error(e);
+      Toast.show({
+        type: 'error',
+        text1: '❌  Une erreur interne est survenue.',
+        position: 'bottom'
+      });
     }
   };
 
@@ -43,13 +55,16 @@ function ModifyProfile({ user }) {
         <Text style={modalStyle.modalTitle}></Text>
         <FontAwesome name="pencil" size={25} color={Colors.Silver} onPress={()=> setModify(true)} />      
       </View>
-      <ModifyForm
-        user={user}
-        checkPseudo={checkPseudo}
-        handleModify={handleModify}
-        isModify={isModify}
-        setModify={setModify}
-      />
+      <ScrollView>
+        <ModifyForm
+          user={user}
+          checkPseudo={checkPseudo}
+          handleModify={handleModify}
+          isModify={isModify}
+          setModify={setModify}
+        />
+      </ScrollView>
+      
     </View>
   );
 }
