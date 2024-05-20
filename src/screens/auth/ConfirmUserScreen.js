@@ -101,6 +101,7 @@ function ConfirmUserScreen({ route, navigation }) {
             if (response.data.token) {
               signInViaToken(response.data.token);
               Tokenizer.setUser(response.data.user);
+              navigation.navigate("navigate");
             } else {
               console.log(
                 "Erreur lors de la connexion post-inscription de l utilisateur"

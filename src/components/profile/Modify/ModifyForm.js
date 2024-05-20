@@ -25,7 +25,7 @@ import { useNavigation } from "@react-navigation/native";
 import { Buffer } from "buffer";
 const MIN_PSEUDO = 3;
 
-const Update = ({ user }) => {
+const Update = ({ user ,spotify}) => {
   const [showPasswordInput, setShowPasswordInput] = useState(false);
   const [showEmailInput, setShowEmailInput] = useState(false);
   const [email, setEmail] = useState("");
@@ -86,13 +86,15 @@ const Update = ({ user }) => {
           gap: 20,
         }}
       >
-        <Pressable onPress={handleUpdateEmail}>
+        {spotify && (<Pressable onPress={handleUpdateEmail}>
           <Text style={styles.buttonText}>Mettre à jour l'email</Text>
-        </Pressable>
+        </Pressable>)}
         <Divider style={styles.divider} />
+        {spotify && (
         <Pressable onPress={handleResetPassword}>
           <Text style={styles.buttonText}>Réinitialiser le mot de passe</Text>
-        </Pressable>
+        </Pressable>)}
+        
         <Pressable
           onPress={() => {
             logout();
@@ -395,6 +397,7 @@ function ModifyForm({ user, checkPseudo, handleModify, isModify, setModify }) {
         height={100}
         value={actualBio}
         onChangeText={handleBioChange}
+        onFocus={() => setPseudoError("")}
         disabled={!isModify}
       />
       {isModify && (
@@ -428,7 +431,7 @@ function ModifyForm({ user, checkPseudo, handleModify, isModify, setModify }) {
           </Pressable>
         </View>
       )}
-      {!spotify && <Update user={user} />}
+      <Update user={user} spotify={spotify} />
     </View>
   );
 }

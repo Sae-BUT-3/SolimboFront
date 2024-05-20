@@ -21,7 +21,12 @@ const App = () => {
         User: 'user',
         Response: 'response',
         Discographie: 'discographie',
-        Comment: 'comment',
+        Comment: {
+          path: 'comment/:id', // Définir un modèle de chemin avec un paramètre dynamique
+          parse: {
+            id: (id) => String(id), // Convertir l'ID en chaîne (facultatif)
+          },
+        },
         Review: 'review',
         Oeuvre: 'oeuvre',
         Artist: 'artist',

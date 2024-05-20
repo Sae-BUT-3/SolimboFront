@@ -35,8 +35,8 @@ function ModifyInput({
     if (actualText.length <= max) {
       setActualLenght(actualText.length);
       setText(actualText);
+      onChangeText(actualText);
     }
-    onChangeText(actualText);
   };
 
   const styles = StyleSheet.create({
@@ -68,11 +68,9 @@ function ModifyInput({
   });
 
   return (
-    <View style={{ width: 380}}>
+    <View style={{ width: 380 }}>
       <View style={[styles.labelContainer]}>
-        <Text style={styles.label}>
-          {label}
-        </Text>
+        <Text style={styles.label}>{label}</Text>
         {focused && (
           <Text style={[styles.counter, commonStyles.text]}>
             {actualLenght}/{max}
@@ -89,7 +87,8 @@ function ModifyInput({
         placeholderTextColor={Colors.Silver}
         theme={{ colors: { primary: "green", underlineColor: "transparent" } }}
         style={[
-          modalStyle.input, focused && modalStyle.inputFocused,
+          modalStyle.input,
+          focused && modalStyle.inputFocused,
           styles.input,
         ]}
       />

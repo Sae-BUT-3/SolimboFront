@@ -56,7 +56,7 @@ const CommentScreen = () => {
     };
 
     const handleLoadMore = () => {
-        if (!isLoadingMore && comments.length < count) {
+        if (!isLoadingMore && comments.length < count && comments.length > 0) {
             const nextPage = page + 1;
             setPage(nextPage);
             loadComments(nextPage);
