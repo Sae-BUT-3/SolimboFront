@@ -110,13 +110,13 @@ function ActivityScreen() {
                             <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'baseline', gap: 20 }}>
                                 <Pressable style={styles.followButton}
                                     activeOpacity={1}
-                                    onPress={() => accept(item.id)}
+                                    onPress={() => accept(item.id_utilisateur)}
                                 >
                                     <FontAwesome name='check' color={Colors.White} size={20}/>  
                                 </Pressable>
                                 <Pressable style={[styles.followButton, {backgroundColor: Colors.Red}]}
                                     activeOpacity={1}
-                                    onPress={() => reject(item.id)}
+                                    onPress={() => reject(item.id_utilisateur)}
                                 >
                                     <FontAwesome name='close' color={Colors.White} size={20}/>  
                                 </Pressable>

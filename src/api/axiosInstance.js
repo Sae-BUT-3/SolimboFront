@@ -8,10 +8,10 @@ import Tokenizer from "../utils/Tokenizer";
  * @type {import('axios').AxiosInstance}
  */
 const instance = axios.create({
-    baseURL: "http://172.20.10.3:3001", //Créer un fichier .env à la racine et ajouter la variable API_URL
-    headers: {
-        'Content-Type': 'application/json',
-    },
+  baseURL: "http://192.168.1.10:3001", //Créer un fichier .env à la racine et ajouter la variable API_URL
+  headers: {
+    "Content-Type": "application/json",
+  },
 });
 
 // Ajoutez un intercepteur pour inclure le token dans le header de chaque requête
@@ -19,7 +19,7 @@ instance.interceptors.request.use(
   async (config) => {
     const token = await Tokenizer.getValidToken();
     if (token) {
-    config.headers.Authorization = `Bearer ${token}`; 
+      config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
   },

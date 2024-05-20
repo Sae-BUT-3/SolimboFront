@@ -172,7 +172,7 @@ const Review = ({ data}) => {
         <View style={styles.reviewerInfo}>
           <View style={{display: 'flex', flexDirection: 'row', gap: 5}}>
                 <Pressable onPress={() => goTo()}>
-                  <Avatar source={{ uri: data.oeuvre.type === 'track' ? data.oeuvre.album.image : data.oeuvre.image }} size={Platform.OS === 'web'? 90 : 74} containerStyle={{  borderRadius: 10,shadowColor: Colors.Onyx,
+                  <Avatar source={{ uri: data.oeuvre.type === 'track' ? data.oeuvre.album?.image : data.oeuvre?.image }} size={Platform.OS === 'web'? 90 : 74} containerStyle={{  borderRadius: 10,shadowColor: Colors.Onyx,
                     shadowOpacity: 0.3,
                     shadowRadius: 3,
                     elevation: Platform.OS === 'android' ? 3 : 0, }} />

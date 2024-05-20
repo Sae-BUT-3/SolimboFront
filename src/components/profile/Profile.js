@@ -76,9 +76,9 @@ function SearchBar({
   };
 
   const onFollowPress = () => {
-    handleFollow().then(() => {
-      setFollowText([followText[1], followText[0]]);
-    });
+    handleFollow()
+    setFollowText([followText[1], followText[0]]);
+    setIsFollowHovered(!isFollowHovered)
   };
   const styles = StyleSheet.create({
     container: {
@@ -221,19 +221,23 @@ function SearchBar({
       <View style={styles.numberContainer}>
         <View style={styles.followText}>
           <Text style={styles.numberValue}>{user?.review_count}</Text>
-          <Text style={styles.numberText}>Critique</Text>
+          <Text style={styles.numberText}>Critique(s)</Text>
         </View>
-        <Pressable onPress={()=> isVisible(!visible)}>
+        <Pressable onPress={()=> {
+          console.log('dezfefezzf')
+          console.log(followed)
+          console.log(followers)
+          isVisible(!visible)}}>
           <View style={styles.followText}>
             <Text style={styles.numberValue}>{user?.follower_count}</Text>
-            <Text style={styles.numberText}>Abonné</Text>
+            <Text style={styles.numberText}>Abonné(s)</Text>
           </View>
         </Pressable>
         
         <Pressable onPress={()=> setShowAll(!showAll)}>
           <View style={styles.followText}>
             <Text style={styles.numberValue}>{user?.following_count}</Text>
-            <Text style={styles.numberText}>Abonnement</Text>
+            <Text style={styles.numberText}>Abonnement(s)</Text>
           </View>
         </Pressable>
        

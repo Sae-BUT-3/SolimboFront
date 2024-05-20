@@ -4,7 +4,7 @@ import { AuthProvider } from './src/contexts/AuthContext';
 import MainNavigator from './src/navigation/MainNavigator';
 import * as Font from 'expo-font';
 import * as Linking from 'expo-linking';
-import { Text, View, ActivityIndicator, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
 import Loader from './src/components/common/Loader';
 
 const App = () => {

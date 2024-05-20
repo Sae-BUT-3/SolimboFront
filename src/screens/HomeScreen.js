@@ -30,6 +30,7 @@ const HomeScreen = () => {
         getData();
         setPage(1); // Remise à zéro de la pagination
         setReviews([]); // Remise à zéro des reviews
+        updateReviews()
         setTimeout(() => {
             setRefreshing(false);
         }, 2000);

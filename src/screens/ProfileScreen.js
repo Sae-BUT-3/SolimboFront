@@ -52,24 +52,28 @@ const ProfileScreen = () => {
   const getData = async () => {
     const user = await Tokenizer.getCurrentUser();
     setCurrentUser(await user);
+    return user
   };
 
-  const updateData = () => {
+  const updateData = (user) => {
     const query = {
       page: page,
       pageSize: 20,
       orderByLike: true,
     };
-    const id_utilisateur = 53; 
+    const id_utilisateur = id || currentUser?.id_utilisateur || user?.id_utilisateur; 
     axiosInstance.get(`/users/${id_utilisateur}/page`, { params: query })
       .then((response) => {
         setData(response.data);
-        setReviews((prev) => [...prev, ...response.data.reviews]);
+        const newReview = response.data.reviews || []
+        setReviews((prev) => [...prev, ... newReview]);
+
         setHasMore(response.data.reviewsCount > reviews.length);
         setFavoris(response.data.favoris);
         setFollowed(response.data.allFollowed);
         setFollowers(response.data.followers);
         setIsLoading(false);
+
       })
       .catch((e) => setError(e.response.data))
       .finally(() => setIsLoading(false));
@@ -78,8 +82,9 @@ const ProfileScreen = () => {
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     const refreshData = async () => {
-      await getData();
-      updateData();
+      await getData().then((user)=>{
+        updateData(user);
+      })
     };
     refreshData();
     setTimeout(() => setRefreshing(false), 2000);
@@ -121,8 +126,9 @@ const ProfileScreen = () => {
   useFocusEffect(
     useCallback(() => {    
       const fetchData = async () => {
-        await getData();
-        updateData();
+        await getData().then((user)=>{
+          updateData(user);
+        })
       };
       fetchData();
     }, [])
@@ -170,7 +176,7 @@ const ProfileScreen = () => {
       </Animated.View>
       <View style={[styles.subcontainer, { width: width > breakpoint.medium ? 1200 : "100%"}] }>
         
-        {data.forbidden ? 
+        {data.forbidden && !data.isCurrent ? 
           <ForbiddenContent /> : <>
             {tab === 'fav' && (
               <FlatList
