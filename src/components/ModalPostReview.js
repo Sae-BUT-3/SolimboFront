@@ -49,7 +49,7 @@ const ModalPostReview = ({ visible, onClose }) => {
         }
         const params = {
             query: query.text,
-            spotify_filter: "album,track,playlist",
+            spotify_filter: query.filters.join(","),
             limit: 20
         }
         axiosInstance.get("/spotify/search", {
