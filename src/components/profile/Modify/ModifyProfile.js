@@ -7,11 +7,8 @@ import { FontAwesome } from "@expo/vector-icons";
 import modalStyle from "../../../style/modalStyle";
 import { useNavigation } from "@react-navigation/native";
 
-function ModifyProfile({ id }) {
-  const [data, setData] = useState([]);
+function ModifyProfile({ user }) {
   const navigation = useNavigation();
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
   const [isModify, setModify] = useState(false);
 
   const checkPseudo = async (pseudo) => {
@@ -39,26 +36,6 @@ function ModifyProfile({ id }) {
     }
   };
 
-  const updateData = async () => {
-    setIsLoading(true);
-    const query = {
-      page: 1,
-      pageSize: 20,
-      orderByLike: true,
-    };
-    axiosInstance.get(`/users/${id}/page`, { params: query })
-    .then(() => {
-      setData(response.data.user);
-    }).catch( (e) => {
-      console.error(e);
-      setError(e.response?.data);
-    });
-  };
-
-  useEffect(() => {
-    updateData();
-  }, []);
-
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -67,7 +44,7 @@ function ModifyProfile({ id }) {
         <FontAwesome name="pencil" size={25} color={Colors.Silver} onPress={()=> setModify(true)} />      
       </View>
       <ModifyForm
-        user={data}
+        user={user}
         checkPseudo={checkPseudo}
         handleModify={handleModify}
         isModify={isModify}

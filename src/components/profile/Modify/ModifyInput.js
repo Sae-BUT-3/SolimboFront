@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Text, TextInput, StyleSheet, View } from "react-native";
+import { Text, TextInput, StyleSheet, View, Platform } from "react-native";
 import Svg, { Path } from "react-native-svg";
 import { Colors } from "../../../style/color";
 import { breakpoint } from "../../../style/breakpoint";
@@ -90,7 +90,7 @@ function ModifyInput({
         placeholderTextColor={Colors.Silver}
         theme={{ colors: { primary: "green", underlineColor: "transparent" } }}
         style={[
-          modalStyle.input, focused && modalStyle.inputFocused
+          modalStyle.input, focused && modalStyle.inputFocused, {height: Platform.OS === 'web' ? '50%' : '20%'}
         ]}
       />
       <Text style={[commonStyles.text, styles.error]}>{error}</Text>

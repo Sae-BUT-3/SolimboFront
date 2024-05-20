@@ -98,7 +98,7 @@ const ReviewScreen = () => {
                     </View>
                 }
                 ListEmptyComponent={
-                    <Text style={{ color: Colors.White, fontSize: 20, textAlign: 'center', marginTop: 30 }}>Aucune critique, soyez le premier à rédiger une critique !</Text>
+                    !isLoadingMore ? <Text style={{ color: Colors.White, fontSize: 20, textAlign: 'center', marginTop: 30 }}>Aucune critique, soyez le premier à rédiger une critique !</Text> : null
                 }
                 refreshControl={
                     <RefreshControl

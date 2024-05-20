@@ -26,7 +26,6 @@ function ConfirmUserScreen({ route, navigation }) {
         callback: redirectUri,
       })
       .then((response) => {
-        console.log("authWithSpotify", response.data);
         if (response.data.confirmToken) {
           setConfirmtoken(response.data.confirmToken);
         } else if (response.data.token) {
@@ -94,10 +93,6 @@ function ConfirmUserScreen({ route, navigation }) {
           bio: "",
           confirmToken: confirmtoken,
         };
-        console.log(userData);
-        console.log(pseudo.trim());
-        console.log(user.alias || pseudo.trim());
-        console.log(confirmtoken);
         axiosInstance
           .post("/users/confirmUser", userData)
           .then((response) => {

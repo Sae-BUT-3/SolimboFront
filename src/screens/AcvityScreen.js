@@ -45,7 +45,6 @@ function ActivityScreen() {
             Toast.show({
                 type: 'success',
                 text1: '✅  Demande d\'ami acceptée.',
-                text1Style: {color: Colors.White},
                 position: 'bottom'
             });
         })
@@ -54,7 +53,6 @@ function ActivityScreen() {
             Toast.show({
               type: 'error',
               text1: '❌  Une erreur interne est survenue.',
-              text1Style: {color: Colors.White},
               position: 'bottom'
            });
         })
@@ -66,7 +64,6 @@ function ActivityScreen() {
             Toast.show({
                 type: 'success',
                 text1: '✅  Demande d\'ami refusée.',
-                text1Style: {color: Colors.White},
                 position: 'bottom'
             });
         })
@@ -75,7 +72,6 @@ function ActivityScreen() {
             Toast.show({
               type: 'error',
               text1: '❌  Une erreur interne est survenue.',
-              text1Style: {color: Colors.White},
               position: 'bottom'
            });
         })

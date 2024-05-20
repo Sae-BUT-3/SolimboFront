@@ -126,7 +126,6 @@ const ArtistScreen = () => {
         const offsetY = event.nativeEvent.contentOffset.y;
         setShowTitle(offsetY > 0);
     };
-    console.log(reviews)
     if (fail) {
         return <ErrorRequest err={fail} />;
     }

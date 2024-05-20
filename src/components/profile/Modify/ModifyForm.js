@@ -8,7 +8,7 @@ import axiosInstance from "../../../api/axiosInstance";
 import ModifyInput from "./ModifyInput";
 import hexToRgbA from "../../../utils/HexToRgbA";
 import pressableBasicStyle from "../../../style/pressableBasicStyle";
-import { FontAwesome, FontAwesome5 } from "@expo/vector-icons";
+import { FontAwesome} from "@expo/vector-icons";
 import BasicInput from "../../form/BasicInput";
 import Toast from "react-native-toast-message";
 import { useAuth } from "../../../contexts/AuthContext";
@@ -290,6 +290,7 @@ function ModifyForm({ user, checkPseudo, handleModify, isModify, setModify }) {
 
   return (
     <View style={styles.container}>
+      <ScrollView>
       <View style={styles.imageContainer}>
         <Image style={styles.image} source={{ uri: uri }} />
        { isModify && <TouchableOpacity
@@ -368,6 +369,7 @@ function ModifyForm({ user, checkPseudo, handleModify, isModify, setModify }) {
           </Pressable>
         </View>}
       {!spotify && <Update user={user} />}
+      </ScrollView>
     </View>
   );
 }

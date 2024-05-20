@@ -36,7 +36,7 @@ const Discography = ({ items, id}) => {
             <Text style={[styles.filterText, filter === 'single']}>Singles</Text>
           </Pressable>
       </View> : null}
-        <View style={{marginBottom: 30, display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', flexWrap: 'wrap'}}>
+        <View style={{marginBottom: 30, display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: Platform.OS === 'web' ? 'flex-start' : 'center', flexWrap: 'wrap'}}>
           {items.length > 0 ? items.filter(item => filter === 'popularity' || item.type.toLowerCase().includes(filter.toLowerCase())).sort((a, b) => {
               if(filter !== 'popularity'){
                 const dateA = new Date(a.date);

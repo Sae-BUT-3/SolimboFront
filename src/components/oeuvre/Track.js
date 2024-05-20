@@ -67,6 +67,7 @@ const Track = ({data}) => {
                         tintColor={Colors.Jet}
                         ratingBackgroundColor={Colors.Onyx}
                         startingValue={data.rating}
+                        fractions={1}
                         readonly
                     />  
                 </View>                  

@@ -92,7 +92,6 @@ const ProfileScreen = () => {
         Toast.show({
           type: 'success',
           text1: data.relation.isFollowed ? '✅  Vous êtes désabonné à cet utilisateur.' : '✅  Vous êtes abonné à cet utilisateur.',
-          text1Style: { color: Colors.White },
           position: 'bottom'
         });
         updateData();
@@ -101,7 +100,6 @@ const ProfileScreen = () => {
         Toast.show({
           type: 'error',
           text1: '❌  Une erreur interne est survenue.',
-          text1Style: { color: Colors.White },
           position: 'bottom'
         });
       });
@@ -219,7 +217,7 @@ const ProfileScreen = () => {
       </View>
       {isModify && (
         <ModifyProfile
-          id={data.user.id_utilisateur}
+          user={data.user}
         />
       )}
     </View>

@@ -191,6 +191,7 @@ const Review = ({ data}) => {
               ratingColor={Colors.DarkSpringGreen}
               ratingBackgroundColor={Colors.Licorice}
               startingValue={data.note}
+              fractions={1}
               readonly
             />
             {Platform.OS != 'web' && <PointTrait point={true}/>}
