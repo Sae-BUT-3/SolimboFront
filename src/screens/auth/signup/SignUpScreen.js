@@ -81,6 +81,7 @@ function SignUpScreen({ navigation }) {
             .then((response) => {
                 if (response.data) {
                     signInViaToken(response.data);
+                    navigation.navigate("navigate")
                 }
             })
             .catch((error) => {
