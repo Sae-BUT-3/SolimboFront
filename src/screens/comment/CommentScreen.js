@@ -108,7 +108,7 @@ const CommentScreen = () => {
                             </View>
                         }
                         ListEmptyComponent={
-                            !isLoadingMore ?  <Text style={{ color: Colors.White, fontSize: 20, textAlign: 'center', marginTop: 30  }}>Aucun commentaire, soyez le premier à rédiger un commentaire !</Text> : null
+                            <Text style={{ color: Colors.White, fontSize: 20, textAlign: 'center', marginTop: 30  }}>Aucun commentaire, soyez le premier à rédiger un commentaire !</Text> 
                         }
                         refreshControl={
                             <RefreshControl

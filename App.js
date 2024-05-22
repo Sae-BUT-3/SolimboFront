@@ -4,21 +4,11 @@ import { AuthProvider } from './src/contexts/AuthContext';
 import MainNavigator from './src/navigation/MainNavigator';
 import * as Font from 'expo-font';
 import * as Linking from 'expo-linking';
+import { Text, View, ActivityIndicator, StyleSheet } from 'react-native';
 import Loader from './src/components/common/Loader';
-import Toast, { BaseToast, ErrorToast } from 'react-native-toast-message';
-import { Colors } from './src/style/color';
 
 const App = () => {
   const [fontsLoaded, setFontsLoaded] = useState(false);
-  const toastConfig = {
-    success: (props) => (
-        <BaseToast {...props} style={ {backgroundColor : Colors.Jet, borderLeftColor: Colors.SeaGreen} } text2Style={{color: Colors.White}} text1Style={{color: Colors.White}}/>
-    ),
-    error: (props) => (
-      <ErrorToast
-      {...props} style={{backgroundColor : Colors.Jet, borderLeftColor: Colors.Red}} text2Style={{color: Colors.White}} text1Style={{color: Colors.White}}/>
-    ),
-};
 
   const linking = {
     prefixes: [Linking.createURL('/'), 'solimbo://'],
@@ -80,12 +70,18 @@ const App = () => {
   return (
     <AuthProvider>
       <NavigationContainer linking={linking} fallback={<Loader/>}>
-        <MainNavigator />        
-        <Toast config={toastConfig} />
+        <MainNavigator />
       </NavigationContainer>
     </AuthProvider>
   );
 };
 
+const styles = StyleSheet.create({
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+});
 
 export default App;

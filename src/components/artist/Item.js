@@ -62,12 +62,11 @@ const Item = ({data}) => {
                                 ratingColor={Colors.DarkSpringGreen}
                                 tintColor={Colors.Jet}
                                 ratingBackgroundColor={Colors.Licorice}
-                                startingValue={data.rating}
-                                fractions={1}
+                                startingValue={data.rating || 0}
                                 readonly
                             />
                             <PointTrait point={true}/> 
-                            <Text style={{color: Colors.White}}>{data.reviewCount > 0 ? data.reviewCount : 5}</Text>
+                            <Text style={{color: Colors.White}}>{data.reviewCount > 0 ? data.reviewCount : 0}</Text>
                         </View>
                         <View style={{display: 'flex', flexDirection: 'row',alignItems: 'center', gap: 10}}>
                             <Text style={{color: Colors.White}}>{data.release_date.substring(0, 4)}</Text>
@@ -85,8 +84,7 @@ const Item = ({data}) => {
                                 ratingColor={Colors.DarkSpringGreen}
                                 tintColor={Colors.Jet}
                                 ratingBackgroundColor={Colors.Licorice}
-                                startingValue={data.rating}
-                                fractions={1}
+                                startingValue={data.rating || 0}
                                 readonly
                             />
                             <PointTrait point={true}/> 

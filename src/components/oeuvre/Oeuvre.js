@@ -122,7 +122,6 @@ const Oeuvre = ({ data, artists, favoris, likeUser, setResponse, show }) => {
               tintColor={Colors.Silver}
               ratingBackgroundColor={Colors.Onyx}
               startingValue={data.rating}
-              fractions={1}
               readonly
             />
             <View style={styles.sectionIcon}>

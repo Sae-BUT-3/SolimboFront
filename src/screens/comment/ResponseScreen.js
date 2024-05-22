@@ -67,12 +67,14 @@ const ResponseScreen = () => {
                     Toast.show({
                         type: 'success',
                         text1: '✅ Votre commentaire a bien été postée.',
+                        text1Style: {color: Colors.White}
                     });
                     handleGoBack()
                 }).catch(e =>{ 
                     Toast.show({
                         type: 'error',
                         text1: '❌ Votre commentaire n\'a pas pu être postée.',
+                        text1Style: {color: Colors.White}
                     }); 
                     handleGoBack()
                 });
@@ -82,12 +84,14 @@ const ResponseScreen = () => {
                     Toast.show({
                         type: 'success',
                         text1: '✅ Votre commentaire a bien été postée.',
+                        text1Style: {color: Colors.White}
                     });
                     handleGoBack()
                 }).catch(e => {
                     Toast.show({
                         type: 'error',
                         text1: '❌ Votre commentaire n\'a pas pu être postée.',
+                        text1Style: {color: Colors.White}
                     }); 
                     handleGoBack()
                 });

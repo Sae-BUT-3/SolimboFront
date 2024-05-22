@@ -169,6 +169,7 @@ const ModalPostReview = ({ visible, onClose }) => {
                                                         Toast.show({
                                                             type: 'success',
                                                             text1: '✅  Votre critique a bien été postée.',
+                                                            text1Style: {color: Colors.White}
                                                         });
                                                     })
                                                     .catch(error => {
@@ -179,6 +180,7 @@ const ModalPostReview = ({ visible, onClose }) => {
                                                         Toast.show({
                                                             type: 'error',
                                                             text1: '❌  Votre critique n\'a pas pu être postée.',
+                                                            text1Style: {color: Colors.White}
                                                         });
                                                     })
                                                 }}
