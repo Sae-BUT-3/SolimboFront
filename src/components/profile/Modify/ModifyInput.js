@@ -15,7 +15,6 @@ function ModifyInput({
   error,
   onFocus,
   onChangeText,
-  disabled,
   ...props
 }) {
   const [focused, setFocused] = useState(false);
@@ -88,11 +87,10 @@ function ModifyInput({
         onChangeText={handleTextChange}
         onFocus={handleFocus}
         onBlur={handleBlur}
-        maxLength={max}
         placeholderTextColor={Colors.Silver}
         theme={{ colors: { primary: "green", underlineColor: "transparent" } }}
         style={[
-          modalStyle.input, focused && modalStyle.inputFocused, {height: height, width: width}
+          modalStyle.input, focused && modalStyle.inputFocused, {height: Platform.OS === 'web' ? '50%' : '20%'}
         ]}
       />
       <Text style={[commonStyles.text, styles.error]}>{error}</Text>

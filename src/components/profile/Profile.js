@@ -84,10 +84,11 @@ function SearchBar({
     container: {
       gap: 10,
       marginBottom: 15,
+      paddingHorizontal: 10
     },
     diplayContainer: {
-      alignItems: "center",
-      justifyContent: "space-around",
+      alignItems: "flex-start",
+      justifyContent: "space-between",
     },
     image: {
       width: width < breakpoint.medium ? 75 : 80,
@@ -108,7 +109,6 @@ function SearchBar({
     },
     numberContainer: {
       flexDirection: "row",
-      paddingHorizontal: 30,
       justifyContent:
         width < breakpoint.mobile ? "space-between" : "space-around",
     },
@@ -209,18 +209,15 @@ function SearchBar({
             </Pressable>
           )}    
       </View>
-      <View style={{paddingHorizontal: 35}}>
-        <ReadMore
-          numberOfLines={2}
-          renderTruncatedFooter={renderTruncatedFooter}
-          renderRevealedFooter={renderRevealedFooter}
-          onReady={() => setIsExpanded(false)}
-          onExpand={() => setIsExpanded(true)}
-        >
-          <Text style={{color: Colors.White, padding:10, fontSize: Platform.OS == 'web' ? 20 : 16, fontWeight: 'normal' }}>{toCapitalCase(user?.bio)}</Text>
-        </ReadMore>
-      </View>
-     
+      <ReadMore
+        numberOfLines={3}
+        renderTruncatedFooter={renderTruncatedFooter}
+        renderRevealedFooter={renderRevealedFooter}
+        onReady={() => setIsExpanded(false)}
+        onExpand={() => setIsExpanded(true)}
+      >
+        <Text style={{color: Colors.White, padding:10, fontSize: Platform.OS == 'web' ? 20 : 16, fontWeight: 'normal' }}>{toCapitalCase(user?.bio)}</Text>
+      </ReadMore>
       <View style={styles.numberContainer}>
         <View style={styles.followText}>
           <Text style={styles.numberValue}>{user?.review_count}</Text>
