@@ -1,0 +1,119 @@
+{
+  "auth": {
+    "typeemail": "Enter your email",
+    "typepassword": "Enter your password",
+    "login": "Login",
+    "logout": "Logout",
+    "forgotpassword": "Forgot password?",
+    "noaccount": "No account yet?",
+    "signup": "Sign up",
+    "loginwithspotify": "Login with Spotify",
+    "updatepassword": "Change my password",
+    "updateemail": "Change my email",
+    "emailupdated": "✅  Email successfully updated",
+    "passwordupdated": "✅  Password successfully updated",
+    "newemail": "New email",
+    "newpassword": "New password",
+    "errors": {
+      "alreadytaken": "Username is already taken",
+      "aliaslength": "Alias must be at least 3 characters long",
+      "pseudolength": "Username must be at least 3 characters long"
+    }
+  },
+  "common": {
+    "close": "Close",
+    "refreshing": "Refreshing...",
+    "displaymore": "Show more",
+    "appearson": "Appears on",
+    "continue": "Continue",
+    "loading": "Loading...",
+    "loading2": "Loading...",
+    "unespected": "❌  An internal error has occurred.",
+    "unespected2": "An internal server error has occurred. Please try again later!",
+    "solimbo": "SOLIMBO",
+    "norelease": "No releases.",
+    "popular": "Popular",
+    "readmore": "Read more",
+    "readless": "Read less",
+    "confirmation": "Confirmation",
+    "reply": "Reply",
+    "delete": "Delete",
+    "cancel": "Cancel",
+    "return": "Return",
+    "modify": "Modify",
+    "posts": "Posts",
+    "favorites": "Favorites",
+    "share": "Share"
+  },
+  "pseudo": {
+    "title": "Username",
+    "checking": "Checking username availability...",
+    "alreadytaken": "This username is already taken"
+  },
+  "album": {
+    "plurialtitle": "Albums"
+  },
+  "single": {
+    "plurialtitle": "Singles"
+  },
+  "discography": {
+    "title": "Discography",
+    "detailled": "Detailed discography",
+    "empty": "Empty discography for now.",
+    "all": "See full discography"
+  },
+  "review": {
+    "plurialtitle": "Reviews",
+    "title(s)": "Review(s)",
+    "newreview": "Recent reviews",
+    "noreview": "No reviews yet, be the first to write a review!",
+    "noreview2": "No reviews available for now.",
+    "subscribeinvitation": "Subscribe to artists or users to follow the latest reviews!",
+    "followtoseereview": "Follow this user to see their reviews.",
+    "seeall": "See all reviews",
+    "deleteverification": "Do you really want to delete this review?",
+    "canceldelete": "Delete cancellation",
+    "share": "Share {{pseudo}}'s review"
+  },
+  "follow": {
+    "follower(s)": "Follower(s)",
+    "following(s)": "Following",
+    "onlyfollow": "Followed only",
+    "follow": "✅  You are following this user.",
+    "unfollow": "✅  You unfollowed this user."
+  },
+  "comment": {
+    "plurialtitle": "Comments",
+    "comment": "Comment",
+    "valid": "✅ Your comment has been posted.",
+    "invalid": "❌ Your comment could not be posted.",
+    "writecomment": "Write a comment on the review...",
+    "response": "Reply to {{alias}}'s comment...",
+    "hide": "Hide replies",
+    "display": "Show replies",
+    "display2": "Show replies",
+    "deleteverification": "Do you really want to delete this comment?"
+  },
+  "search": {
+    "search": "Search for your artists, music, or friends",
+    "noresult": "No results for this search"
+  },
+  "activity": {
+    "title": "Activity"
+  },
+  "friend": {
+    "accept": "✅  Friend request accepted.",
+    "reject": "❌  Friend request rejected.",
+    "request": "Friend request",
+    "norequest": "No pending friend requests",
+    "follow": "+ Follow",
+    "followed": "Followed",
+    "followers": "Followers",
+    "waiting": "Pending",
+    "followback": "Follow back",
+    "count": "Including {{count}} friends"
+  },
+  "compilation": {
+    "plurialtitle": "Compilations"
+  }
+}

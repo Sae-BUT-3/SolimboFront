@@ -23,17 +23,17 @@ const Discography = ({ items, id}) => {
           <Pressable style={[styles.filterButton, isHovered ?  styles.btnHovered : null, filter === 'popularity' && { backgroundColor: Colors.DarkSpringGreen }]} onPress={() => setFilter('popularity')} activeOpacity={1}
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}>
-            <Text style={[styles.filterText, filter === 'popularity']}>Populaires</Text>
+            <Text style={[styles.filterText, filter === 'popularity']}>{t('common.popular')}</Text>
           </Pressable>
           <Pressable style={[styles.filterButton, isHovered ? styles.btnHovered : null, filter === 'album' && { backgroundColor: Colors.DarkSpringGreen }]} onPress={() => setFilter('album')} activeOpacity={1}
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}>
-            <Text style={[styles.filterText, filter === 'album']}>Albums</Text>
+            <Text style={[styles.filterText, filter === 'album']}>{t('album.plurialtitle')}</Text>
           </Pressable>
           <Pressable style={[styles.filterButton, isHovered ? styles.btnHovered : null, filter === 'single' && { backgroundColor: Colors.DarkSpringGreen }]} onPress={() => setFilter('single')} activeOpacity={1}
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}>
-            <Text style={[styles.filterText, filter === 'single']}>Singles</Text>
+            <Text style={[styles.filterText, filter === 'single']}>{t('single.plurialtitle')}</Text>
           </Pressable>
       </View> : null}
         <View style={{marginBottom: 30, display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', flexWrap: 'wrap'}}>
@@ -47,12 +47,12 @@ const Discography = ({ items, id}) => {
             }).slice(0, Platform.OS == 'web' ? 5 : 3).map(item => (
             <Item  key={item.id} data={item}/>)) : 
             <View style={{display:'flex', margin: 30}}>
-              <Text style={{color: Colors.White, fontSize:20, fontWeight:'normal'}}>Discographie vide pour le moment.</Text>
+              <Text style={{color: Colors.White, fontSize:20, fontWeight:'normal'}}>{t("discography.empty")}</Text>
             </View>}
             {Platform.OS !== 'web' && (
             <View style={[styles.sectionFilter, {alignItems: 'center'}]}>
               <Pressable style={styles.btn} onPress={()=>{navigation.navigate('discographie', {id})}}>
-                <Text style={styles.filterText}>Voir toute la discographie</Text>
+                <Text style={styles.filterText}>{t("discography.all")}</Text>
               </Pressable>
             </View>)}
         </View>

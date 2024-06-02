@@ -18,7 +18,7 @@ import { useLinkTo, useNavigation } from "@react-navigation/native";
 import { Snackbar } from "react-native-paper";
 import { makeRedirectUri, useAuthRequest } from "expo-auth-session";
 import * as WebBrowser from "expo-web-browser";
-
+import { useTranslation } from "react-i18next";
 WebBrowser.maybeCompleteAuthSession();
 const scopes = [
   "user-read-private",
@@ -46,6 +46,7 @@ const discovery = {
 };
 
 function SignInScreen({ navigation }) {
+  const { t } = useTranslation();
   const { signIn } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -56,12 +57,13 @@ function SignInScreen({ navigation }) {
       email: email,
       password: password,
     };
-    signIn(credentials).then(() => {
-      navigation.navigate("navigate");
-    }).catch(error => {
-      setError(error);
-    });
-    
+    signIn(credentials)
+      .then(() => {
+        navigation.navigate("navigate");
+      })
+      .catch((error) => {
+        setError(error);
+      });
   };
   const handleClose = () => {
     setError(null);
@@ -111,7 +113,7 @@ function SignInScreen({ navigation }) {
           <BasicInput
             autoCapitalize="none"
             autoCorrect={false}
-            placeholder="Entrez votre email"
+            placeholder={t("auth.typeemail")}
             textContentType="emailAddress"
             keyboardType="email-address"
             value={email}
@@ -119,14 +121,14 @@ function SignInScreen({ navigation }) {
           />
 
           <BasicInput
-            placeholder="Entrez votre mot de passe"
+            placeholder={t("auth.typepassword")}
             secureTextEntry
             value={password}
             onChangeText={setPassword}
           />
-          <PressableBasic text="Connexion" onPress={handleSignIn} />
+          <PressableBasic text={t("auth.login")} onPress={handleSignIn} />
           <Text style={authStyle.textPasswordForgot}>
-            Mot de passe oublié ?{" "}
+            {t("auth.forgotpassword")}
           </Text>
         </View>
 
@@ -143,13 +145,13 @@ function SignInScreen({ navigation }) {
 
       <View style={commonStyles.row}>
         <Text style={[commonStyles.text, authStyle.noAccount]}>
-          Pas encore de compte ?{" "}
+          {t("auth.noaccount")}
         </Text>
         <Text
           style={commonStyles.textLink}
           onPress={() => navigation.navigate("signup")}
         >
-          S'inscire
+          {t("auth.signup")}
         </Text>
       </View>
       {error && (
@@ -157,7 +159,7 @@ function SignInScreen({ navigation }) {
           visible={error !== null}
           onDismiss={handleClose}
           action={{
-            label: "Fermer",
+            label: t("common.close"),
             onPress: handleClose,
           }}
           duration={Snackbar.DURATION_LONG}

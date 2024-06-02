@@ -8,6 +8,7 @@ import { useAuth } from "../../contexts/AuthContext";
 import { Colors } from "../../style/color";
 import { FontAwesome5 } from "@expo/vector-icons";
 import Tokenizer from "../../utils/Tokenizer";
+import { useTranslation } from "react-i18next";
 function ConfirmUserScreen({ route, navigation }) {
   const [confirmtoken, setConfirmtoken] = useState("");
   const [user, setUser] = useState({});
@@ -18,7 +19,7 @@ function ConfirmUserScreen({ route, navigation }) {
   const [isPseudoAvailable, setIsPseudoAvailable] = useState(true);
   const [pseudoCheckTimeout, setPseudoCheckTimeout] = useState(null);
   const { signInViaToken } = useAuth();
-
+  const { t } = useTranslation();
   useEffect(() => {
     axiosInstance
       .post("/users/authWithSpotify", {
@@ -41,9 +42,8 @@ function ConfirmUserScreen({ route, navigation }) {
         console.log(
           "error /users/authWithSpotify" + error,
           JSON.stringify(error)
-        )
-      }
-      );
+        );
+      });
   }, []);
 
   useEffect(() => {
@@ -128,13 +128,13 @@ function ConfirmUserScreen({ route, navigation }) {
             </View>
             <View style={[commonStyles.row]}>
               <BasicInput
-                placeholder="Pseudo"
+                placeholder={t("pseudo.title")}
                 value={pseudo}
                 onChangeText={handlePseudoChange}
               />
             </View>
             {isCheckingPseudo ? (
-              <Text>Vérification de la disponibilité du pseudo...</Text>
+              <Text>{t("pseudo.checking")}</Text>
             ) : isPseudoAvailable ? (
               <Text style={{ color: "red" }}></Text>
             ) : (
@@ -147,16 +147,19 @@ function ConfirmUserScreen({ route, navigation }) {
                     style={{ marginRight: 5 }}
                   />
                   <Text style={[commonStyles.textError]}>
-                    Ce pseudo est déjà pris
+                    {t("pseudo.alreadytaken")}
                   </Text>
                 </View>
               </>
             )}
-            <PressableBasic text="Continuer" onPress={handleConfirmUser} />
+            <PressableBasic
+              text={t("common.continue")}
+              onPress={handleConfirmUser}
+            />
           </View>
         </View>
       ) : (
-        <Text>Loading...</Text>
+        <Text>{t("common.loading")}</Text>
       )}
     </SafeAreaView>
   );
