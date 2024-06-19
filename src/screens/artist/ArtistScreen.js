@@ -137,7 +137,6 @@ const ArtistScreen = () => {
             {isLoading ? (<Loader />) : (
                 <>
                     <ScrollView
-                        onScroll={handleScroll}
                         scrollEventThrottle={16}
                         refreshControl={
                             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[Colors.DarkSpringGreen]} tintColor={Colors.DarkSpringGreen} size='large' title='Actualisation...' titleColor={Colors.White}/>
@@ -149,10 +148,6 @@ const ArtistScreen = () => {
                         { friendsFollowers.length > 1 && showAll && <ImagePanel avatars={friendsFollowers} type={'user'} show={setShowAll} onRefresh={updateData}/>}
                         <ScrollView
                             scrollEventThrottle={16}
-                            onScroll={Animated.event(
-                                [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-                                { useNativeDriver: true }
-                            )}
                         >
                             <View style={styles.sectionFilter}>
                                 <Text style={styles.sectionTitle}>Discographie</Text>

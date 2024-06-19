@@ -56,13 +56,12 @@ const OeuvreScreen = () => {
     const updateData = () => {
         axiosInstance.get(`/oeuvre/${id}`)
         .then(response => {
-            setOeuvre(response.data.oeuvre);
-            setArtists(response.data.artist);
-            setTracks(response.data.oeuvre.tracks);
-            setFriendsLikes(response.data);
-            setReviews(response.data.reviewsByTime);
-            setLike(response.data.doesUserLikes);
-            setFavoris(response.data.doesUserFav);
+            if (response.data.oeuvre) setOeuvre(response.data.oeuvre);
+            if (response.data.artist) setArtists(response.data.artist);
+            if (response.data.oeuvre.tracks) setTracks(response.data.oeuvre.tracks);
+            if (response.data.reviewsByTime) setReviews(response.data.reviewsByTime);
+            if (response.data.doesUserLikes) setLike(response.data.doesUserLikes);
+            if (response.data.doesUserFav) setFavoris(response.data.doesUserFav);
             setIsLoading(false);
         }).catch(e => setFailed(e.response.data));
     }
@@ -97,7 +96,6 @@ const OeuvreScreen = () => {
             {isLoading ? (<Loader />) : (
                 <>
                     <ScrollView
-                        onScroll={handleScroll}
                         scrollEventThrottle={16}
                         refreshControl={
                             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[Colors.DarkSpringGreen]} tintColor={Colors.DarkSpringGreen} size='large' title='Actualisation...' titleColor={Colors.White}/>
@@ -109,10 +107,6 @@ const OeuvreScreen = () => {
                         { (artists.length > 1 && showAll) && <ImagePanel avatars={artists} type={'artist'} show={setShowAll} onRefresh={updateData}/>}
                         <ScrollView
                             scrollEventThrottle={16}
-                            onScroll={Animated.event(
-                                [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-                                { useNativeDriver: true }
-                            )}
                         >
                             { type !== 'track' && (<Trackgraphy items={tracks} id={id} />)}
                             <View style={[styles.sectionFilter,  {marginBottom: 25}]}>

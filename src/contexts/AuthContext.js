@@ -32,11 +32,6 @@ export const AuthProvider = ({ children }) => {
           setError("Échec de l'authentification, jeton non trouvé dans la réponse" );
         }
       })
-      .catch(error => {
-        console.log("Error : /users/signin " + error.response.data)
-        setError("L'email/pseudo ou le mot de passe est incorrect, veuillez ressayer !" );
-      });
-      return response
   };
 
   const autoSignIn = async () => {

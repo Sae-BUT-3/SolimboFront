@@ -8,6 +8,8 @@ import { useAuth } from "../../contexts/AuthContext";
 import { Colors } from "../../style/color";
 import { FontAwesome5 } from "@expo/vector-icons";
 import Tokenizer from "../../utils/Tokenizer";
+
+
 function ConfirmUserScreen({ route, navigation }) {
   const [confirmtoken, setConfirmtoken] = useState("");
   const [user, setUser] = useState({});
@@ -39,8 +41,8 @@ function ConfirmUserScreen({ route, navigation }) {
       })
       .catch((error) => {
         console.log(
-          "error /users/authWithSpotify" + error,
-          JSON.stringify(error)
+          "error /users/authWithSpotify" + 
+          JSON.stringify(error.response.data)
         )
       }
       );
@@ -99,8 +101,7 @@ function ConfirmUserScreen({ route, navigation }) {
           .post("/users/confirmUser", userData)
           .then((response) => {
             if (response.data.token) {
-              signInViaToken(response.data.token);
-              Tokenizer.setUser(response.data.user);
+              signInViaToken(response.data);
               navigation.navigate("navigate");
             } else {
               console.log(

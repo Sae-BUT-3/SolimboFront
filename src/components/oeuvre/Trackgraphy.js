@@ -26,8 +26,10 @@ const Trackgraphy = ({ items }) => {
     }
     
     // Simuler un appel API pour obtenir des éléments
-    const newData = items.slice(newPage * itemsPerPage, (newPage * itemsPerPage) + itemsPerPage);
-    setData(newData);
+    if (items !== undefined) {
+      const newData = items.slice(newPage * itemsPerPage, (newPage * itemsPerPage) + itemsPerPage);
+      setData(newData);
+    }
     
     setIsLoading(false);
     setIsLoadingMore(false);
@@ -53,6 +55,9 @@ const Trackgraphy = ({ items }) => {
     isLoading ? (
         <Loader />
       ) : (
+        items ===undefined ? (
+          <Text style={{color: Colors.White}}>No data</Text>
+        ) : (
         <View style={styles.container}>
           <FlatList
             data={data}
@@ -70,6 +75,7 @@ const Trackgraphy = ({ items }) => {
             <FontAwesome name="arrow-right"  onPress={handleLoadMore} size={20} color={Colors.DarkSpringGreen} disabled={(page + 1) * itemsPerPage >= items.length} />
           </View>
         </View>
+        )
    )
   );
 };

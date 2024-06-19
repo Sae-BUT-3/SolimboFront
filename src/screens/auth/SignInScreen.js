@@ -51,17 +51,20 @@ function SignInScreen({ navigation }) {
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
   const linkTo = useLinkTo();
+  
   const handleSignIn = () => {
     const credentials = {
       email: email,
       password: password,
     };
-    signIn(credentials).then(() => {
+    signIn(credentials).then((data) => {
+      console.log("datacredentials",data)
       navigation.navigate("navigate");
     }).catch(error => {
-      setError(error);
+      console.log("🚀 ~ signIn ~ error:", error.response.data.message)
+      let errorMsg = "La connexion à votre compte a échoué."
+      setError(errorMsg);
     });
-    
   };
   const handleClose = () => {
     setError(null);
