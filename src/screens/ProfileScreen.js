@@ -31,7 +31,7 @@ import NavBar from "../components/profile/NavBar";
 import { FontAwesome, FontAwesome5 } from "@expo/vector-icons";
 import Toast from "react-native-toast-message";
 import commonStyles from "../style/commonStyle";
-
+import { useTranslation } from "react-i18next";
 const ProfileScreen = () => {
   const windowDimensions = useWindowDimensions();
   const width = windowDimensions ? windowDimensions.width : 0;
@@ -52,7 +52,7 @@ const ProfileScreen = () => {
   const route = useRoute();
   const id = route.params?.id || null;
   const navigation = useNavigation();
-
+  const { t } = useTranslation();
   const getData = async () => {
     const user = await Tokenizer.getCurrentUser();
     setCurrentUser(await user);
@@ -105,8 +105,8 @@ const ProfileScreen = () => {
         Toast.show({
           type: "success",
           text1: data.relation.isFollowed
-            ? "✅  Vous êtes désabonné à cet utilisateur."
-            : "✅  Vous êtes abonné à cet utilisateur.",
+            ? t("folow.unfollow")
+            : t("folow.follow"),
           text1Style: { color: Colors.White },
           position: "bottom",
         });
@@ -115,7 +115,7 @@ const ProfileScreen = () => {
       .catch(() => {
         Toast.show({
           type: "error",
-          text1: "❌  Une erreur interne est survenue.",
+          text1: t("common.unespected"),
           text1Style: { color: Colors.White },
           position: "bottom",
         });
@@ -195,7 +195,7 @@ const ProfileScreen = () => {
       <View
         style={[
           styles.subcontainer,
-          { width: width > breakpoint.medium ? 1200 : "100%",flex: 1 },
+          { width: width > breakpoint.medium ? 1200 : "100%", flex: 1 },
         ]}
       >
         {data.forbidden && !data.isCurrent ? (
@@ -272,9 +272,7 @@ const ForbiddenContent = () => (
       size={160}
       style={{ opacity: 0.5 }}
     />
-    <Text style={styles.text}>
-      Abonnez-vous à cet utilisateur pour pouvoir voir ses critiques.
-    </Text>
+    <Text style={styles.text}>{t("review.followtoseereview")}</Text>
   </View>
 );
 

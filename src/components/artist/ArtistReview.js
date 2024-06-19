@@ -15,13 +15,13 @@ const ArtistReview = ({ items, id}) => {
         {(Platform.OS !== 'web' ) && ( 
           <View style={styles.sectionFilter}>
             <Pressable style={styles.btn} onPress={()=>{navigation.navigate('review', {id})}}>
-              <Text style={styles.filterText}>Voir tous les critiques</Text>
+              <Text style={styles.filterText}>{t("review.seeall")}</Text>
             </Pressable>
           </View>
         )}
       </View>:
       <View style={{display:'flex', marginLeft: 30, marginBottom: 30}}>
-        <Text style={{color: Colors.White, fontSize:20, fontWeight:'normal'}}>Aucune critique disponible pour le moment.</Text>
+        <Text style={{color: Colors.White, fontSize:20, fontWeight:'normal'}}>{t("review.noreview2")}</Text>
       </View>
 )}
 

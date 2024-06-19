@@ -1,0 +1,119 @@
+{
+  "auth": {
+    "typeemail": "Entrez votre email",
+    "typepassword": "Entrez votre mot de passe",
+    "login": "Connexion",
+    "logout": "Se déconnecter",
+    "forgotpassword": "Mot de passe oublié ? ",
+    "noaccount": "Pas encore de compte ?",
+    "signup": "S'inscire",
+    "loginwithspotify": "Se connecter avec Spotify",
+    "updatepassword": "Modifier mon mot de passe",
+    "updateemail": "Modifier mon email",
+    "emailupdated": "✅  Email bien modifiée",
+    "passwordupdated": "✅  Mot de passe bien modifiée",
+    "newemail": "Nouvel email",
+    "newpassword": "Nouveau mot de passe",
+    "errors": {
+      "alreadytaken": "Le pseudo est déjà pris",
+      "aliaslength": "L'alias doit contenir au moins 3 caractères",
+      "pseudolength": "Le pseudo doit contenir au moins 3 caractères"
+    }
+  },
+  "common": {
+    "close": "Fermer",
+    "refreshing": "Actualisation...",
+    "displaymore": "Afficher plus",
+    "appearson": "Apparaît sur",
+    "continue": "Continuer",
+    "loading": "Chargement...",
+    "loading2": "Chargement en cours...",
+    "unespected": "❌  Une erreur interne est survenue.",
+    "unespected2": "Une erreur interne à notre serveur est survenue. Réessayer plus tard !",
+    "solimbo": "SOLIMBO",
+    "norelease": "Aucune apparution.",
+    "popular": "Populaires",
+    "readmore": "Lire la suite",
+    "readless": "Lire moins",
+    "confirmation": "Confirmation",
+    "reply": "Répondre",
+    "delete": "Supprimer",
+    "cancel": "Annuler",
+    "return": "Retour",
+    "modify": "Modifier",
+    "posts": "Posts",
+    "favorites": "Favoris",
+    "share": "Partager"
+  },
+  "pseudo": {
+    "title": "Pseudo",
+    "checking": "Vérification de la disponibilité du pseudo...",
+    "alreadytaken": "Ce pseudo est déjà pris"
+  },
+  "album": {
+    "plurialtitle": "Albums"
+  },
+  "single": {
+    "plurialtitle": "Singles"
+  },
+  "discography": {
+    "title": "Discographie",
+    "detailled": "Discographie détaillée",
+    "empty": "Discographie vide pour le moment.",
+    "all": "Voir toute la discographie"
+  },
+  "review": {
+    "plurialtitle": "Reviews",
+    "title(s)": "Critique(s)",
+    "newreview": "Récentes reviews",
+    "noreview": "Aucune critique, soyez le premier à rédiger une critique !",
+    "noreview2": "Aucune critique disponible pour le moment.",
+    "subscribeinvitation": "Abonnez-vous à des artistes ou utilisateurs pour suivre les derniers critiques rédigées !",
+    "followtoseereview": "Abonnez-vous à cet utilisateur pour pouvoir voir ses critiques.",
+    "seeall": "Voir toutes les critiques",
+    "deleteverification": "Voulez-vous vraiment supprimer cette review ?",
+    "canceldelete": "Annulation de la suppression",
+    "share": "Partage de la review de {{pseudo}}"
+  },
+  "follow": {
+    "follower(s)": "Abonné(s)",
+    "following(s)": "Abonnement(s)",
+    "onlyfollow": "Suivis uniquement",
+    "follow": "✅  Vous êtes abonné à cet utilisateur.",
+    "unfollow": "✅  Vous êtes désabonné à cet utilisateur."
+  },
+  "comment": {
+    "plurialtitle": "Commentaires",
+    "comment": "Commenter",
+    "valid": "✅ Votre commentaire a bien été postée.",
+    "invalid": "❌ Votre commentaire n'a pas pu être postée.",
+    "writecomment": "Rédiger un commentaire à la critique...",
+    "response": "Réponse au commentaire de {{alias}}..",
+    "hide": "Masquer les réponses",
+    "display": "Afficher les réponses",
+    "display2": "Afficher les réponses",
+    "deleteverification": "Voulez-vous vraiment supprimer ce commentaire ?"
+  },
+  "search": {
+    "search": "Recherchez vos artistes, musiques ou amis",
+    "noresult": "Pas de résulat pour cette recherche"
+  },
+  "activity": {
+    "title": "Activité"
+  },
+  "friend": {
+    "accept": "✅  Demande d'ami acceptée.",
+    "reject": "❌  Demande d'ami refusée.",
+    "request": "Demande d'ami",
+    "norequest": "Aucune demande d'ami en attente",
+    "follow": "+ Suivre",
+    "followed": "Suivi(e)",
+    "followers": "Followers",
+    "waiting": "En attente",
+    "followback": "Suivre en retour",
+    "count": "Dont {{count}} amis"
+  },
+  "compilation": {
+    "plurialtitle": "Compilations"
+  }
+}

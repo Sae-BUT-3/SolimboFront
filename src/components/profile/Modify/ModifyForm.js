@@ -23,16 +23,17 @@ import { useAuth } from "../../../contexts/AuthContext";
 import { Divider } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
 import { Buffer } from "buffer";
+import { useTranslation } from "react-i18next";
 const MIN_PSEUDO = 3;
 
-const Update = ({ user ,spotify}) => {
+const Update = ({ user, spotify }) => {
   const [showPasswordInput, setShowPasswordInput] = useState(false);
   const [showEmailInput, setShowEmailInput] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { logout } = useAuth();
   const navigation = useNavigation();
-
+  const { t } = useTranslation();
   const handleResetPassword = () => {
     setShowPasswordInput(!showPasswordInput);
   };
@@ -48,7 +49,7 @@ const Update = ({ user ,spotify}) => {
         setShowEmailInput(false);
         Toast.show({
           type: "success",
-          text1: "✅  Email bien modifiée",
+          text1: t("auth.emailupdated"),
           text1Style: { color: Colors.White },
           position: "bottom",
         });
@@ -65,7 +66,7 @@ const Update = ({ user ,spotify}) => {
         setShowPasswordInput(false);
         Toast.show({
           type: "success",
-          text1: "✅  Mot de passe bien modifiée",
+          text1: t("auth.passwordupdated"),
           text1Style: { color: Colors.White },
           position: "bottom",
         });
@@ -86,15 +87,18 @@ const Update = ({ user ,spotify}) => {
           gap: 20,
         }}
       >
-        {spotify && (<Pressable onPress={handleUpdateEmail}>
-          <Text style={styles.buttonText}>Mettre à jour l'email</Text>
-        </Pressable>)}
+        {spotify && (
+          <Pressable onPress={handleUpdateEmail}>
+            <Text style={styles.buttonText}>{t("auth.updateemail")}</Text>
+          </Pressable>
+        )}
         <Divider style={styles.divider} />
         {spotify && (
-        <Pressable onPress={handleResetPassword}>
-          <Text style={styles.buttonText}>Réinitialiser le mot de passe</Text>
-        </Pressable>)}
-        
+          <Pressable onPress={handleResetPassword}>
+            <Text style={styles.buttonText}>{t("auth.updatepassword")}</Text>
+          </Pressable>
+        )}
+
         <Pressable
           onPress={() => {
             logout();
@@ -102,7 +106,7 @@ const Update = ({ user ,spotify}) => {
           }}
         >
           <Text style={[styles.text, { color: Colors.Red }]}>
-            Se déconnecter
+            {t("auth.logout")}
           </Text>
         </Pressable>
       </View>
@@ -113,7 +117,7 @@ const Update = ({ user ,spotify}) => {
             <BasicInput
               autoCapitalize="none"
               autoCorrect={false}
-              placeholder="Nouvel email"
+              placeholder={t("auth.newemail")}
               textContentType="emailAddress"
               keyboardType="email-address"
               value={email}
@@ -130,7 +134,9 @@ const Update = ({ user ,spotify}) => {
                   color={Colors.White}
                   style={{ paddingRight: 10 }}
                 />
-                <Text style={pressableBasicStyle.button_text}>Modifier</Text>
+                <Text style={pressableBasicStyle.button_text}>
+                  {t("common.modify")}
+                </Text>
               </Pressable>
               <Pressable
                 style={[
@@ -145,7 +151,9 @@ const Update = ({ user ,spotify}) => {
                   color={Colors.White}
                   style={{ paddingRight: 10 }}
                 />
-                <Text style={pressableBasicStyle.button_text}>Annuler</Text>
+                <Text style={pressableBasicStyle.button_text}>
+                  {t("common.cancel")}
+                </Text>
               </Pressable>
             </View>
           </>
@@ -154,7 +162,7 @@ const Update = ({ user ,spotify}) => {
           <>
             <BasicInput
               style={styles.input}
-              placeholder="Nouveau mot de passe"
+              placeholder={t("auth.newpassword")}
               secureTextEntry
               onChangeText={setPassword}
               value={password}
@@ -170,7 +178,9 @@ const Update = ({ user ,spotify}) => {
                   color={Colors.White}
                   style={{ paddingRight: 10 }}
                 />
-                <Text style={pressableBasicStyle.button_text}>Modifier</Text>
+                <Text style={pressableBasicStyle.button_text}>
+                  {t("common.modify")}
+                </Text>
               </Pressable>
               <Pressable
                 style={[
@@ -185,7 +195,9 @@ const Update = ({ user ,spotify}) => {
                   color={Colors.White}
                   style={{ paddingRight: 10 }}
                 />
-                <Text style={pressableBasicStyle.button_text}>Annuler</Text>
+                <Text style={pressableBasicStyle.button_text}>
+                  {t("common.cancel")}
+                </Text>
               </Pressable>
             </View>
           </>
@@ -260,15 +272,15 @@ function ModifyForm({ user, checkPseudo, handleModify, isModify, setModify }) {
   const handleSubmit = async () => {
     let valid = true;
     if (!isPseudoValid) {
-      setPseudoError("Le pseudo est déjà pris");
+      setPseudoError(t("auth.errors.alreadytaken"));
       valid = false;
     }
     if (actualAlias.length < MIN_PSEUDO) {
-      setAliasError("L'alias doit contenir au moins 3 caractères");
+      setAliasError(t("auth.errors.aliaslength"));
       valid = false;
     }
     if (actualPseudo.length < MIN_PSEUDO) {
-      setPseudoError("Le pseudo doit contenir au moins 3 caractères");
+      setPseudoError(t("auth.errors.pseudolength"));
       valid = false;
     }
     if (valid) {

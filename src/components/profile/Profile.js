@@ -13,29 +13,13 @@ import { breakpoint } from "../../style/breakpoint";
 import commonStyles from "../../style/commonStyle";
 import ReadMore from "react-native-read-more-text";
 import ImagePanel from "../common/ImagePanel";
+import { useTranslation } from "react-i18next";
 
 const toCapitalCase = (mot) => {
   if (mot == "artist") mot = mot + "e";
   return mot ? mot.charAt(0).toUpperCase() + mot.slice(1) : mot;
 };
 
-const getFollowValues = (user, relation) => {
-  if (!user) return ["+ Suivre", "Suivi"];
-  let afterFollow = "Suivi";
-  let beforeFollow = "+ Suivre";
-
-  if (user.is_private && (relation.isWaited || !relation.isFollowed)) {
-    afterFollow = "En attente";
-  }
-  if (relation.doesFollows) {
-    beforeFollow = "Suivre en retour";
-  }
-  if (relation.doesFollow) {
-  }
-  return relation.isFollowed
-    ? [afterFollow, beforeFollow]
-    : [beforeFollow, afterFollow];
-};
 function SearchBar({
   user,
   isCurrent,
@@ -46,13 +30,36 @@ function SearchBar({
   onRefresh,
 }) {
   const { height, width } = useWindowDimensions();
-  const [followText, setFollowText] = useState(["+ Suivre", "Suivi"]);
+  const { t } = useTranslation();
+  const [followText, setFollowText] = useState([
+    t("friend.follow"),
+    t("friend.followed"),
+  ]);
   const [isFollowHovered, setIsFollowHovered] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const [visible, isVisible] = useState(false);
   const [showAll, setShowAll] = useState(false);
-  const [btnColored, setBtnColored] = useState(relation?.isWaited || relation?.isFollowed);
+  const [btnColored, setBtnColored] = useState(
+    relation?.isWaited || relation?.isFollowed
+  );
 
+  const getFollowValues = (user, relation) => {
+    if (!user) return [t("friend.follow"), t("friend.followed")];
+    let afterFollow = t("friend.followed");
+    let beforeFollow = t("friend.follow");
+
+    if (user.is_private && (relation.isWaited || !relation.isFollowed)) {
+      afterFollow = t("friend.waiting");
+    }
+    if (relation.doesFollows) {
+      beforeFollow = t("friend.followback");
+    }
+    if (relation.doesFollow) {
+    }
+    return relation.isFollowed
+      ? [afterFollow, beforeFollow]
+      : [beforeFollow, afterFollow];
+  };
   const renderTruncatedFooter = (handlePress) => (
     <Text
       onPress={handlePress}
@@ -62,7 +69,7 @@ function SearchBar({
         fontWeight: "normal",
       }}
     >
-      Lire plus
+      {t("common.readmore")}
     </Text>
   );
 
@@ -75,7 +82,7 @@ function SearchBar({
         fontWeight: "normal",
       }}
     >
-      Lire moins
+      {t("common.readless")}
     </Text>
   );
 
@@ -92,7 +99,7 @@ function SearchBar({
 
   const onFollowPress = () => {
     handleFollow();
-  
+
     setFollowText([followText[1], followText[0]]);
     setBtnColored((prev) => !prev);
     setIsFollowHovered(!isFollowHovered);
@@ -266,7 +273,7 @@ function SearchBar({
         <View style={styles.numberContainer}>
           <View style={styles.followText}>
             <Text style={styles.numberValue}>{user?.review_count}</Text>
-            <Text style={styles.numberText}>Critique(s)</Text>
+            <Text style={styles.numberText}>{t("review.title(s)")}</Text>
           </View>
           <Pressable
             onPress={() => {
@@ -275,14 +282,14 @@ function SearchBar({
           >
             <View style={styles.followText}>
               <Text style={styles.numberValue}>{user?.follower_count}</Text>
-              <Text style={styles.numberText}>Abonné(s)</Text>
+              <Text style={styles.numberText}>{t("follow.follower(s)")}</Text>
             </View>
           </Pressable>
 
           <Pressable onPress={() => setShowAll(!showAll)}>
             <View style={styles.followText}>
               <Text style={styles.numberValue}>{user?.following_count}</Text>
-              <Text style={styles.numberText}>Abonnement(s)</Text>
+              <Text style={styles.numberText}>{t("follow.following(s)")}</Text>
             </View>
           </Pressable>
         </View>
