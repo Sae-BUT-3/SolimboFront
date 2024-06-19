@@ -110,153 +110,65 @@ const OeuvreScreen = () => {
 
     return (
         <View style={styles.container}>
-            {isLoading ? (<Loader />) : (
-                <>
-                    <ScrollView
-                        scrollEventThrottle={16}
-                        refreshControl={
-                            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[Colors.DarkSpringGreen]} tintColor={Colors.DarkSpringGreen} size='large' title='Actualisation...' titleColor={Colors.White}/>
-                        }
-                    >
-                        <View style={{ height: showTitle && (type!== 'track' && reviews?.length > 2) ? 300 : 500, marginBottom: 25 }}>
-                            <Oeuvre data={oeuvre} artists={artists} favoris={favoris} likeUser={like} setResponse={setResponse} show={handleShowAll} />
-                        </View>
-                        { (artists.length > 1 && showAll) && <ImagePanel avatars={artists} type={'artist'} show={setShowAll} onRefresh={updateData}/>}
-                        <ScrollView
-                            scrollEventThrottle={16}
-                        >
-                            { type !== 'track' && (<Trackgraphy items={tracks} id={id} />)}
-                            <View style={[styles.sectionFilter,  {marginBottom: 25}]}>
-                                <Text style={styles.sectionTitle}>Récentes reviews</Text>
-                                { (reviews && reviews.length > 3 && Platform.OS === 'web') &&
-                                    <Pressable onPress={() => { navigation.navigate('review', { id }) }}>
-                                        <Text style={styles.buttonText}>Afficher plus</Text>
-                                    </Pressable>}
-                            </View>
-                            {reviews && reviews.length > 3 && <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 10,marginBottom: 25, marginLeft: 30}}>
-                                <FontAwesome5 name="filter" size={20} color={Colors.SeaGreen} />
-                                <Filter 
-                                    onPressHandler={()=>{setFilter(!filter)}}
-                                    text={"Suivis uniquement"}
-                                />
-                            </View>}
-                            <OeuvreReview items={reviews.filter(item => {
-                                    if(filter) 
-                                        return item.made_by_friend
-                                    return 1
-                                })} id={id} 
-                            />  
-                        </ScrollView>
-                    </ScrollView>
-                  
-                    <View style={styles.titleHeader}>
-                        <Pressable onPress={() => { navigation.goBack() }}>
-                            <FontAwesome5 name="chevron-left" size={25} color={Colors.White} />
-                        </Pressable>
-                    </View>
-                    {response && (<Snackbar
-                        visible={response !== null}
-                        onDismiss={handleClose}
-                        action={{
-                            label: 'Fermer',
-                            onPress: handleClose
-                        }}
-                        duration={Snackbar.DURATION_MEDIUM}
-                        style={{width: Platform.OS == 'web' ? 500 : 400, position: 'relative'}}
-                    >
-                        {response}
-                    </Snackbar>)}
-                </>
-            )}
+    {isLoading ? (<Loader />) : (
+        <>
             <ScrollView
-              scrollEventThrottle={16}
-              onScroll={Animated.event(
-                [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-                { useNativeDriver: true }
-              )}
+                scrollEventThrottle={16}
+                refreshControl={
+                    <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[Colors.DarkSpringGreen]} tintColor={Colors.DarkSpringGreen} size='large' title='Actualisation...' titleColor={Colors.White}/>
+                }
             >
-              {type !== "track" && <Trackgraphy items={tracks} id={id} />}
-              <View style={[styles.sectionFilter, { marginBottom: 25 }]}>
-                <Text style={styles.sectionTitle}>{t("review.newreview")}</Text>
-                {reviews && reviews.length > 3 && Platform.OS === "web" && (
-                  <Pressable
-                    onPress={() => {
-                      navigation.navigate("review", { id });
-                    }}
-                  >
-                    <Text style={styles.buttonText}>
-                      {t("common.displaymore")}
-                    </Text>
-                  </Pressable>
-                )}
-              </View>
-              {reviews && reviews.length > 3 && (
-                <View
-                  style={{
-                    display: "flex",
-                    flexDirection: "row",
-                    alignItems: "center",
-                    gap: 10,
-                    marginBottom: 25,
-                    marginLeft: 30,
-                  }}
-                >
-                  <FontAwesome5
-                    name="filter"
-                    size={20}
-                    color={Colors.SeaGreen}
-                  />
-                  <Filter
-                    onPressHandler={() => {
-                      setFilter(!filter);
-                    }}
-                    text={t("follow.onlyfollow")}
-                  />
+                <View style={{ height: showTitle && (type!== 'track' && reviews?.length > 2) ? 300 : 500, marginBottom: 25 }}>
+                    <Oeuvre data={oeuvre} artists={artists} favoris={favoris} likeUser={like} setResponse={setResponse} show={handleShowAll} />
                 </View>
-              )}
-              <OeuvreReview
-                items={reviews.filter((item) => {
-                  if (filter) return item.made_by_friend;
-                  return 1;
-                })}
-                id={id}
-              />
+                { (artists.length > 1 && showAll) && <ImagePanel avatars={artists} type={'artist'} show={setShowAll} onRefresh={updateData}/>}
+                <ScrollView
+                    scrollEventThrottle={16}
+                >
+                    { type !== 'track' && (<Trackgraphy items={tracks} id={id} />)}
+                    <View style={[styles.sectionFilter,  {marginBottom: 25}]}>
+                        <Text style={styles.sectionTitle}>Récentes reviews</Text>
+                        { (reviews && reviews.length > 3 && Platform.OS === 'web') &&
+                            <Pressable onPress={() => { navigation.navigate('review', { id }) }}>
+                                <Text style={styles.buttonText}>Afficher plus</Text>
+                            </Pressable>}
+                    </View>
+                    {reviews && reviews.length > 3 && <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 10,marginBottom: 25, marginLeft: 30}}>
+                        <FontAwesome5 name="filter" size={20} color={Colors.SeaGreen} />
+                        <Filter 
+                            onPressHandler={()=>{setFilter(!filter)}}
+                            text={"Suivis uniquement"}
+                        />
+                    </View>}
+                    <OeuvreReview items={reviews.filter(item => {
+                            if(filter) 
+                                return item.made_by_friend
+                            return 1
+                        })} id={id} 
+                    />  
+                </ScrollView>
             </ScrollView>
-          </ScrollView>
-
-          <View style={styles.titleHeader}>
-            <Pressable
-              onPress={() => {
-                navigation.goBack();
-              }}
+      
+            <View style={styles.titleHeader}>
+                <Pressable onPress={() => { navigation.goBack() }}>
+                    <FontAwesome5 name="chevron-left" size={25} color={Colors.White} />
+                </Pressable>
+            </View>
+            {response && (<Snackbar
+                visible={response !== null}
+                onDismiss={handleClose}
+                action={{
+                    label: 'Fermer',
+                    onPress: handleClose
+                }}
+                duration={Snackbar.DURATION_MEDIUM}
+                style={{width: Platform.OS == 'web' ? 500 : 400, position: 'relative'}}
             >
-              <FontAwesome5
-                name="chevron-left"
-                size={25}
-                color={Colors.White}
-              />
-            </Pressable>
-          </View>
-          {response && (
-            <Snackbar
-              visible={response !== null}
-              onDismiss={handleClose}
-              action={{
-                label: t("common.close"),
-                onPress: handleClose,
-              }}
-              duration={Snackbar.DURATION_MEDIUM}
-              style={{
-                width: Platform.OS == "web" ? 500 : 400,
-                position: "relative",
-              }}
-            >
-              {response}
-            </Snackbar>
-          )}
+                {response}
+            </Snackbar>)}
         </>
-      )}
-    </View>
+    )}
+</View>
   );
 };
 
