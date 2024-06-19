@@ -61,26 +61,23 @@ const OeuvreScreen = () => {
     setResponse(null);
   };
 
-  useFocusEffect(
-    useCallback(() => {
-      updateData();
-    }, [])
-  );
-  const updateData = () => {
-    axiosInstance
-      .get(`/oeuvre/${id}`)
-      .then((response) => {
-        setOeuvre(response.data.oeuvre);
-        setArtists(response.data.artist);
-        setTracks(response.data.oeuvre.tracks);
-        setFriendsLikes(response.data);
-        setReviews(response.data.reviewsByTime);
-        setLike(response.data.doesUserLikes);
-        setFavoris(response.data.doesUserFav);
-        setIsLoading(false);
-      })
-      .catch((e) => setFailed(e.response.data));
-  };
+    useFocusEffect(
+        useCallback(() => {
+            updateData();
+        }, [])
+    );
+    const updateData = () => {
+        axiosInstance.get(`/oeuvre/${id}`)
+        .then(response => {
+            if (response.data.oeuvre) setOeuvre(response.data.oeuvre);
+            if (response.data.artist) setArtists(response.data.artist);
+            if (response.data.oeuvre.tracks) setTracks(response.data.oeuvre.tracks);
+            if (response.data.reviewsByTime) setReviews(response.data.reviewsByTime);
+            if (response.data.doesUserLikes) setLike(response.data.doesUserLikes);
+            if (response.data.doesUserFav) setFavoris(response.data.doesUserFav);
+            setIsLoading(false);
+        }).catch(e => setFailed(e.response.data));
+    }
 
   useEffect(() => {
     axiosInstance
@@ -111,52 +108,65 @@ const OeuvreScreen = () => {
     return <ErrorRequest err={fail} />;
   }
 
-  return (
-    <View style={styles.container}>
-      {isLoading ? (
-        <Loader />
-      ) : (
-        <>
-          <ScrollView
-            onScroll={handleScroll}
-            scrollEventThrottle={16}
-            refreshControl={
-              <RefreshControl
-                refreshing={refreshing}
-                onRefresh={onRefresh}
-                colors={[Colors.DarkSpringGreen]}
-                tintColor={Colors.DarkSpringGreen}
-                size="large"
-                title={t("common.refreshing")}
-                titleColor={Colors.White}
-              />
-            }
-          >
-            <View
-              style={{
-                height:
-                  showTitle && type !== "track" && reviews?.length > 2
-                    ? 300
-                    : 500,
-                marginBottom: 25,
-              }}
-            >
-              <Oeuvre
-                data={oeuvre}
-                artists={artists}
-                favoris={favoris}
-                likeUser={like}
-                setResponse={setResponse}
-                show={handleShowAll}
-              />
-            </View>
-            {artists.length > 1 && showAll && (
-              <ImagePanel
-                avatars={artists}
-                type={"artist"}
-                show={setShowAll}
-                onRefresh={updateData}
-              />
+    return (
+        <View style={styles.container}>
+            {isLoading ? (<Loader />) : (
+                <>
+                    <ScrollView
+                        scrollEventThrottle={16}
+                        refreshControl={
+                            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[Colors.DarkSpringGreen]} tintColor={Colors.DarkSpringGreen} size='large' title='Actualisation...' titleColor={Colors.White}/>
+                        }
+                    >
+                        <View style={{ height: showTitle && (type!== 'track' && reviews?.length > 2) ? 300 : 500, marginBottom: 25 }}>
+                            <Oeuvre data={oeuvre} artists={artists} favoris={favoris} likeUser={like} setResponse={setResponse} show={handleShowAll} />
+                        </View>
+                        { (artists.length > 1 && showAll) && <ImagePanel avatars={artists} type={'artist'} show={setShowAll} onRefresh={updateData}/>}
+                        <ScrollView
+                            scrollEventThrottle={16}
+                        >
+                            { type !== 'track' && (<Trackgraphy items={tracks} id={id} />)}
+                            <View style={[styles.sectionFilter,  {marginBottom: 25}]}>
+                                <Text style={styles.sectionTitle}>Récentes reviews</Text>
+                                { (reviews && reviews.length > 3 && Platform.OS === 'web') &&
+                                    <Pressable onPress={() => { navigation.navigate('review', { id }) }}>
+                                        <Text style={styles.buttonText}>Afficher plus</Text>
+                                    </Pressable>}
+                            </View>
+                            {reviews && reviews.length > 3 && <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 10,marginBottom: 25, marginLeft: 30}}>
+                                <FontAwesome5 name="filter" size={20} color={Colors.SeaGreen} />
+                                <Filter 
+                                    onPressHandler={()=>{setFilter(!filter)}}
+                                    text={"Suivis uniquement"}
+                                />
+                            </View>}
+                            <OeuvreReview items={reviews.filter(item => {
+                                    if(filter) 
+                                        return item.made_by_friend
+                                    return 1
+                                })} id={id} 
+                            />  
+                        </ScrollView>
+                    </ScrollView>
+                  
+                    <View style={styles.titleHeader}>
+                        <Pressable onPress={() => { navigation.goBack() }}>
+                            <FontAwesome5 name="chevron-left" size={25} color={Colors.White} />
+                        </Pressable>
+                    </View>
+                    {response && (<Snackbar
+                        visible={response !== null}
+                        onDismiss={handleClose}
+                        action={{
+                            label: 'Fermer',
+                            onPress: handleClose
+                        }}
+                        duration={Snackbar.DURATION_MEDIUM}
+                        style={{width: Platform.OS == 'web' ? 500 : 400, position: 'relative'}}
+                    >
+                        {response}
+                    </Snackbar>)}
+                </>
             )}
             <ScrollView
               scrollEventThrottle={16}
