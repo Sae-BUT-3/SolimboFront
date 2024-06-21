@@ -15,10 +15,12 @@ import { FontAwesome5 } from '@expo/vector-icons'; // Importation de FontAwesome
 import Filter from '../../components/search/Filter';
 import ImagePanel from '../../components/common/ImagePanel';
 import { useTranslation } from "react-i18next";
-
+import { useAuth } from "../../contexts/AuthContext";
 const ArtistScreen = () => {
     const navigation = useNavigation();
     const route = useRoute();
+    const { checkLogin } = useAuth();
+    checkLogin(navigation);
     const { id } = route.params;
     const [filter, setFilter] =  useState(false);
     const [discography, setDiscography] = useState([]);
@@ -35,6 +37,7 @@ const ArtistScreen = () => {
     const [refreshing, setRefreshing] = useState(false);
     const [showAll, setShowAll] = useState(false);
     const { t } = useTranslation();
+    
     const handleShowAll = () => {
       setShowAll(true);
     };

@@ -23,15 +23,17 @@ import axiosInstance from "../../api/axiosInstance";
 import Review from "../../components/review/Review";
 import ErrorRequest from "../../components/common/ErrorRequest";
 import Loader from "../../components/common/Loader";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view"; // Importation de KeyboardAwareScrollView
 import pressableBasicStyle from "../../style/pressableBasicStyle";
 import Toast from "react-native-toast-message";
 import { useTranslation } from "react-i18next";
+import { useAuth } from "../../contexts/AuthContext";
 const ResponseScreen = () => {
   const route = useRoute();
   const { id, type } = route.params || null;
   const navigation = useNavigation();
+  const { checkLogin } = useAuth();
+  checkLogin(navigation);
   const scrollY = useRef(new Animated.Value(0)).current;
   const [currentUser, setUser] = useState({});
   const [data, setData] = useState(null);

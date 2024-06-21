@@ -62,7 +62,6 @@ function SignInScreen({ navigation }) {
       console.log("datacredentials",data)
       navigation.navigate("navigate");
     }).catch(error => {
-      console.log("🚀 ~ signIn ~ error:", error.response.data.message)
       let errorMsg = "La connexion à votre compte a échoué."
       setError(errorMsg);
     });

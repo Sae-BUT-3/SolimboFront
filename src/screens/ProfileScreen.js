@@ -12,7 +12,6 @@ import {
   StyleSheet,
   useWindowDimensions,
 } from "react-native";
-import { useAuth } from "../contexts/AuthContext";
 import {
   useFocusEffect,
   useNavigation,
@@ -32,7 +31,11 @@ import { FontAwesome, FontAwesome5 } from "@expo/vector-icons";
 import Toast from "react-native-toast-message";
 import commonStyles from "../style/commonStyle";
 import { useTranslation } from "react-i18next";
+import { useAuth } from "../contexts/AuthContext";
 const ProfileScreen = () => {
+  const navigation = useNavigation();
+  const { checkLogin } = useAuth();
+  checkLogin(navigation);
   const windowDimensions = useWindowDimensions();
   const width = windowDimensions ? windowDimensions.width : 0;
   const [data, setData] = useState([]);
@@ -51,7 +54,7 @@ const ProfileScreen = () => {
   const [hasMore, setHasMore] = useState(true);
   const route = useRoute();
   const id = route.params?.id || null;
-  const navigation = useNavigation();
+  
   const { t } = useTranslation();
   const getData = async () => {
     const user = await Tokenizer.getCurrentUser();
