@@ -6,7 +6,7 @@ import * as Font from "expo-font";
 import * as Linking from "expo-linking";
 import { StyleSheet } from "react-native";
 import Loader from "./src/components/common/Loader";
-import i18next from "./i18n/i18n.config";
+import "./i18n/i18n.config";
 const App = () => {
   const [fontsLoaded, setFontsLoaded] = useState(false);
 
@@ -44,9 +44,9 @@ const App = () => {
   };
 
   useEffect(() => {
-    const loadFonts = async () => {
+    const loadFonts = () => {
       try {
-        await Font.loadAsync({
+        Font.loadAsync({
           "inter-regular": require("./src/assets/fonts/Inter-Regular.ttf"),
           "inter-bold": require("./src/assets/fonts/Inter-Bold.ttf"),
           "inter-medium": require("./src/assets/fonts/Inter-Medium.ttf"),
@@ -56,8 +56,7 @@ const App = () => {
           "inter-black": require("./src/assets/fonts/Inter-Black.ttf"),
           "inter-extra-bold": require("./src/assets/fonts/Inter-ExtraBold.ttf"),
           "inter-semi-bold": require("./src/assets/fonts/Inter-SemiBold.ttf"),
-        });
-        setFontsLoaded(true);
+        }).then(() => setFontsLoaded(true));
       } catch (error) {
         console.error("Error loading fonts", error);
       }

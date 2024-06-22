@@ -1,41 +1,45 @@
 import i18next from "i18next";
 import { initReactI18next } from "react-i18next";
-import LanguageDetector from "i18next-browser-languagedetector";
-import { Platform } from 'react-native';
+import { NativeModules, Platform } from "react-native";
 import fr from "./fr/fr.json";
 import en from "./en/en.json";
 const resources = {
   en: { translation: en },
   fr: { translation: fr },
 };
-
+const defaultLang = "fr";
 const languageDetectorWeb = {
-  type: 'languageDetector',
+  type: "languageDetector",
   init: () => {},
   detect: () => {
     // Example detection using navigator object (web)
-    return navigator.language || navigator.userLanguage || 'en';
+    return navigator.language || navigator.userLanguage || "en";
   },
   cacheUserLanguage: () => {},
 };
 const languageDetectorNative = {
-  type: 'languageDetector',
-  async: true,
-  detect: (callback) => {
-    import('react-native-localize').then(RNLocalize => {
-      const locales = RNLocalize.getLocales();
-      if (locales.length > 0) {
-        callback(locales[0].languageTag);
-      } else {
-        callback('en'); // Default to English if no locale detected
-      }
-    });
-  },
+  type: "languageDetector",
   init: () => {},
   cacheUserLanguage: () => {},
+  detect: () => {
+    const supportedLanguages = ["en", "fr"];
+    const locale =
+      Platform.OS === "ios"
+        ? NativeModules.SettingsManager?.settings?.AppleLocale ||
+          NativeModules.SettingsManager?.settings?.AppleLanguages[0] ||
+          ""
+        : NativeModules.I18nManager?.localeIdentifier || "";
+
+    const [lowerCaseLocale] = locale.split("_");
+    if (supportedLanguages.includes(lowerCaseLocale)) {
+      return lowerCaseLocale;
+    }
+    return defaultLang;
+  },
 };
 
-const languageDetector = Platform.OS === 'web' ? languageDetectorWeb : languageDetectorNative;
+const languageDetector =
+  Platform.OS === "web" ? languageDetectorWeb : languageDetectorNative;
 i18next
   .use(languageDetector)
   .use(initReactI18next) // passes i18n down to react-i18next
