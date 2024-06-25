@@ -31,8 +31,7 @@ function ConfirmUserScreen({ route, navigation }) {
         if (response.data.confirmToken) {
           setConfirmtoken(response.data.confirmToken);
         } else if (response.data.token) {
-          Tokenizer.setToken(response.data.token);
-          Tokenizer.setUser(response.data.user);
+          signInViaToken(response.data);
           navigation.navigate("navigate");
         } else {
           console.log("Erreur lors de la connexion de l utilisateur");
