@@ -16,9 +16,12 @@ import Loader from "../../components/common/Loader";
 import ErrorRequest from "../../components/common/ErrorRequest";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
+import { useAuth } from "../../contexts/AuthContext";
 
 const DiscograpyScreen = () => {
   const navigation = useNavigation();
+  const { checkLogin } = useAuth();
+  checkLogin(navigation);
   const [albums, setAlbums] = useState([]);
   const [singles, setSingles] = useState([]);
   const [filter, setFilter] = useState("album");

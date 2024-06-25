@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import {
   FlatList,
   Image,
@@ -19,6 +19,7 @@ import Loader from "../components/common/Loader";
 import Review from "../components/review/Review";
 import { Colors } from "../style/color";
 import { useTranslation } from "react-i18next";
+import { useAuth } from "../contexts/AuthContext";
 const baseImageURL =
   "https://merriam-webster.com/assets/mw/images/article/art-wap-article-main/egg-3442-e1f6463624338504cd021bf23aef8441@1x.jpg";
 
@@ -32,7 +33,8 @@ const HomeScreen = () => {
   const [page, setPage] = useState(1);
   const { t } = useTranslation();
   const navigation = useNavigation();
-
+  const { checkLogin } = useAuth();
+  checkLogin(navigation);
   const getData = async () => {
     setUser(await Tokenizer.getCurrentUser());
   };
@@ -105,7 +107,7 @@ const HomeScreen = () => {
           <Avatar.Image
             source={{ uri: currentUser?.photo || baseImageURL }}
             size={Platform.OS === "web" ? 65 : 45}
-            accessibilityLabel={currentUser.pseudo}
+            accessibilityLabel={currentUser?.pseudo}
           />
         </Pressable>
       </View>

@@ -19,8 +19,13 @@ import commonStyles from "../../style/commonStyle";
 import searchStyle from "../../style/searchStyle";
 import { breakpoint } from "../../style/breakpoint";
 import { Colors } from "../../style/color";
+import { useAuth } from "../../contexts/AuthContext";
+import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 function SearchScreen() {
+  const navigation = useNavigation();
+  const { checkLogin } = useAuth();
+  checkLogin(navigation);
   const { width } = useWindowDimensions();
 
   const searchStyleWidth = StyleSheet.create({
@@ -40,14 +45,14 @@ function SearchScreen() {
 
   const [filter, setFilter] = useState([]);
   const [items, setItems] = useState([]);
-  const [messsageText, setMesssageText] = useState(t("search.search"));
+  const [messsageText, setMesssageText] = useState();
   const [error, setError] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
   const { t } = useTranslation();
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     setItems([]);
-    setMesssageText(t("search.search"));
+    // setMesssageText(t("search.search"));
     setTimeout(() => {
       setRefreshing(false);
     }, 2000);
@@ -65,7 +70,7 @@ function SearchScreen() {
   function handleSerch(query) {
     if (!query.text.length) {
       setItems([]);
-      setMesssageText(t("search.search"));
+      // setMesssageText(t("search.search"));
       return;
     }
     const params = {

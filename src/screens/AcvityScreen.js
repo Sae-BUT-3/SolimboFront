@@ -18,6 +18,7 @@ import Loader from "../components/common/Loader";
 import { FontAwesome } from "@expo/vector-icons";
 import Toast from "react-native-toast-message";
 import { useTranslation } from "react-i18next";
+import { useAuth } from "../contexts/AuthContext";
 function ActivityScreen() {
   const [tab, setTab] = useState("2");
   const [requests, setRequest] = useState([]);
@@ -25,7 +26,8 @@ function ActivityScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const { t } = useTranslation();
   const navigation = useNavigation();
-
+  const { checkLogin } = useAuth();
+  checkLogin(navigation);
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     update();

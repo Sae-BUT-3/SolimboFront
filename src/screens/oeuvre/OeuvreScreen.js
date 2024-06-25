@@ -23,12 +23,14 @@ import { FontAwesome5 } from "@expo/vector-icons"; // Importation de FontAwesome
 import OeuvreReview from "../../components/oeuvre/OeuvreReview";
 import Oeuvre from "../../components/oeuvre/Oeuvre";
 import Trackgraphy from "../../components/oeuvre/Trackgraphy";
-import { SafeAreaView } from "react-native-safe-area-context";
 import ImagePanel from "../../components/common/ImagePanel";
 import Filter from "../../components/search/Filter";
 import { useTranslation } from "react-i18next";
+import { useAuth } from "../../contexts/AuthContext";
 const OeuvreScreen = () => {
   const navigation = useNavigation();
+  const { checkLogin } = useAuth();
+  checkLogin(navigation);
   const route = useRoute();
   const { type, id } = route.params;
   const [tracks, setTracks] = useState([]);

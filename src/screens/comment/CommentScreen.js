@@ -22,10 +22,13 @@ import Review from "../../components/review/Review";
 import ErrorRequest from "../../components/common/ErrorRequest";
 import Loader from "../../components/common/Loader";
 import { useTranslation } from "react-i18next";
+import { useAuth } from "../../contexts/AuthContext";
 const CommentScreen = () => {
   const route = useRoute();
   const id = route.params?.id || null;
   const navigation = useNavigation();
+  const { checkLogin } = useAuth();
+  checkLogin(navigation);
   const scrollY = useRef(new Animated.Value(0)).current;
   const [review, setReview] = useState({});
   const [comments, setComments] = useState([]);

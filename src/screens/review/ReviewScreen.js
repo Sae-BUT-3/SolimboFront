@@ -21,10 +21,13 @@ import axiosInstance from "../../api/axiosInstance";
 import Loader from "../../components/common/Loader";
 import ErrorRequest from "../../components/common/ErrorRequest";
 import Filter from "../../components/search/Filter";
+import { useAuth } from "../../contexts/AuthContext";
 import { useTranslation } from "react-i18next";
 const sorts = ["Suivis uniquement", "Par date", "Par like"];
 const ReviewScreen = () => {
   const navigation = useNavigation();
+  const { checkLogin } = useAuth();
+  checkLogin(navigation);
   const route = useRoute();
   const { id } = route.params || null;
   const [reviews, setReviews] = useState([]);
