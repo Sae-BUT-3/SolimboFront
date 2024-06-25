@@ -43,9 +43,6 @@ export const AuthProvider = ({ children }) => {
     if (token) {
       setIsAuthenticated(true); // Marquer l'utilisateur comme authentifié
     }
-    console.log("dzadza");
-
-    setIsAuthenticated(false);
   };
 
   useEffect(() => {
@@ -58,6 +55,8 @@ export const AuthProvider = ({ children }) => {
     setIsAuthenticated(false); // Déconnecter l'utilisateur
   };
   const checkLogin = (navigation) => {
+    console.log("checkLogin");
+    console.log(isAuthenticated);
     if (!isAuthenticated) {
       navigation.navigate("signin");
     }
