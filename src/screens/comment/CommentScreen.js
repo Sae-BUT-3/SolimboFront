@@ -24,6 +24,7 @@ import Loader from "../../components/common/Loader";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../../contexts/AuthContext";
 import i18next from "i18next";
+import { getDeeplLangAttribute } from "../../utils/DeepLangAttribute";
 
 const CommentScreen = () => {
   const route = useRoute();
@@ -59,7 +60,7 @@ const CommentScreen = () => {
     }
     axiosInstance
       .get(`/review/${id}`, {
-        params: { page: newPage + 1, pageSize: 100, orderByLike: false, lang: i18next.language },
+        params: { page: newPage + 1, pageSize: 100, orderByLike: false, lang: getDeeplLangAttribute(i18next.language) },
       })
       .then((response) => {
         setReview(response.data);
