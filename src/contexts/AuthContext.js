@@ -55,8 +55,6 @@ export const AuthProvider = ({ children }) => {
     setIsAuthenticated(false); // Déconnecter l'utilisateur
   };
   const checkLogin = (navigation) => {
-    console.log("checkLogin");
-    console.log(isAuthenticated);
     if (!isAuthenticated) {
       navigation.navigate("signin");
     }
