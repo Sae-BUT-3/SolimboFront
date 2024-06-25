@@ -26,14 +26,28 @@ const toCapitalCase = (mot) => {
   return mot ? mot.charAt(0).toUpperCase() + mot.slice(1) : mot;
 };
 
-const Review = ({ data }) => {
+const Review = ({ data}) => {
   const navigation = useNavigation();
   const [like, setLike] = useState(false);
   const [countlikes, setCountLikes] = useState(0);
   const [isExpanded, setIsExpanded] = useState(false);
   const [currentUser, setUser] = useState({});
   const [isActive, setActive] = useState(false);
+
+  const [isTradEnabled, setIsTradEnabled] = useState(false);
+  const [isTradActive, setIsTradActive] = useState(false);
   const { t } = useTranslation();
+
+  useEffect(() => {
+    if (data?.translatedDescription != null) {
+      setIsTradEnabled(true);
+    }
+  }, [data]);
+
+  const handleTradButtonClick = () => {
+    setIsTradActive(!isTradActive);
+  };
+  
   const renderTruncatedFooter = (handlePress) => (
     <Text
       onPress={handlePress}
@@ -311,7 +325,7 @@ const Review = ({ data }) => {
                 fontWeight: "normal",
               }}
             >
-              {toCapitalCase(data.description)}
+              {isTradActive ? toCapitalCase(data.translatedDescription) : toCapitalCase(data.description)}  
             </Text>
           </ReadMore>
         </View>
@@ -374,6 +388,25 @@ const Review = ({ data }) => {
               <Text style={{ color: Colors.White, fontSize: 20 }}>
                 {data.countComment}
               </Text>
+              {isTradEnabled ? (
+                <Pressable onPress={handleTradButtonClick}>
+                  {isTradActive ? (
+                  <FontAwesome5
+                    name="language"
+                    size={30}
+                    color={Colors.DarkSpringGreen}
+                    solid
+                  />
+                ) : (
+                  <FontAwesome5
+                    name="language"
+                    size={30}
+                    color={Colors.Onyx}
+                    regular
+                  />
+                )}
+                </Pressable>
+              ) : null}
             </View>
           </View>
           <Date dateString={data.createdAt} />

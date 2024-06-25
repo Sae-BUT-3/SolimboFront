@@ -18,11 +18,15 @@ import { useNavigation } from "@react-navigation/native";
 import Tokenizer from "../../utils/Tokenizer";
 import ActionsPanel from "../common/ActionsPanel";
 import { useTranslation } from "react-i18next";
+import i18next from "i18next";
+import { getDeeplLangAttribute } from "../../utils/DeepLangAttribute";
+
 const toCapitalCase = (mot) => {
   return mot ? mot.charAt(0).toUpperCase() + mot.slice(1) : mot;
 };
 
 const Comment = ({ data, hide }) => {
+  const [comment, setComment] = useState(data);
   const [replies, setReplies] = useState(null);
   const [like, setLike] = useState(false);
   const [countlike, setCountLike] = useState(0);
@@ -30,7 +34,30 @@ const Comment = ({ data, hide }) => {
   const [currentUser, setUser] = useState({});
   const [isActive, setActive] = useState(false);
   const navigation = useNavigation();
+
+  const [isTradEnabled, setIsTradEnabled] = useState(false);
+  const [isTradActive, setIsTradActive] = useState(false);
   const { t } = useTranslation();
+
+  useEffect(() => {
+    axiosInstance
+        .get(`/comment/${data.id_com}`, {
+          params: { page: 1, pageSize: 1, orderByLike: false , lang : getDeeplLangAttribute(i18next.language) },
+        })
+        .then((response) => {
+          setReplies(response.data.comments);
+          setComment(response.data.comment);
+          if (response.data.comment.translatedDescription != null) {
+            setIsTradEnabled(true);
+          }
+        })
+        .catch((e) => console.log(`comment/${data.id_com} : ${e.response.data}`));
+  }, [data]);
+
+  const handleTradButtonClick = () => {
+    setIsTradActive(!isTradActive);
+  };
+
   const renderTruncatedFooter = (handlePress) => (
     <Text
       onPress={handlePress}
@@ -85,10 +112,14 @@ const Comment = ({ data, hide }) => {
     if (replies === null) {
       axiosInstance
         .get(`/comment/${data.id_com}`, {
-          params: { page: 1, pageSize: data.countComment, orderByLike: false },
+          params: { page: 1, pageSize: data.countComment, orderByLike: false , lang: i18next.language },
         })
         .then((response) => {
           setReplies(response.data.comments);
+          setComment(response.data.comment);
+          if (response.data.comment.translatedDescription != null) {
+            setIsTradEnabled(true);
+          }
         })
         .catch((e) => console.log(`comment/${id} : ${e.response.data}`));
     } else {
@@ -217,7 +248,7 @@ const Comment = ({ data, hide }) => {
                 fontWeight: "normal",
               }}
             >
-              {toCapitalCase(data.description)}
+              {isTradActive ? toCapitalCase(comment.translatedDescription) : toCapitalCase(comment.description)}  
             </Text>
           </ReadMore>
         </View>
@@ -298,6 +329,27 @@ const Comment = ({ data, hide }) => {
                 >
                   {data?.countComment}
                 </Text>
+                
+                {isTradEnabled ? (
+                <Pressable onPress={handleTradButtonClick}>
+                  {isTradActive ? (
+                  <FontAwesome5
+                    name="language"
+                    size={30}
+                    color={Colors.DarkSpringGreen}
+                    solid
+                  />
+                ) : (
+                  <FontAwesome5
+                    name="language"
+                    size={30}
+                    color={Colors.Onyx}
+                    regular
+                  />
+                )}
+                </Pressable>
+              ) : null}
+
               </View>
             </View>
             <Date dateString={data?.createdAt} />

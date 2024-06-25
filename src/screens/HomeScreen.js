@@ -63,9 +63,9 @@ const HomeScreen = () => {
         setIsLoading(false);
       })
       .catch((e) => {
-        console.error("Erreur lors de la récupération des reviews:", e);
+        console.error("Erreur lors de la récupération des reviews:", e?.response?.data?.message);
         setIsLoading(false);
-        setError(e.response.data.message);
+        setError(e?.response?.data?.message);
       });
   };
 

@@ -75,6 +75,7 @@ const ProfileScreen = () => {
       .then((response) => {
         setData(response.data);
         const newReview = response.data.reviews || [];
+        setReviews([])
         setReviews((prev) => {
           return [...prev, ...newReview];
         });

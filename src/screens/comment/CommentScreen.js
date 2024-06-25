@@ -23,6 +23,9 @@ import ErrorRequest from "../../components/common/ErrorRequest";
 import Loader from "../../components/common/Loader";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../../contexts/AuthContext";
+import i18next from "i18next";
+import { getDeeplLangAttribute } from "../../utils/DeepLangAttribute";
+
 const CommentScreen = () => {
   const route = useRoute();
   const id = route.params?.id || null;
@@ -57,7 +60,7 @@ const CommentScreen = () => {
     }
     axiosInstance
       .get(`/review/${id}`, {
-        params: { page: newPage + 1, pageSize: 100, orderByLike: false },
+        params: { page: newPage + 1, pageSize: 100, orderByLike: false, lang: getDeeplLangAttribute(i18next.language) },
       })
       .then((response) => {
         setReview(response.data);
@@ -170,7 +173,7 @@ const CommentScreen = () => {
                 colors={[Colors.DarkSpringGreen]}
                 tintColor={Colors.DarkSpringGreen}
                 size="large"
-                title={f("common.refreshing")}
+                title={t("common.refreshing")}
                 titleColor={Colors.White}
               />
             }
