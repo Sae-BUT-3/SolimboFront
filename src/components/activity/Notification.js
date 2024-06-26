@@ -59,7 +59,7 @@ const Notification = ({ data }) => {
 
     const handlePress = () => {
         if (data.type === "follow") {
-            navigation.navigate("user", { id: data.sender[0].id });
+            navigation.navigate("user", { id: data.sender[0].id_utilisateur });
         } else if (data.type === "like" || data.type === "reply") {
             console.log(data);
             if (data.review) {
