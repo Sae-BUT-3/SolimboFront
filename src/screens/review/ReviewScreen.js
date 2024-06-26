@@ -23,6 +23,8 @@ import ErrorRequest from "../../components/common/ErrorRequest";
 import Filter from "../../components/search/Filter";
 import { useAuth } from "../../contexts/AuthContext";
 import { useTranslation } from "react-i18next";
+import screenStyle from '../../style/screenStyle';
+
 const sorts = ["Suivis uniquement", "Par date", "Par like"];
 const ReviewScreen = () => {
   const navigation = useNavigation();
@@ -84,101 +86,87 @@ const ReviewScreen = () => {
     }
   };
 
+    const handleSort = (orderByLike) => {
+        axiosInstance.get(`/reviews/oeuvre/${id}`, { params: { page: 1, pageSize: 100, orderByLike: orderByLike } })
+            .then(response => {
+                setReviews(response.data.data);
+                setCount(response.data.count);
+                setIsLoading(false);
+                setIsLoadingMore(false);
+                setRefreshing(false);
+            }).catch(e => {
+                setError(e.response.data);
+                setIsLoading(false);
+                setIsLoadingMore(false);
+                setRefreshing(false);
+            });
+    };
+
   if (error) {
     return <ErrorRequest err={error} />;
   }
 
-  return isLoading ? (
-    <Loader />
-  ) : (
-    <View style={styles.container}>
-      <Animated.View style={[styles.header]}>
-        <Pressable
-          onPress={() => {
-            navigation.goBack();
-          }}
-        >
-          <FontAwesome5
-            name="chevron-left"
-            size={25}
-            color={Colors.White}
-            style={{ paddingTop: 15 }}
-          />
-        </Pressable>
-        <Text style={styles.title}>{t("review.plurialtitle")}</Text>
-        <Text />
-      </Animated.View>
-      <FlatList
-        data={
-          filter ? reviews.filter((review) => review.made_by_friend) : reviews
-        }
-        keyExtractor={(item) => item.id_review.toString()}
-        renderItem={({ item }) => (
-          <View style={styles.itemContainer}>
-            <Review data={item} />
-          </View>
-        )}
-        ListHeaderComponent={
-          <View style={styles.diplayContainer} horizontal={true}>
-            <View
-              style={{
-                display: "flex",
-                flexDirection: "row",
-                gap: 10,
-                alignItems: "center",
-                marginBottom: 10,
-                flexWrap: "wrap",
-              }}
-            >
-              <FontAwesome
-                name="filter"
-                size={25}
-                color={Colors.DarkSpringGreen}
-                regular
-              />
-              {sorts.map((item, index) => (
-                <Filter
-                  key={index}
-                  onPressHandler={() => {
-                    item === t("follow.onlyfollow")
-                      ? setFilter(!filter)
-                      : handleSort(item === "Like");
+    return (
+        <View style={screenStyle.container}>
+            <Animated.View style={[screenStyle.header, {marginBottom: 0}]}>
+                <Pressable onPress={() => navigation.goBack()}>
+                    <FontAwesome5 name="chevron-left" size={25} color={Colors.White} style={{ paddingTop: 15 }} />
+                </Pressable>
+                <Text style={screenStyle.title}>{t("review.plurialtitle")}</Text>
+                <Text />
+            </Animated.View>
+            <FlatList
+                data={filter ? reviews.filter(review => review.made_by_friend) : reviews}
+                keyExtractor={(item) => item.id_review.toString()}
+                renderItem={({ item }) => (
+                    <View style={styles.itemContainer}>
+                        <Review data={item} />
+                    </View>
+                )}
+                ListHeaderComponent={
+                    <View style={styles.diplayContainer}>
+                        <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 10, flexWrap: 'wrap', gap: 10 }}>
+                            <FontAwesome name="filter" size={25} color={Colors.DarkSpringGreen} />
+                            {sorts.map((item, index) => (
+                                <Filter
+                                    key={index}
+                                    onPressHandler={() => item === 'Suivis uniquement' ? setFilter(!filter) : handleSort(item === 'Par like')}
+                                    text={item}
+                                />
+                            ))}
+                        </View>
+                    </View>
+                }
+                ListEmptyComponent={
+                  <Text
+                  style={{
+                    color: Colors.White,
+                    fontSize: 20,
+                    textAlign: "center",
+                    marginTop: 30,
                   }}
-                  text={item}
-                />
-              ))}
-            </View>
-          </View>
-        }
-        ListEmptyComponent={
-          <Text
-            style={{
-              color: Colors.White,
-              fontSize: 20,
-              textAlign: "center",
-              marginTop: 30,
-            }}
-          >
-            {t("review.noreview")}
-          </Text>
-        }
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={onRefresh}
-            colors={[Colors.DarkSpringGreen]}
-            tintColor={Colors.DarkSpringGreen}
-            size="large"
-            title={t("common.refreshing")}
-            titleColor={Colors.White}
-          />
-        }
-        onEndReached={handleLoadMore}
-        onEndReachedThreshold={0.5}
-        ListFooterComponent={isLoadingMore ? <Loader /> : null}
-      />
-    </View>
-  );
+                  >
+                  {t("review.noreview")}
+                </Text>
+                }
+                refreshControl={
+                    <RefreshControl
+                        refreshing={refreshing}
+                        onRefresh={onRefresh}
+                        colors={[Colors.DarkSpringGreen]}
+                        tintColor={Colors.DarkSpringGreen}
+                        title={t("common.refreshing")}
+                        titleColor={Colors.White}
+                    />
+                }
+                onEndReached={handleLoadMore}
+                onEndReachedThreshold={0.5}
+                ListFooterComponent={
+                    isLoadingMore ? <Loader /> : null
+                }
+            />
+        </View>
+    );
 };
 
 const styles = StyleSheet.create({
@@ -208,6 +196,7 @@ const styles = StyleSheet.create({
     padding: 15,
     paddingLeft: 20,
     backgroundColor: "rgba(43, 43, 43, 0.3)",
+    marginBottom: 30,
   },
   filterButton: {
     marginRight: 10,
@@ -231,6 +220,12 @@ const styles = StyleSheet.create({
     width: "100%",
     alignItems: "center",
   },
+  emptyText: {
+    color: Colors.White,
+    fontSize: 20,
+    textAlign: 'center',
+    marginTop: 30,
+},
 });
 
 export default ReviewScreen;

@@ -20,12 +20,14 @@ import Review from "../components/review/Review";
 import { Colors } from "../style/color";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../contexts/AuthContext";
+import screenStyle from '../style/screenStyle';
+
 const baseImageURL =
   "https://merriam-webster.com/assets/mw/images/article/art-wap-article-main/egg-3442-e1f6463624338504cd021bf23aef8441@1x.jpg";
 
 const HomeScreen = () => {
   const [refreshing, setRefreshing] = useState(false);
-  const [currentUser, setUser] = useState({});
+  const [currentUser, setCurrentUser] = useState({});
   const [reviews, setReviews] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
@@ -36,7 +38,7 @@ const HomeScreen = () => {
   const { checkLogin } = useAuth();
   checkLogin(navigation);
   const getData = async () => {
-    setUser(await Tokenizer.getCurrentUser());
+    setCurrentUser(await Tokenizer.getCurrentUser());
   };
 
   const onRefresh = useCallback(() => {
@@ -49,6 +51,7 @@ const HomeScreen = () => {
       setRefreshing(false);
     }, 2000);
   }, []);
+
 
   const updateReviews = () => {
     if (isLoading) return;
@@ -88,118 +91,79 @@ const HomeScreen = () => {
   );
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <View style={{ flexDirection: "row", alignItems: "center" }}>
-          <Image
-            source={require("../assets/images/main_logo_no_bg.png")}
-            style={{ width: 45, height: 45, borderRadius: 5 }}
-          />
-          <Text style={styles.name}>{t("common.solimbo")}</Text>
-        </View>
-        <Pressable
-          onPress={() => {
-            setPage(1);
-            setReviews([]);
-            navigation.navigate("Profile");
-          }}
-        >
-          <Avatar.Image
-            source={{ uri: currentUser?.photo || baseImageURL }}
-            size={Platform.OS === "web" ? 65 : 45}
-            accessibilityLabel={currentUser?.pseudo}
-          />
-        </Pressable>
-      </View>
-      <FlatList
-        data={reviews}
-        keyExtractor={(item, index) => index.toString()}
-        renderItem={({ item }) => (
-          <View style={styles.itemContainer}>
-            <Review data={item} />
-          </View>
+    <View style={screenStyle.container}>
+        {Platform.OS !== 'web' && (
+            <View style={screenStyle.header}>
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <Image
+                        source={require('../assets/images/main_logo_no_bg.png')}
+                        style={{ width: 45, height: 45, borderRadius: 5 }}
+                    />
+                    <Text style={styles.name}>SOLIMBO</Text>
+                </View>
+                <Pressable onPress={() => { 
+                    setPage(1);
+                    setReviews([]);
+                    navigation.navigate('Profile');
+                }}>
+                    <Avatar.Image 
+                        source={{ uri: currentUser?.photo || baseImageURL }} 
+                        size={Platform.OS === 'web' ? 65 : 45} 
+                        accessibilityLabel={currentUser.pseudo} 
+                    />
+                </Pressable>
+            </View>
         )}
-        onEndReached={loadMoreReviews}
-        onEndReachedThreshold={0.5}
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={onRefresh}
-            colors={[Colors.SeaGreen]}
-            tintColor={Colors.SeaGreen}
-          />
-        }
-        ListFooterComponent={renderFooter}
-        ListEmptyComponent={
-          <View
-            style={{
-              justifyContent: "space-around",
-              gap: 55,
-              alignItems: "center",
+        <FlatList
+            data={reviews}
+            keyExtractor={(item, index) => index.toString()}
+            renderItem={({ item }) => <Review data={item} />}
+            contentContainerStyle={{
+                alignItems: 'center',
+                justifyContent: 'flex-start',
             }}
-          >
-            <Text />
-            <ImageBackground
-              source={require("../assets/images/main_logo_v1_500x500.png")}
-              style={{ width: 165, height: 165, opacity: 0.3 }}
-            />
-            {!isLoading ? (
-              <Text style={styles.text}>{t("review.subscribeinvitation")}</Text>
-            ) : null}
-          </View>
-        }
-        showsVerticalScrollIndicator={false}
-        style={{ paddingTop: 20 }}
-      />
+            onEndReached={loadMoreReviews}
+            onEndReachedThreshold={0.5}
+            refreshControl={
+                <RefreshControl
+                    refreshing={refreshing}
+                    onRefresh={onRefresh}
+                    colors={[Colors.SeaGreen]}
+                    tintColor={Colors.SeaGreen}
+                />
+            }
+            ListFooterComponent={renderFooter}
+            ListEmptyComponent={
+                <View style={{ justifyContent: 'space-around', gap: 55, alignItems: 'center' }}>
+                    <Text />
+                    <ImageBackground
+                        source={require('../assets/images/main_logo_v1_500x500.png')}
+                        style={screenStyle.emptyImage}
+                    />
+                    {!isLoading && (
+                        <Text style={screenStyle.text}>
+                            Abonnez-vous à des artistes ou utilisateurs pour suivre les dernières critiques rédigées !
+                        </Text>
+                    )}
+                </View>
+            }
+            style={{ paddingTop: 20 }}
+        />
     </View>
-  );
-};
+);
+}
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: Colors.Licorice,
-  },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingLeft: 10,
-    paddingRight: 10,
-    paddingBottom: 15,
-    paddingTop: Platform.OS === "web" ? 25 : 55,
-    position: "relative",
-    top: 0,
-    left: 0,
-    right: 0,
-    zIndex: 1,
-    backgroundColor: "rgba(43, 43, 43, 0.5)",
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.Onyx,
-  },
-  name: {
-    fontSize: Platform.OS === "web" ? 30 : 20,
-    color: Colors.Celadon,
-    fontWeight: "bold",
-    marginBottom: 10,
-    textTransform: "uppercase",
-    textShadowColor: "rgba(0, 0, 0, 0.5)",
-    textShadowOffset: { width: -1, height: 1 },
-    textShadowRadius: 10,
-  },
-  text: {
-    fontSize: Platform.OS === "web" ? 20 : 16,
-    color: Colors.Celadon,
-    marginBottom: 10,
-    textAlign: "center",
-    textShadowColor: "rgba(0, 0, 0, 0.5)",
-    textShadowOffset: { width: -1, height: 1 },
-    textShadowRadius: 10,
-  },
-  itemContainer: {
-    width: "100%",
-    alignItems: "center",
-  },
+    name: {
+        fontSize: Platform.OS === 'web' ? 30 : 20,
+        color: Colors.Celadon,
+        fontWeight: 'bold',
+        marginBottom: 10,
+        textTransform: 'uppercase',
+        textShadowColor: 'rgba(0, 0, 0, 0.5)',
+        textShadowOffset: { width: -1, height: 1 },
+        textShadowRadius: 10,
+    },
 });
 
 export default HomeScreen;

@@ -28,6 +28,7 @@ import pressableBasicStyle from "../../style/pressableBasicStyle";
 import Toast from "react-native-toast-message";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../../contexts/AuthContext";
+import screenStyle from '../../style/screenStyle';
 const ResponseScreen = () => {
   const route = useRoute();
   const { id, type } = route.params || null;
@@ -37,7 +38,7 @@ const ResponseScreen = () => {
   const scrollY = useRef(new Animated.Value(0)).current;
   const [currentUser, setUser] = useState({});
   const [data, setData] = useState(null);
-  const [comment, setText] = useState("");
+  const [comment, setComment] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const { t } = useTranslation();
@@ -128,169 +129,102 @@ const ResponseScreen = () => {
     }
   };
 
-  if (error) {
-    return <ErrorRequest err={error} />;
-  }
+    if (error) {
+        return <ErrorRequest err={error} />;
+    }
 
-  return (
-    <View style={styles.container}>
-      {isLoading ? (
-        <Loader />
-      ) : (
-        <PaperProvider>
-          <Animated.View>
-            <View style={[styles.header, headerOpacity]}>
-              <Pressable onPress={handleGoBack}>
-                <FontAwesome5
-                  name="chevron-left"
-                  size={30}
-                  color={Colors.White}
-                />
-              </Pressable>
-            </View>
-          </Animated.View>
-          <KeyboardAwareScrollView // Remplacez ScrollView par KeyboardAwareScrollView
-            contentContainerStyle={styles.scrollView}
-            enableOnAndroid={true}
-            extraScrollHeight={Platform.OS === "ios" ? 0 : 120} // Ajustez cette valeur selon vos besoins
-          >
-            <DataTable style={{ marginBottom: 30 }}>
-              <DataTable.Header style={{ borderBottomColor: Colors.Jet }}>
-                <View style={{ marginBottom: 30 }}>
-                  {type == "review" ? (
-                    <Review data={data} />
-                  ) : (
-                    <Comment data={data} hide={true} />
-                  )}
-                </View>
-              </DataTable.Header>
-            </DataTable>
-            <View
-              style={{
-                backgroundColor: Colors.Jet,
-                display: "flex",
-                gap: 5,
-                justifyContent: "flex-start",
-                padding: 20,
-                borderTopLeftRadius: 15,
-                borderTopRightRadius: 15,
-              }}
-            >
-              <View
-                style={{
-                  display: "flex",
-                  flexDirection: "row",
-                  gap: 10,
-                  justifyContent: "flex-start",
-                  alignItems: "center",
-                }}
-              >
-                <Avatar.Image
-                  source={{
-                    uri:
-                      currentUser.photo ||
-                      require("../../assets/images/profil.png"),
-                  }}
-                  size={64}
-                  accessibilityLabel={currentUser.pseudo}
-                />
-                <Text
-                  style={{
-                    color: Colors.SeaGreen,
-                    fontSize: 19,
-                    fontWeight: "normal",
-                  }}
-                >
-                  {"@" + currentUser.alias}
-                </Text>
-              </View>
-              <TextInput
-                multiline
-                maxLength={1500}
-                placeholder={
-                  type === "review"
-                    ? t("comment.writecomment")
-                    : t("comment.response", { alias: user.alias })
-                }
-                value={comment}
-                onChangeText={(text) => setText(text)}
-                underlineColor={Colors.Onyx}
-                activeUnderlineColor={Colors.BattleShipGray}
-                textColor={Colors.White}
-                color={Colors.White}
-                cursorColor={Colors.SeaGreen}
-                selectionColor={Colors.SeaGreen}
-                style={styles.input} // Ajoutez le style input
-              />
-              <Pressable
-                style={[pressableBasicStyle.button, { width: 160 }]}
-                onPress={addComment}
-              >
-                <FontAwesome
-                  size={20}
-                  name="send-o"
-                  color={Colors.White}
-                  style={{ paddingRight: 10 }}
-                />
-                <Text style={styles.text}>{t("comment.comment")}</Text>
-              </Pressable>
-            </View>
-          </KeyboardAwareScrollView>
-        </PaperProvider>
-      )}
-    </View>
-  );
-};
+    return (
+        <View style={styles.container}>
+            {isLoading ? <Loader /> : (
+            <PaperProvider>
+                <Animated.View>
+                    <View style={[styles.header, headerOpacity ]}>
+                        <Pressable onPress={handleGoBack}>
+                            <FontAwesome5 name="chevron-left" size={30} color={Colors.White}/>
+                        </Pressable>
+                    </View>
+                </Animated.View>
+                <KeyboardAwareScrollView // Remplacez ScrollView par KeyboardAwareScrollView
+                    contentContainerStyle={styles.scrollView}
+                    enableOnAndroid={true}
+                    extraScrollHeight={Platform.OS === 'ios' ? 0 : 120} // Ajustez cette valeur selon vos besoins
+                >   
+                    <DataTable  style={{marginBottom: 30}}>
+                        <DataTable.Header style={{borderBottomColor: Colors.Jet}}>
+                            <View style={{marginBottom: 30}}>{type == "review" ?
+                                <Review data={data} /> : <Comment data={data} hide={true}/>
+                            }</View>
+                        </DataTable.Header>
+                    </DataTable>
+                    <View style={{backgroundColor: Colors.Jet, display: 'flex', gap: 5, justifyContent:'flex-start', padding: 20, borderTopLeftRadius: 15, borderTopRightRadius: 15}}>
+                        <View style={{display: 'flex', flexDirection:'row', gap: 10, justifyContent: 'flex-start', alignItems: 'center'}}>
+                            <Avatar.Image source={{ uri: currentUser.photo || require('../../assets/images/profil.png') }} size={64} accessibilityLabel={currentUser.pseudo} />
+                            <Text style={{color: Colors.SeaGreen, fontSize: 19, fontWeight: 'normal'}}>{'@' + currentUser.alias}</Text>
+                        </View>
+                        <TextInput
+                            multiline
+                            maxLength={1500}
+                            placeholder={
+                              type === "review"
+                                ? t("comment.writecomment")
+                                : t("comment.response", { alias: user.alias })
+                            }
+                            value={comment}
+                            onChangeText={(text) => setComment(text)}
+                            underlineColor={Colors.Onyx}
+                            activeUnderlineColor={Colors.BattleShipGray}
+                            textColor={Colors.White}
+                            color={Colors.White}
+                            cursorColor={Colors.SeaGreen}
+                            selectionColor={Colors.SeaGreen}
+                            style={styles.input} // Ajoutez le style input
+                        />                                    
+                        <Pressable style={[pressableBasicStyle.button, {width: 160}]} onPress={addComment}>
+                            <FontAwesome size={20} name='send-o' color={Colors.White} style={{ paddingRight: 10 }} />
+                            <Text style={styles.text}>{t("comment.comment")}</Text>
+                        </Pressable>
+                    </View>
+                </KeyboardAwareScrollView>
+            </PaperProvider>
+        )}
+        </View>
+    ) 
+}
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: Colors.Licorice,
-  },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "flex-start",
-    paddingTop: 35,
-    paddingLeft: 20,
-    paddingBottom: 10,
-    position: "relative",
-    top: 0,
-    left: 0,
-    right: 0,
-    zIndex: 1,
-    marginBottom: Platform.OS === "web" ? 30 : 20,
-    marginTop: Platform.OS === "web" ? 30 : 20,
-  },
-  text: {
-    fontWeight: "bold",
-    color: Colors.White,
-    fontSize: 17,
-    textAlign: "center",
-  },
-  button: {
-    marginRight: 10,
-    paddingHorizontal: 15,
-    paddingVertical: 8,
-    borderRadius: 20,
-    width: 200,
-    backgroundColor: Colors.DarkSpringGreen,
-    shadowColor: Colors.Onyx,
-    shadowOpacity: 0.3,
-    shadowRadius: 3,
-    elevation: Platform.OS === "android" ? 3 : 0,
-    transition: "background-color 0.3s ease",
-  },
-  scrollView: {
-    flexGrow: 1, // Ajoutez flexGrow: 1 pour que le contenu puisse se faire défiler
-    justifyContent: "space-between", // Ajustez cet espace comme vous le souhaitez
-  },
-  input: {
-    backgroundColor: Colors.Jet,
-    fontSize: 18,
-    padding: 10,
-    marginBottom: 20,
-  },
+    scrollView: {
+        flexGrow: 1,
+        justifyContent: 'space-between',
+    },
+    commentSection: {
+        backgroundColor: Colors.Jet,
+        padding: 20,
+        borderTopLeftRadius: 15,
+        borderTopRightRadius: 15,
+    },
+    userInfo: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 20,
+    },
+    userAlias: {
+        color: Colors.SeaGreen,
+        fontSize: 19,
+        fontWeight: 'normal',
+        marginLeft: 10,
+    },
+    input: {
+        backgroundColor: Colors.Jet,
+        fontSize: 18,
+        padding: 10,
+        marginBottom: 20,
+    },
+    commentButton: {
+        width: 160,
+    },
+    sendIcon: {
+        paddingRight: 10,
+    },
 });
 
 export default ResponseScreen;

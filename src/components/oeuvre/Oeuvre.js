@@ -45,6 +45,7 @@ const Oeuvre = ({ data, artists, favoris, likeUser, setResponse, show }) => {
       })
       .catch((e) => setResponse(t("common.unespected2")));
   };
+
   const onLike = () => {
     axiosInstance
       .post(`/oeuvre/${data.type}/${data.id}/like`)
@@ -59,7 +60,8 @@ const Oeuvre = ({ data, artists, favoris, likeUser, setResponse, show }) => {
       })
       .catch((e) => setResponse(t("common.unespected2")));
   };
-  const linkto = () => {
+
+  const linkTo = () => {
     Linking.openURL(data.spotify_url);
   };
 
@@ -99,7 +101,7 @@ const Oeuvre = ({ data, artists, favoris, likeUser, setResponse, show }) => {
                   style={{ width: 164, height: 164, borderRadius: 5 }}
                 />
                 <View style={styles.playButtonContainer}>
-                  <Pressable onPress={linkto}>
+                  <Pressable onPress={linkTo}>
                     <FontAwesome name="play" size={30} color={Colors.White} />
                   </Pressable>
                 </View>
@@ -379,6 +381,30 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(43, 43, 43, 0.5)",
     padding: 10,
     borderRadius: 5,
+  },
+  sectionIcon: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
+  artistImage: {
+    width: Platform.OS === 'web' ? 64 : 40,
+    height: Platform.OS === 'web' ? 64 : 40,
+    borderRadius: 82,
+  },
+  infoContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+    gap: 3,
+  },
+  infoText: {
+    color: Colors.White,
+    fontSize: Platform.OS === 'web' ? 20 : 17,
+    textAlign: 'center',
+    textShadowColor: 'rgba(0, 0, 0, 0.75)',
+    textShadowOffset: { width: -1, height: 1 },
+    textShadowRadius: 10,
   },
 });
 

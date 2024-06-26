@@ -20,10 +20,12 @@ import Toast from "react-native-toast-message";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../contexts/AuthContext";
 import Notification from "../components/activity/Notification";
+import screenStyle from '../style/screenStyle';
+import { widthPercentageToDP } from 'react-native-responsive-screen';
 
-function ActivityScreen() {
+const ActivityScreen = () => {
   const [tab, setTab] = useState("1");
-  const [requests, setRequest] = useState([]);
+  const [requests, setRequests] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const { t } = useTranslation();
@@ -302,53 +304,60 @@ function ActivityScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    backgroundColor: Colors.Licorice,
-    flex: 1,
-    paddingTop: 50,
-    gap: 10,
-  },
-  tab: {
-    borderRadius: 30,
-    marginLeft: 10,
-    marginRight: 10,
-    backgroundColor: Colors.Jet,
-    justifyContent: "space-between",
-    alignItems: "flex-start",
-    flexDirection: "row",
-    padding: 8,
-  },
-  tabButton: {
-    borderRadius: 30,
-    width: 170,
-    padding: 15,
-  },
-  buttonText: {
-    color: Colors.White,
-    fontWeight: "bold",
-    textAlign: "center",
-    fontSize: 16,
-  },
-  followButton: {
-    backgroundColor: Colors.SeaGreen,
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 10,
-    shadowColor: Colors.Onyx,
-    shadowOpacity: 0.3,
-    shadowRadius: 3,
-    elevation: Platform.OS === "android" ? 4 : 0,
-    transition: "background-color 0.3s ease",
-  },
-  text: {
-    fontSize: Platform.OS === "web" ? 20 : 16,
-    color: Colors.Celadon,
-    marginBottom: 10,
-    textAlign: "center",
-    textShadowColor: "rgba(0, 0, 0, 0.5)",
-    textShadowOffset: { width: -1, height: 1 },
-    textShadowRadius: 10,
-  },
+    container: {
+        flex: 1,
+        backgroundColor: Colors.Licorice,
+        paddingTop: 50,
+        paddingHorizontal: 10,
+        alignItems: 'center'
+    },
+    tab: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: 30,
+        backgroundColor: Colors.Jet,
+        borderRadius: 30,
+        width: widthPercentageToDP('80%'),
+    },
+    tabButton: {
+        borderRadius: 30,
+        width: widthPercentageToDP('35%'),
+        paddingVertical: 15,
+        backgroundColor: Colors.Onyx
+    },
+    buttonText: {
+        color: Colors.White,
+        fontWeight: 'bold',
+        textAlign: 'center',
+        fontSize: 16,
+    },
+    requestContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        alignItems: 'center',
+        paddingVertical: 10,
+        paddingHorizontal: 5,
+        borderBottomWidth: 1,
+        borderBottomColor: Colors.Jet,
+    },
+    buttonsContainer: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    button: {
+        backgroundColor: Colors.SeaGreen,
+        borderRadius: 30,
+        padding: 10,
+        marginHorizontal: 5,
+    },
+    activityContainer: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        flex: 1,
+        gap: 20
+    },
 });
 
 export default ActivityScreen;

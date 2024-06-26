@@ -208,8 +208,8 @@ const Response = ({ data }) => {
         <View style={{ margin: Platform.OS == "web" ? 20 : 10 }}>
           <ReadMore
             numberOfLines={5}
-            renderTruncatedFooter={renderTruncatedFooter}
-            renderRevealedFooter={renderRevealedFooter}
+            renderTruncatedFooter={(handlePress) => <Text onPress={handlePress} style={styles.readMore}>Lire plus</Text>}
+            renderRevealedFooter={(handlePress) => <Text onPress={handlePress} style={styles.readMore}>Lire moins</Text>}
             onReady={() => setIsExpanded(false)}
             onExpand={() => setIsExpanded(true)}
           >

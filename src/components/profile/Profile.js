@@ -4,9 +4,9 @@ import {
   Text,
   Image,
   StyleSheet,
-  useWindowDimensions,
   Platform,
   Pressable,
+  useWindowDimensions,
 } from "react-native";
 import { Colors } from "../../style/color";
 import { breakpoint } from "../../style/breakpoint";
@@ -14,13 +14,32 @@ import commonStyles from "../../style/commonStyle";
 import ReadMore from "react-native-read-more-text";
 import ImagePanel from "../common/ImagePanel";
 import { useTranslation } from "react-i18next";
+import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
+import screenStyle from "../../style/screenStyle";
 
 const toCapitalCase = (mot) => {
-  if (mot == "artist") mot = mot + "e";
+  if (mot === "artist") mot = mot + "e";
   return mot ? mot.charAt(0).toUpperCase() + mot.slice(1) : mot;
 };
 
-function SearchBar({
+const getFollowValues = (user, relation) => {
+  if (!user) return ["+ Suivre", "Suivi"];
+  let afterFollow = "Suivi";
+  let beforeFollow = "+ Suivre";
+
+  if (user.is_private && (relation.isWaited || !relation.isFollowed)) {
+    afterFollow = "En attente";
+  }
+  if (relation.doesFollows) {
+    beforeFollow = "Suivre en retour";
+  }
+
+  return relation.isFollowed
+    ? [afterFollow, beforeFollow]
+    : [beforeFollow, afterFollow];
+};
+
+function Profile({
   user,
   isCurrent,
   relation,
@@ -29,7 +48,6 @@ function SearchBar({
   followers,
   onRefresh,
 }) {
-  const { height, width } = useWindowDimensions();
   const { t } = useTranslation();
   const [followText, setFollowText] = useState([
     t("friend.follow"),
@@ -37,8 +55,10 @@ function SearchBar({
   ]);
   const [isFollowHovered, setIsFollowHovered] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
-  const [visible, isVisible] = useState(false);
+  const [visible, setVisible] = useState(false);
   const [showAll, setShowAll] = useState(false);
+  const windowDimensions = useWindowDimensions();
+  const width = windowDimensions ? windowDimensions.width : 0;
   const [btnColored, setBtnColored] = useState(
     relation?.isWaited || relation?.isFollowed
   );
@@ -73,22 +93,10 @@ function SearchBar({
     </Text>
   );
 
-  const renderRevealedFooter = (handlePress) => (
-    <Text
-      onPress={handlePress}
-      style={{
-        color: Colors.SeaGreen,
-        fontSize: Platform.OS == "web" ? 20 : 17,
-        fontWeight: "normal",
-      }}
-    >
-      {t("common.readless")}
-    </Text>
-  );
-
   useEffect(() => {
     setFollowText(getFollowValues(user, relation));
-  }, []);
+  }, [user, relation]);
+
   const handleFollowMouseEnter = () => {
     setIsFollowHovered(true);
   };
@@ -101,18 +109,14 @@ function SearchBar({
     handleFollow();
 
     setFollowText([followText[1], followText[0]]);
-    setBtnColored((prev) => !prev);
     setIsFollowHovered(!isFollowHovered);
   };
+
   const styles = StyleSheet.create({
     container: {
       gap: 10,
-      marginBottom: 15,
-      paddingHorizontal: 10,
-    },
-    diplayContainer: {
-      alignItems: "flex-start",
-      justifyContent: "space-between",
+      paddingBottom: 15,
+      width: Platform.OS === "web" ?  wp('80%') : wp('90%'),
     },
     image: {
       width: width < breakpoint.medium ? 75 : 80,
@@ -122,44 +126,15 @@ function SearchBar({
     imageContainer: {
       flexDirection: "row",
       justifyContent: "space-between",
-      alignItems: "center",
+      alignItems: 'flex-start',
       gap: 10,
-      paddingLeft: 9,
+      paddingLeft: 15,
     },
-
-    infoContainer: {
-      flex: 1,
-      justifyContent: "center",
-    },
-    numberContainer: {
+    diplayContainer: {
+      justifyContent: "space-around",
+      alignItems: "flex-start",
       flexDirection: "row",
-      justifyContent:
-        width < breakpoint.mobile ? "space-between" : "space-around",
-    },
-    followText: {
-      fontWeight: "600",
-      textAlign: "center",
-      color: Colors.White,
-    },
-    followButton: {
-      backgroundColor: Colors.SeaGreen,
-      paddingVertical: 10,
-      paddingHorizontal: 20,
-      borderRadius: 15,
-      marginTop: 10,
-      shadowColor: Colors.Onyx,
-      shadowOpacity: 0.3,
-      shadowRadius: 3,
-      maxWidth: 250,
-      elevation: Platform.OS === "android" ? 3 : 0,
-      transition: "background-color 0.3s ease",
-      width: 150,
-    },
-    btnFollowHovered: {
-      backgroundColor: Colors.Jet,
-    },
-    btnModiferHovered: {
-      backgroundColor: Colors.SeaGreen,
+      gap: 35,
     },
     aliasText: {
       fontSize: Platform.OS === "web" ? 35 : 25,
@@ -171,12 +146,20 @@ function SearchBar({
       fontSize: 12,
       fontWeight: "600",
     },
+    btnFollowHovered: {
+      backgroundColor: Colors.Jet,
+    },
     followText: {
       color: Colors.White,
       fontWeight: "bold",
       textAlign: "center",
       alignItems: "center",
       fontSize: 15,
+    },
+    numberContainer: {
+      flexDirection: "row",
+      paddingLeft: 10,
+      justifyContent: "space-around",
     },
     numberText: {
       fontSize: 15,
@@ -189,23 +172,34 @@ function SearchBar({
     },
     bioText: {
       color: Colors.White,
-      textAlign: "left",
-      fontSize: Platform.OS === "web" ? 20 : 15,
+      textAlign: "justify",
+      fontSize: Platform.OS === "web" ? 20 : 17,
+    },
+    descriptionContainer: {
+      marginBottom: Platform.OS == 'web' ? 20 : 15,
+      marginTop: Platform.OS == 'web' ? 20 : 15,
+      marginLeft: 20,
     },
   });
 
+  const renderRevealedFooter = (handlePress) => (
+    <Text
+      onPress={handlePress}
+      style={{
+        color: Colors.SeaGreen,
+        fontSize: Platform.OS == "web" ? 20 : 17,
+        fontWeight: "normal",
+      }}
+    >
+      Lire moins
+    </Text>
+  );
+
   return (
     <>
-      <View style={[styles.container]}>
-        <View style={[styles.imageContainer]}>
-          <View
-            style={{
-              justifyContent: "space-around",
-              alignItems: "flex-start",
-              flexDirection: "row",
-              gap: 35,
-            }}
-          >
+      <View style={styles.container}>
+        <View style={styles.imageContainer}>
+          <View style={styles.diplayContainer}>
             <Image
               style={styles.image}
               source={{
@@ -214,12 +208,11 @@ function SearchBar({
                   "https://merriam-webster.com/assets/mw/images/article/art-wap-article-main/egg-3442-e1f6463624338504cd021bf23aef8441@1x.jpg",
               }}
             />
-            <View style={[styles.diplayContainer]}>
+            <View>
               <Text style={[commonStyles.text, styles.aliasText]}>
                 {user?.alias}
               </Text>
               <Text style={[commonStyles.text, styles.pseudoText]}>
-                {" "}
                 @{user?.pseudo}
               </Text>
             </View>
@@ -227,9 +220,9 @@ function SearchBar({
           {isCurrent ? null : (
             <Pressable
               style={[
-                styles.followButton,
+                screenStyle.followButton,
                 {
-                  backgroundColor: btnColored
+                  backgroundColor: relation?.isWaited || relation?.isFollowed
                     ? Colors.Jet
                     : Colors.DarkSpringGreen,
                 },
@@ -240,52 +233,38 @@ function SearchBar({
               onMouseLeave={handleFollowMouseLeave}
               onPress={onFollowPress}
             >
-              {!false ? (
-                <Text numberOfLines={1} style={styles.followText}>
-                  {followText[0]}
-                </Text>
-              ) : (
-                <Text numberOfLines={1} style={styles.followText}>
-                  Suivi
-                </Text>
-              )}
+              <Text numberOfLines={1} style={styles.followText}>
+                {followText[0]}
+              </Text>
             </Pressable>
           )}
         </View>
-        <ReadMore
-          numberOfLines={3}
-          renderTruncatedFooter={renderTruncatedFooter}
-          renderRevealedFooter={renderRevealedFooter}
-          onReady={() => setIsExpanded(false)}
-          onExpand={() => setIsExpanded(true)}
-        >
-          <Text
-            style={{
-              color: Colors.White,
-              padding: 10,
-              fontSize: Platform.OS == "web" ? 20 : 16,
-              fontWeight: "normal",
-            }}
+        <View style={styles.descriptionContainer}>
+          <ReadMore
+            numberOfLines={3}
+            renderTruncatedFooter={renderTruncatedFooter}
+            renderRevealedFooter={renderRevealedFooter}
+            onReady={() => setIsExpanded(false)}
+            onExpand={() => setIsExpanded(true)}
           >
-            {toCapitalCase(user?.bio)}
-          </Text>
-        </ReadMore>
+            <Text
+              style={styles.bioText}
+            >
+              {toCapitalCase(user?.bio)}
+            </Text>
+          </ReadMore>
+        </View>
         <View style={styles.numberContainer}>
           <View style={styles.followText}>
             <Text style={styles.numberValue}>{user?.review_count}</Text>
             <Text style={styles.numberText}>{t("review.title(s)")}</Text>
           </View>
-          <Pressable
-            onPress={() => {
-              isVisible(!visible);
-            }}
-          >
+          <Pressable onPress={() => setVisible(!visible)}>
             <View style={styles.followText}>
               <Text style={styles.numberValue}>{user?.follower_count}</Text>
               <Text style={styles.numberText}>{t("follow.follower(s)")}</Text>
             </View>
           </Pressable>
-
           <Pressable onPress={() => setShowAll(!showAll)}>
             <View style={styles.followText}>
               <Text style={styles.numberValue}>{user?.following_count}</Text>
@@ -298,7 +277,7 @@ function SearchBar({
         <ImagePanel
           avatars={followers}
           type={"user"}
-          show={isVisible}
+          show={setVisible}
           onRefresh={onRefresh}
         />
       )}
@@ -313,4 +292,4 @@ function SearchBar({
   );
 }
 
-export default SearchBar;
+export default Profile;

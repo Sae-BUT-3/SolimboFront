@@ -25,6 +25,8 @@ import { useTranslation } from "react-i18next";
 import { useAuth } from "../../contexts/AuthContext";
 import i18next from "i18next";
 import { getDeeplLangAttribute } from "../../utils/DeepLangAttribute";
+import screenStyle from '../../style/screenStyle';
+
 
 const CommentScreen = () => {
   const route = useRoute();
@@ -112,132 +114,84 @@ const CommentScreen = () => {
     return <ErrorRequest err={error} />;
   }
 
-  return (
-    <View style={styles.container}>
-      {isLoading ? (
-        <Loader />
-      ) : (
-        <>
-          <Animated.View>
-            <View style={[styles.header, headerOpacity]}>
-              <Pressable onPress={handleGoBack}>
-                <FontAwesome5
-                  name="chevron-left"
-                  size={25}
-                  color={Colors.White}
-                  style={{ paddingTop: 15 }}
-                />
-              </Pressable>
-              <Text style={styles.title}>{t("comment.plurialtitle")}</Text>
-              <Text />
-            </View>
-          </Animated.View>
-          <FlatList
-            data={comments}
-            keyExtractor={(item, index) => index.toString()}
-            renderItem={({ item }) => (
-              <View style={styles.itemContainer}>
-                <Comment data={item} hide={false} />
-              </View>
+    return (
+        <View style={screenStyle.container}>
+            {isLoading ? <Loader /> : (
+                <>
+                    <Animated.View>
+                        <View style={screenStyle.header}>
+                            <Pressable onPress={handleGoBack}>
+                                <FontAwesome5 name="chevron-left" size={25} color={Colors.White} style={{ paddingTop: 15 }} />
+                            </Pressable>
+                            <Text style={screenStyle.title}>{t("comment.plurialtitle")}</Text>
+                            <Text />
+                        </View>
+                    </Animated.View>
+                    <FlatList
+                        contentContainerStyle={styles.contentContainer}
+                        ListHeaderComponentStyle={{marginBottom: 30, borderBottomColor: Colors.Onyx, borderBottomWidth: 1}}
+                        data={comments}
+                        keyExtractor={(item, index) => index.toString()}
+                        renderItem={({ item }) => (
+                            <Comment data={item} hide={false} />
+                        )}
+                        ListHeaderComponent={
+                            <Review data={review} />
+                        }
+                        ListEmptyComponent={
+                            <Text style={styles.noCommentText}>Aucun commentaire, soyez le premier à rédiger un commentaire !</Text>
+                        }
+                        refreshControl={
+                            <RefreshControl
+                                refreshing={refreshing}
+                                onRefresh={onRefresh}
+                                colors={[Colors.DarkSpringGreen]}
+                                tintColor={Colors.DarkSpringGreen}
+                                size="large"
+                                title={t("common.refreshing")}
+                                titleColor={Colors.White}
+                            />
+                        }
+                        onEndReached={handleLoadMore}
+                        onEndReachedThreshold={0.5}
+                        ListFooterComponent={
+                            isLoadingMore ? <Loader /> : null
+                        }
+                    />
+                    <View style={styles.response}>
+                        <Pressable onPress={handleResponse}>
+                            <FontAwesome5 name="comment-medical" size={30} color={Colors.DarkSpringGreen} regular />
+                        </Pressable>
+                    </View>
+                </>
             )}
-            ListHeaderComponent={
-              <View
-                style={[
-                  styles.itemContainer,
-                  {
-                    marginBottom: 20,
-                    borderBottomColor: Colors.Onyx,
-                    borderBottomWidth: 1,
-                  },
-                ]}
-              >
-                <Review data={review} />
-              </View>
-            }
-            ListEmptyComponent={
-              <Text
-                style={{
-                  color: Colors.White,
-                  fontSize: 20,
-                  textAlign: "center",
-                  marginTop: 30,
-                }}
-              >
-                Aucun commentaire, soyez le premier à rédiger un commentaire !
-              </Text>
-            }
-            refreshControl={
-              <RefreshControl
-                refreshing={refreshing}
-                onRefresh={onRefresh}
-                colors={[Colors.DarkSpringGreen]}
-                tintColor={Colors.DarkSpringGreen}
-                size="large"
-                title={t("common.refreshing")}
-                titleColor={Colors.White}
-              />
-            }
-            onEndReached={handleLoadMore}
-            onEndReachedThreshold={0.5}
-            ListFooterComponent={isLoadingMore ? <Loader /> : null}
-          />
-          <View style={styles.response}>
-            <Pressable onPress={handleResponse}>
-              <FontAwesome5
-                name="comment-medical"
-                size={30}
-                color={Colors.DarkSpringGreen}
-                regular
-              />
-            </Pressable>
-          </View>
-        </>
-      )}
-    </View>
-  );
+        </View>
+    );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: Colors.Licorice,
-  },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "baseline",
-    padding: 30,
-    position: "relative",
-    top: 0,
-    left: 0,
-    right: 0,
-    zIndex: 1,
-    backgroundColor: "rgba(43, 43, 43, 0.3)",
-    marginBottom: 30,
-  },
-  title: {
-    fontSize: Platform.OS === "web" ? 35 : 25,
-    color: Colors.White,
-    fontWeight: "bold",
-    paddingTop: 15,
-  },
-  response: {
-    flexDirection: "row",
-    position: "absolute",
-    bottom: 20,
-    left: 20,
-    alignItems: "center",
-    justifyContent: "space-between",
-    backgroundColor: "rgba(43, 43, 43, 0.5)",
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    padding: 10,
-  },
-  itemContainer: {
-    width: "100%",
-    alignItems: "center",
-  },
+    contentContainer: {
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    response: {
+        position: 'absolute',
+        bottom: 20,
+        left: 20,
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: 'rgba(43, 43, 43, 0.5)',
+        width: 50,
+        height: 50,
+        borderRadius: 25,
+        padding: 10,
+    },
+    noCommentText: {
+        color: Colors.White,
+        fontSize: 20,
+        textAlign: 'center',
+        marginTop: 30,
+    },
 });
 
 export default CommentScreen;

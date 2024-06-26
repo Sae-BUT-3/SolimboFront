@@ -17,6 +17,7 @@ import ErrorRequest from "../../components/common/ErrorRequest";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../../contexts/AuthContext";
+import screenStyle from '../../style/screenStyle';
 
 const DiscograpyScreen = () => {
   const navigation = useNavigation();
@@ -60,153 +61,57 @@ const DiscograpyScreen = () => {
     }
   }, []);
 
-  if (error) {
-    return <ErrorRequest err={error} />;
-  }
-  return (
-    <View style={styles.container}>
-      {isLoading ? (
-        <Loader />
-      ) : (
-        <>
-          <Animated.View style={styles.header}>
-            <Pressable
-              onPress={() => {
-                navigation.goBack();
-              }}
-            >
-              <FontAwesome5
-                name="chevron-left"
-                size={25}
-                color={Colors.White}
-                style={{ paddingTop: 15 }}
-              />
-            </Pressable>
-            <Text style={styles.title}>{t("dicography.title")}</Text>
-            <Text />
-          </Animated.View>
-          <View
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              gap: 10,
-              alignItems: "center",
-              marginBottom: 15,
-              flexWrap: "wrap",
-              backgroundColor: "rgba(43, 43, 43, 0.3)",
-              padding: 20,
-            }}
-          >
-            <Pressable
-              style={[
-                styles.filterButton,
-                filter === "album" && {
-                  backgroundColor: Colors.DarkSpringGreen,
-                },
-              ]}
-              onPress={() => setFilter("album")}
-              activeOpacity={1}
-            >
-              <Text style={[styles.filterText, filter === "album"]}>
-                {t("album.plurialtitle")}
-              </Text>
-            </Pressable>
-            <Pressable
-              style={[
-                styles.filterButton,
-                filter === "single" && {
-                  backgroundColor: Colors.DarkSpringGreen,
-                },
-              ]}
-              onPress={() => setFilter("single")}
-              activeOpacity={1}
-            >
-              <Text style={[styles.filterText, filter === "single"]}>
-                {t("single.plurialtitle")}
-              </Text>
-            </Pressable>
-          </View>
-          <ScrollView style={{ marginBottom: 30 }}>
-            <View style={styles.item}>
-              {filter === "album" &&
-                albums
-                  .sort((a, b) => {
-                    const dateA = new Date(a.date);
-                    const dateB = new Date(b.date);
-                    return dateA - dateB;
-                  })
-                  .map((item) => <ItemPopup key={item.id} data={item} />)}
-              {filter === "single" &&
-                singles
-                  .sort((a, b) => {
-                    const dateA = new Date(a.date);
-                    const dateB = new Date(b.date);
-                    return dateA - dateB;
-                  })
-                  .map((item) => <ItemPopup key={item.id} data={item} />)}
-            </View>
-          </ScrollView>
-        </>
-      )}
-    </View>
-  );
+    if (error) {
+        return <ErrorRequest err={error} />;
+    }
+
+    return (
+        <View style={screenStyle.container}>
+            {isLoading ? (
+                <Loader />
+            ) : (
+                <>
+                    <View style={[screenStyle.header, {marginBottom: 0}]}>
+                        <Pressable onPress={() => navigation.goBack()}>
+                            <FontAwesome5 name="chevron-left" size={25} color={Colors.White} style={{ paddingTop: 15 }} />
+                        </Pressable>
+                        <Text style={screenStyle.title}>{t("dicography.title")}</Text>
+                        <Text />
+                    </View>
+                    <View style={{ display: 'flex', flexDirection: 'row', gap: 10, alignItems: 'center', marginBottom: 15, flexWrap: 'wrap', backgroundColor: 'rgba(43, 43, 43, 0.3)', padding: 20 }}>
+                        <Pressable style={[screenStyle.filterButton, filter === 'album' && { backgroundColor: Colors.DarkSpringGreen }]} onPress={() => setFilter('album')} activeOpacity={1}>
+                            <Text style={[screenStyle.filterText, filter === 'album' && { color: Colors.White }]}>{t("album.plurialtitle")}</Text>
+                        </Pressable>
+                        <Pressable style={[screenStyle.filterButton, filter === 'single' && { backgroundColor: Colors.DarkSpringGreen }]} onPress={() => setFilter('single')} activeOpacity={1}>
+                            <Text style={[screenStyle.filterText, filter === 'single' && { color: Colors.White }]}>{t("single.plurialtitle")}</Text>
+                        </Pressable>
+                    </View>
+                    <ScrollView style={{ marginBottom: 30 }}>
+                        <View style={styles.item}>
+                            {filter === 'album' && sortByDate(albums).map((item) => (
+                                <ItemPopup key={item.id} data={item} />
+                            ))}
+                            {filter === 'single' && sortByDate(singles).map((item) => (
+                                <ItemPopup key={item.id} data={item} />
+                            ))}
+                        </View>
+                    </ScrollView>
+                </>
+            )}
+        </View>
+    );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    backgroundColor: Colors.Licorice,
-  },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "baseline",
-    paddingTop: 30,
-    paddingLeft: 10,
-    paddingRight: 10,
-    position: "relative",
-    top: 0,
-    left: 0,
-    right: 0,
-    zIndex: 1,
-    backgroundColor: "rgba(43, 43, 43, 0.3)",
-  },
-  title: {
-    fontSize: Platform.OS === "web" ? 35 : 25,
-    color: Colors.White,
-    fontWeight: "bold",
-    paddingTop: 15,
-  },
-  item: {
-    display: "flex",
-    flexDirection: "row",
-    flexWrap: "wrap",
-    justifyContent: "center",
-    alignItems: "center",
-    marginBottom: 30,
-    backgroundColor: Colors.Licorice,
-  },
-  sectionTitle: {
-    color: Colors.SeaGreen,
-    fontWeight: "bold",
-    fontSize: 27,
-  },
-  filterButton: {
-    marginRight: 10,
-    paddingHorizontal: 15,
-    paddingVertical: 8,
-    borderRadius: 20,
-    backgroundColor: Colors.Jet,
-    shadowColor: Colors.Onyx,
-    shadowOpacity: 0.3,
-    shadowRadius: 3,
-    elevation: Platform.OS === "android" ? 3 : 0,
-    transition: "background-color 0.3s ease",
-  },
-  filterText: {
-    fontWeight: "bold",
-    color: Colors.White,
-    fontSize: Platform.OS === "web" ? 17 : 14,
-  },
+    item: {
+        display: 'flex',
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginBottom: 30,
+        backgroundColor: Colors.Licorice,
+    },
 });
 
 export default DiscograpyScreen;

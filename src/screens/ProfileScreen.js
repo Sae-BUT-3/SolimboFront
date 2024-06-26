@@ -32,12 +32,15 @@ import Toast from "react-native-toast-message";
 import commonStyles from "../style/commonStyle";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../contexts/AuthContext";
+import screenStyle from "../style/screenStyle";
+
 const ProfileScreen = () => {
   const navigation = useNavigation();
   const { checkLogin } = useAuth();
   checkLogin(navigation);
   const windowDimensions = useWindowDimensions();
   const width = windowDimensions ? windowDimensions.width : 0;
+
   const [data, setData] = useState([]);
   const [reviews, setReviews] = useState([]);
   const [favoris, setFavoris] = useState([]);
@@ -52,13 +55,14 @@ const ProfileScreen = () => {
   const [currentUser, setCurrentUser] = useState({});
   const [isModifierHovered, setIsModifierHovered] = useState(false);
   const [hasMore, setHasMore] = useState(true);
+
   const route = useRoute();
   const id = route.params?.id || null;
   
   const { t } = useTranslation();
   const getData = async () => {
     const user = await Tokenizer.getCurrentUser();
-    setCurrentUser(await user);
+    setCurrentUser(user);
     return user;
   };
 
@@ -106,6 +110,9 @@ const ProfileScreen = () => {
     axiosInstance
       .post(url, { amiIdUtilisateur: data.user.id_utilisateur })
       .then(() => {
+        const successMessage = data.relation.isFollowed
+          ? "✅  Vous êtes désabonné à cet utilisateur."
+          : "✅  Vous êtes abonné à cet utilisateur.";
         Toast.show({
           type: "success",
           text1: data.relation.isFollowed
@@ -132,11 +139,6 @@ const ProfileScreen = () => {
     }
   };
 
-  const renderFooter = () => {
-    if (!isLoading) return null;
-    return <Loader />;
-  };
-
   useFocusEffect(
     useCallback(() => {
       const fetchData = async () => {
@@ -151,7 +153,7 @@ const ProfileScreen = () => {
   return isLoading ? (
     <Loader />
   ) : (
-    <View style={styles.container}>
+    <View style={screenStyle.container}>
       <Animated.View style={styles.header}>
         <View style={styles.headerContent}>
           <FontAwesome
@@ -171,13 +173,13 @@ const ProfileScreen = () => {
                 styles.ModifierButton,
                 isModifierHovered ? styles.btnModifierHovered : null,
               ]}
-              onMouseEnter={() => setIsModifierHovered(true)}
-              onMouseLeave={() => setIsModifierHovered(false)}
               onPress={() =>
                 navigation.navigate("setting", {
                   id: id || currentUser.id_utilisateur,
                 })
               }
+              onPressIn={() => setIsModifierHovered(true)}
+              onPressOut={() => setIsModifierHovered(false)}
             >
               <FontAwesome name="gear" color={Colors.Silver} size={25} />
             </Pressable>
@@ -197,10 +199,7 @@ const ProfileScreen = () => {
         <NavBar setTab={setTab} />
       </Animated.View>
       <View
-        style={[
-          styles.subcontainer,
-          { width: width > breakpoint.medium ? 1200 : "100%", flex: 1 },
-        ]}
+        style={styles.subcontainer}
       >
         {data.forbidden && !data.isCurrent ? (
           <ForbiddenContent t={t} />
@@ -210,23 +209,12 @@ const ProfileScreen = () => {
               <FlatList
                 data={favoris}
                 keyExtractor={(item, index) => index.toString()}
-                renderItem={({ item, index }) =>
-                  index !== favoris.length - 1 ? (
-                    <View style={{ width: "100%", alignItems: "center" }}>
-                      <Item data={item} />
-                    </View>
-                  ) : (
-                    <View
-                      style={{
-                        width: "100%",
-                        alignItems: "center",
-                        paddingBottom: 50,
-                      }}
-                    >
-                      <Item data={item} />
-                    </View>
-                  )
-                }
+                renderItem={({ item, index }) => <Item data={item} />}
+                contentContainerStyle={{
+                  justifyContent: "flex-start",
+                  alignItems: "center",
+                }}
+                ListEmptyComponent={<EmptyList />}
                 refreshControl={
                   <RefreshControl
                     refreshing={refreshing}
@@ -235,17 +223,19 @@ const ProfileScreen = () => {
                     tintColor={Colors.SeaGreen}
                   />
                 }
+                horizontal={Platform.OS === "web"}
+                showsHorizontalScrollIndicator={false}
               />
             )}
             {tab === "posts" && (
               <FlatList
                 data={reviews}
                 keyExtractor={(item, index) => index.toString()}
-                renderItem={({ item }) => (
-                  <View style={{ width: "100%", alignItems: "center" }}>
-                    <Review data={item} />
-                  </View>
-                )}
+                renderItem={({ item }) => <Review data={item} />}
+                contentContainerStyle={{
+                  alignItems: "center",
+                  justifyContent: "flex-start",
+                }}
                 onEndReached={loadMoreReviews}
                 onEndReachedThreshold={0.5}
                 ListEmptyComponent={<EmptyList />}
@@ -285,21 +275,16 @@ const EmptyList = () => (
     <Text />
     <ImageBackground
       source={require("../assets/images/main_logo_v1_500x500.png")}
-      style={styles.emptyImage}
+      style={screenStyle.emptyImage}
     />
     <Text />
   </View>
 );
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: Colors.Licorice,
-  },
   subcontainer: {
-    alignItems: "center",
-    justifyContent: "center",
     marginTop: 30,
+    flex: 1
   },
   albumContainer: {
     alignItems: "center",
@@ -339,7 +324,6 @@ const styles = StyleSheet.create({
   },
   header: {
     justifyContent: "space-around",
-    alignItems: Platform.OS !== "web" ? "center" : "stretch",
     paddingTop: Platform.OS !== "web" ? 30 : 0,
     position: "relative",
     top: 0,
@@ -357,8 +341,10 @@ const styles = StyleSheet.create({
   headerContent: {
     flexDirection: "row",
     justifyContent: "space-between",
-    paddingBottom: 15,
-    paddingTop: 10,
+    alignItems: 'baseline',
+    paddingLeft: 5,
+    padding: 10,
+    marginBottom: 10
   },
   chevronIcon: {
     paddingLeft: 15,
@@ -376,11 +362,6 @@ const styles = StyleSheet.create({
     alignContent: "space-around",
     gap: 55,
     alignItems: "center",
-  },
-  emptyImage: {
-    width: 165,
-    height: 165,
-    opacity: 0.3,
   },
   btnModifierHovered: {
     backgroundColor: Colors.SeaGreen,

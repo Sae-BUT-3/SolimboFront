@@ -1,9 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Text, TextInput, StyleSheet, View } from "react-native";
-import Svg, { Path } from "react-native-svg";
 import { Colors } from "../../../style/color";
-import { breakpoint } from "../../../style/breakpoint";
-import BasicInput from "../../form/BasicInput";
 import commonStyles from "../../../style/commonStyle";
 import modalStyle from "../../../style/modalStyle";
 function ModifyInput({

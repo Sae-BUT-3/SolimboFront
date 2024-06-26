@@ -20,6 +20,8 @@ import ActionsPanel from "../common/ActionsPanel";
 import { useTranslation } from "react-i18next";
 import i18next from "i18next";
 import { getDeeplLangAttribute } from "../../utils/DeepLangAttribute";
+import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
+import PropTypes from 'prop-types';
 
 const toCapitalCase = (mot) => {
   return mot ? mot.charAt(0).toUpperCase() + mot.slice(1) : mot;
@@ -107,7 +109,7 @@ const Comment = ({ data, hide }) => {
       .catch((e) => console.log(`comment/${id}/like : ${e.response.data}`));
   };
 
-  const displayReply = () => {
+  const displayReply = async () => {
     setActive(false);
     if (replies === null) {
       axiosInstance
@@ -191,6 +193,7 @@ const Comment = ({ data, hide }) => {
       size: 24,
     });
   }
+
   return (
     <View style={styles.commentContainer}>
       <Pressable onLongPress={() => setActive(!isActive)}>
@@ -441,10 +444,9 @@ const styles = StyleSheet.create({
   commentContainer: {
     display: "flex",
     padding: 20,
-    marginBottom: Platform.OS == "web" ? 30 : 20,
-    marginLeft: Platform.OS == "web" ? 20 : 0,
-    marginRight: Platform.OS == "web" ? 20 : 0,
-    width: Platform.OS != "web" ? 386 : 950,
+    marginBottom: Platform.OS == 'web' ? 30 : 20,
+    marginHorizontal: Platform.OS == 'web' ? 20 : 0,
+    width:  Platform.OS  == "web" ? wp('80%') : wp('90%'),
     backgroundColor: Colors.Jet,
     borderRadius: 15,
     shadowColor: Colors.Onyx,
@@ -459,6 +461,44 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.BattleShipGray,
     marginTop: 10,
   },
+  replySection: {
+    display: 'flex',
+    flexDirection: 'row',
+    gap: 10,
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginTop: 10,
+  },
+  replyText: {
+    color: Colors.DarkSpringGreen,
+    fontSize: 19,
+    fontWeight: 'normal',
+  },
+  replyContainer: {
+    marginTop: 10,
+    alignItems: 'flex-end',
+  },
 });
+
+Comment.propTypes = {
+  data: PropTypes.shape({
+    id_com: PropTypes.number.isRequired,
+    description: PropTypes.string.isRequired,
+    countLike: PropTypes.number.isRequired,
+    doesUserLike: PropTypes.bool.isRequired,
+    countComment: PropTypes.number.isRequired,
+    createdAt: PropTypes.string.isRequired,
+    utilisateur: PropTypes.shape({
+      id_utilisateur: PropTypes.number.isRequired,
+      alias: PropTypes.string.isRequired,
+      photo: PropTypes.string.isRequired,
+    }).isRequired,
+  }).isRequired,
+  hide: PropTypes.bool,
+};
+
+Comment.defaultProps = {
+  hide: false,
+};
 
 export default Comment;

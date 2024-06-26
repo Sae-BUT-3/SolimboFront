@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from "react";
-import { StyleSheet, View, Text, Pressable, Platform } from "react-native";
-import { Colors } from "../../style/color";
-import Item from "./Item";
+import React, { useState } from 'react';
+import { StyleSheet, View, Text, Pressable, Platform, FlatList } from 'react-native';
+import { Colors } from '../../style/color';
+import Item from './Item';
+import screenStyle from '../../style/screenStyle';
+
 import { useTranslation } from "react-i18next";
 const ArtistAppearsOn = ({ items }) => {
   const [filter, setFilter] = useState("");
@@ -11,97 +13,55 @@ const ArtistAppearsOn = ({ items }) => {
       {items.length > 0 ? (
         <View style={styles.sectionFilter}>
           <Pressable
-            style={[
-              styles.filterButton,
-              filter === "compilation" && {
-                backgroundColor: Colors.DarkSpringGreen,
-              },
-            ]}
-            onPress={() => setFilter("compilation")}
+            style={[screenStyle.filterButton, filter === 'compilation' && { backgroundColor: Colors.DarkSpringGreen }]}
+            onPress={() => setFilter('compilation')}
           >
-            <Text style={[styles.filterText, filter === "compilation"]}>
-              {t("compilation.plurialtitle")}
-            </Text>
+            <Text style={[screenStyle.filterText, filter === 'compilation']}>{t("compilation.plurialtitle")}</Text>
           </Pressable>
           <Pressable
-            style={[
-              styles.filterButton,
-              filter === "album" && { backgroundColor: Colors.DarkSpringGreen },
-            ]}
-            onPress={() => setFilter("album")}
+            style={[screenStyle.filterButton, filter === 'album' && { backgroundColor: Colors.DarkSpringGreen }]}
+            onPress={() => setFilter('album')}
           >
-            <Text style={[styles.filterText, filter === "album"]}>
-              {t("album.plurialtitle")}
-            </Text>
+            <Text style={[screenStyle.filterText, filter === 'album']}>{t("album.plurialtitle")}</Text>
           </Pressable>
         </View>
       ) : null}
-      <View
-        style={{
-          marginBottom: 30,
-          display: "flex",
-          flexWrap: "wrap",
-          flexDirection: "row",
-          alignItems: "center",
-          justifyContent: "center",
+      <FlatList
+        data={ items
+          .filter(item => item.type.toLowerCase().includes(filter.toLowerCase()))
+          .slice(0, Platform.OS === 'web' ? 6 : 4)
+          .sort((a, b) => new Date(a.date) - new Date(b.date))}
+        keyExtractor={(item, index) => index.toString()}
+        renderItem={({ item, index }) =>
+          <Item data={item} />
+        }
+        contentContainerStyle={{
+          flexGrow: 1,
+          alignItems: 'center',
+          justifyContent: 'flex-start',
         }}
-      >
-        {items.length > 0 ? (
-          items
-            .filter((item) =>
-              item.type.toLowerCase().includes(filter.toLowerCase())
-            )
-            .slice(0, Platform.OS === "web" ? 6 : 4)
-            .sort((a, b) => {
-              const dateA = new Date(a.date);
-              const dateB = new Date(b.date);
-              return dateA - dateB;
-            })
-            .map((item) => <Item key={item.id} data={item} />)
-        ) : (
-          <View style={{ display: "flex", alignItems: "center", margin: 30 }}>
-            <Text
-              style={{
-                color: Colors.White,
-                fontSize: 20,
-                fontWeight: "normal",
-              }}
-            >
-              {t("common.norelease")}.
-            </Text>
-          </View>
-        )}
-      </View>
+        ListEmptyComponent={<EmptyList />}
+        horizontal={Platform.OS === 'web'}
+        showsHorizontalScrollIndicator={false}
+        showsVerticalScrollIndicator={false}
+      />      
     </>
   );
 };
+
+const EmptyList = () => (
+  <View style={screenStyle.emptyListContainer}>
+    <Text style={screenStyle.noItemsText}>{t("common.norelease")}</Text>
+  </View>
+);
 const styles = StyleSheet.create({
   sectionFilter: {
     display: "flex",
-    flexDirection: "row",
+    flexDirection:  "row",
     justifyContent: "flex-start",
     marginLeft: 30,
     marginBottom: 30,
   },
-  buttonText: {
-    color: Colors.White,
-    fontWeight: "normal",
-    textAlign: "right",
-  },
-  filterButton: {
-    marginRight: 10,
-    paddingHorizontal: 15,
-    paddingVertical: 8,
-    borderRadius: 20,
-    backgroundColor: Colors.Jet,
-    shadowColor: Colors.Onyx,
-    shadowOpacity: 0.3,
-    shadowRadius: 3,
-    elevation: Platform.OS === "android" ? 3 : 0,
-  },
-  filterText: {
-    fontWeight: "bold",
-    color: Colors.White,
-  },
 });
+
 export default ArtistAppearsOn;
