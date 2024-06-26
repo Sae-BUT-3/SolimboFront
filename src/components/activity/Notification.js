@@ -61,13 +61,10 @@ const Notification = ({ data }) => {
         if (data.type === "follow") {
             navigation.navigate("user", { id: data.sender[0].id_utilisateur });
         } else if (data.type === "like" || data.type === "reply") {
-            console.log(data);
             if (data.review) {
-                console.log("review")
                 navigation.navigate("comment", { id: data.review.id_review });
             }
             if (data.comment) {
-                console.log("comment")
                 navigation.navigate("comment", { id: data.comment.id_review });
             }
         }
