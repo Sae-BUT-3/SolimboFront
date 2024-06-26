@@ -118,7 +118,7 @@ const styles = StyleSheet.create({
         paddingLeft: 10,
         paddingRight: 10,
         paddingBottom: 10,
-        paddingTop: Platform.OS === "web" ? 15 : 15,
+        paddingTop: 15,
         position: "relative",
         top: 0,
         left: 0,
