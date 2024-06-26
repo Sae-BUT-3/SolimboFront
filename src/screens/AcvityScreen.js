@@ -19,15 +19,39 @@ import { FontAwesome } from "@expo/vector-icons";
 import Toast from "react-native-toast-message";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../contexts/AuthContext";
+import Notification from "../components/activity/Notification";
+
 function ActivityScreen() {
-  const [tab, setTab] = useState("2");
+  const [tab, setTab] = useState("1");
   const [requests, setRequest] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const { t } = useTranslation();
+  const [refreshingNotificatons, setRefreshingNotificatons] = useState(false);
+  const [notifications, setNotifications] = useState([]);
   const navigation = useNavigation();
   const { checkLogin } = useAuth();
   checkLogin(navigation);
+
+  const onRefreshNotificatons = useCallback(() => {
+    setRefreshingNotificatons(true);
+    updateNotifications();
+    setTimeout(() => {
+      setRefreshingNotificatons(false);
+    }, 2000);
+  }, []);
+
+  const updateNotifications = () => {
+    if (refreshingNotificatons) setIsLoading(true);
+    axiosInstance
+      .get("/notifications", {
+        params: { page: 1, pageSize: 100},
+      }).then((res) => {
+        setNotifications(res.data);
+        if (refreshingNotificatons) setIsLoading(false);
+      });
+  };
+
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     update();
@@ -37,12 +61,12 @@ function ActivityScreen() {
   }, []);
 
   const update = () => {
-    setIsLoading(true);
+    if (refreshing) setIsLoading(true);
     axiosInstance
       .get("/amis/request")
       .then((res) => {
         setRequest(res.data.requestsReceived);
-        setIsLoading(false);
+        if (refreshing) setIsLoading(true);
       })
       .catch((e) => {});
   };
@@ -70,6 +94,7 @@ function ActivityScreen() {
         });
       });
   };
+
   const reject = (id) => {
     axiosInstance
       .post("/amis/unfollow", { amiIdUtilisateur: id })
@@ -92,9 +117,15 @@ function ActivityScreen() {
         });
       });
   };
+
   useEffect(() => {
-    update();
+    if (tab == "1") {
+      updateNotifications();
+    }else{
+      update();
+    }
   }, []);
+
   return (
     <View style={styles.container}>
       <View style={styles.tab}>
@@ -121,6 +152,49 @@ function ActivityScreen() {
         <Loader />
       ) : (
         <>
+          {tab == "1" && (
+            <FlatList
+              data={notifications}
+              renderItem={({ item }) => (
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "space-around",
+                    alignItems: "center",
+                    padding: 10,
+                  }}
+                >
+                  <Notification data={item} />
+                </View>
+              )}
+              ListEmptyComponent={
+                <View
+                  style={{
+                    justifyContent: "space-around",
+                    gap: 55,
+                    alignItems: "center",
+                  }}
+                >
+                  <Text />
+                  <ImageBackground
+                    source={require("../assets/images/main_logo_v1_500x500.png")}
+                    style={{ width: 165, height: 165, opacity: 0.3 }}
+                  />
+                  <Text style={styles.text}>{t("activity.nonotification")}</Text>
+                </View>
+              }
+              showsVerticalScrollIndicator={false}
+              refreshControl={
+                <RefreshControl
+                  refreshing={refreshingNotificatons}
+                  onRefresh={onRefreshNotificatons}
+                  colors={[Colors.SeaGreen]}
+                  tintColor={Colors.SeaGreen}
+                />
+              }
+            />
+          )}
+          
           {tab == "2" && (
             <FlatList
               data={requests}
@@ -220,22 +294,6 @@ function ActivityScreen() {
                 />
               }
             />
-          )}
-          {tab == "1" && (
-            <View
-              style={{
-                justifyContent: "space-around",
-                gap: 55,
-                alignItems: "center",
-              }}
-            >
-              <Text />
-              <ImageBackground
-                source={require("../assets/images/main_logo_v1_500x500.png")}
-                style={{ width: 165, height: 165, opacity: 0.3 }}
-              />
-              <Text />
-            </View>
           )}
         </>
       )}

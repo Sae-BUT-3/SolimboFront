@@ -203,7 +203,7 @@ const ProfileScreen = () => {
         ]}
       >
         {data.forbidden && !data.isCurrent ? (
-          <ForbiddenContent />
+          <ForbiddenContent t={t} />
         ) : (
           <>
             {tab === "fav" && (
@@ -267,7 +267,7 @@ const ProfileScreen = () => {
   );
 };
 
-const ForbiddenContent = () => (
+const ForbiddenContent = ({t}) => (
   <View style={styles.forbiddenContainer}>
     <Text />
     <FontAwesome5

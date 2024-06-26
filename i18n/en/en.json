@@ -99,7 +99,8 @@
     "noresult": "No results for this search"
   },
   "activity": {
-    "title": "Activity"
+    "title": "Activity",
+    "nonotification": "No notifications"
   },
   "friend": {
     "accept": "✅  Friend request accepted.",
@@ -115,5 +116,18 @@
   },
   "compilation": {
     "plurialtitle": "Compilations"
-  }
+  },
+  "notification": {
+        "andManyOthers": "and {{count}} others",
+        "likeReviewMultiple": " liked your review of {{reviewName}}",
+        "likeReviewSingle": " liked your review of {{reviewName}}",
+        "replyReviewMultiple": " commented on your review of {{reviewName}}",
+        "replyReviewSingle": " commented on your review of {{reviewName}}",
+        "likeCommentMultiple": " liked your comment",
+        "likeCommentSingle": " liked your comment",
+        "replyCommentMultiple": " commented on your comment",
+        "replyCommentSingle": " commented on your comment",
+        "followMultiple": " are following you",
+        "followSingle": " is following you"
+    }
 }
