@@ -128,9 +128,7 @@ function SignInScreen({ navigation }) {
             onChangeText={setPassword}
           />
           <PressableBasic text={t("auth.login")} onPress={handleSignIn} />
-          <Text style={authStyle.textPasswordForgot}>
-            {t("auth.forgotpassword")}
-          </Text>
+
         </View>
 
         <View style={authStyle.lineContainer}>
