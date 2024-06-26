@@ -5,6 +5,7 @@ import AvatarGroup from '../common/AvatarGroup';
 import { Avatar, Divider } from 'react-native-paper';
 import Follower from '../follow/Follower';
 import ImagePanel from '../common/ImagePanel';
+import screenStyle from '../../style/screenStyle';
 
 const Profil = ({ data, friends_followers, follow, followArtist }) => {
   const [isHovered, setIsHovered] = useState(false);
@@ -53,7 +54,7 @@ const Profil = ({ data, friends_followers, follow, followArtist }) => {
                   style={{ width: 164, height: 164, borderRadius: 82}}
                 />              
               </Pressable>
-              <Pressable style={[styles.followButton, isHovered ? styles.btnHovered : null]}
+              <Pressable style={[screenStyle.followButton, isHovered ? styles.btnHovered : null]}
                 activeOpacity={1}
                 onMouseEnter={handleMouseEnter}
                 onMouseLeave={handleMouseLeave}
@@ -62,7 +63,7 @@ const Profil = ({ data, friends_followers, follow, followArtist }) => {
               </Pressable >
             </View>
             <View style={{ display: Platform.OS !== 'web'? 'flex': undefined, alignItems: Platform.OS !== 'web'? 'center' : null}}>
-                <View style={styles.container}>
+                <View style={screenStyle.container}>
                   <Text numberOfLines={2} style={styles.nameA}>{data.name}</Text>
                 </View>
                 <View style={styles.sectionFollower}>
@@ -118,18 +119,6 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 75, 
     borderBottomRightRadius: 75, 
   },
-  followButton: {
-    backgroundColor: Colors.DarkSpringGreen,
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 20,
-    marginTop: 10,
-    shadowColor: Colors.Onyx,
-    shadowOpacity: 0.3,
-    shadowRadius: 3,
-    elevation: Platform.OS === 'android' ? 4 : 0, 
-    transition: 'background-color 0.3s ease'
-  },
   btnHovered: {
     backgroundColor: Colors.SeaGreen, 
   },
@@ -144,6 +133,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     flexDirection: 'row',
+    marginLeft: 20,
     backgroundColor: Colors.BattleShipGray,
     borderRadius: 9,
     padding: 10,

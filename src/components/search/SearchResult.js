@@ -12,6 +12,7 @@ import {
 import commonStyles from "../../style/commonStyle";
 import {Colors} from "../../style/color";
 import {useNavigation} from '@react-navigation/native'
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 
 function SearchResult({id, type, imageURL, title, subtitle, rounded, onPress}) {
     const baseImageURL = "https://merriam-webster.com/assets/mw/images/article/art-wap-article-main/egg-3442-e1f6463624338504cd021bf23aef8441@1x.jpg"
@@ -62,7 +63,7 @@ function SearchResult({id, type, imageURL, title, subtitle, rounded, onPress}) {
             gap: 10,
         },
         searchResultContainer: {
-            width: Platform.OS === 'web'? "93%": "100%",
+            width: Platform.OS === 'web'? wp("93%"): wp("100%"),
             backgroundColor: isHovered ? Colors.Jet : "transparent",
             borderRadius: 5,
         },

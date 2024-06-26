@@ -30,12 +30,12 @@ export default class Tokenizer {
         await AsyncStorage.setItem('user', JSON.stringify(user));
     };
 
-     /**
+    /**
      * Récupère un token valide de l'AsyncStorage.
      * Si aucun token n'est trouvé, retourne null.
      * @returns {Promise<Object|null>} Le token récupéré ou null.
      */
-     static getCurrentUser = async () => {
+    static getCurrentUser = async () => {
         const user = JSON.parse(await AsyncStorage.getItem('user'));
         return user || null;
     };

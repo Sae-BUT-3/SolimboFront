@@ -8,6 +8,7 @@ import axiosInstance from '../../api/axiosInstance';
 import Review from '../../components/review/Review';
 import ErrorRequest from '../../components/common/ErrorRequest';
 import Loader from '../../components/common/Loader';
+import screenStyle from '../../style/screenStyle';
 
 const CommentScreen = () => {
     const route = useRoute();
@@ -67,12 +68,6 @@ const CommentScreen = () => {
         navigation.goBack();
     };
 
-    const headerOpacity = scrollY.interpolate({
-        inputRange: [0, 100, 200],
-        outputRange: ['rgba(255, 255, 255, 0)', 'rgba(255, 255, 255, 1)', 'rgba(64, 64, 64, 1)'],
-        extrapolate: 'clamp',
-    });
-
     const handleResponse = () => {
         navigation.navigate("response", { type: 'review', id: id });
     };
@@ -82,33 +77,31 @@ const CommentScreen = () => {
     }
 
     return (
-        <View style={styles.container}>
+        <View style={screenStyle.container}>
             {isLoading ? <Loader /> : (
                 <>
                     <Animated.View>
-                        <View style={[styles.header, headerOpacity]}>
+                        <View style={screenStyle.header}>
                             <Pressable onPress={handleGoBack}>
                                 <FontAwesome5 name="chevron-left" size={25} color={Colors.White} style={{ paddingTop: 15 }} />
                             </Pressable>
-                            <Text style={styles.title}>Commentaires</Text>
+                            <Text style={screenStyle.title}>Commentaires</Text>
                             <Text />
                         </View>
                     </Animated.View>
                     <FlatList
+                        contentContainerStyle={styles.contentContainer}
+                        ListHeaderComponentStyle={{marginBottom: 30, borderBottomColor: Colors.Onyx, borderBottomWidth: 1}}
                         data={comments}
                         keyExtractor={(item, index) => index.toString()}
                         renderItem={({ item }) => (
-                            <View style={styles.itemContainer}>
-                                <Comment data={item} hide={false} />
-                            </View>
+                            <Comment data={item} hide={false} />
                         )}
                         ListHeaderComponent={
-                            <View style={[styles.itemContainer, { marginBottom: 20, borderBottomColor: Colors.Onyx, borderBottomWidth: 1 }]}>
-                                <Review data={review} />
-                            </View>
+                            <Review data={review} />
                         }
                         ListEmptyComponent={
-                            <Text style={{ color: Colors.White, fontSize: 20, textAlign: 'center', marginTop: 30  }}>Aucun commentaire, soyez le premier à rédiger un commentaire !</Text> 
+                            <Text style={styles.noCommentText}>Aucun commentaire, soyez le premier à rédiger un commentaire !</Text>
                         }
                         refreshControl={
                             <RefreshControl
@@ -116,8 +109,8 @@ const CommentScreen = () => {
                                 onRefresh={onRefresh}
                                 colors={[Colors.DarkSpringGreen]}
                                 tintColor={Colors.DarkSpringGreen}
-                                size='large'
-                                title='Actualisation...'
+                                size="large"
+                                title="Actualisation..."
                                 titleColor={Colors.White}
                             />
                         }
@@ -139,45 +132,27 @@ const CommentScreen = () => {
 };
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: Colors.Licorice,
-    },
-    header: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'baseline',
-        padding: 30,
-        position: 'relative',
-        top: 0,
-        left: 0,
-        right: 0,
-        zIndex: 1,
-        backgroundColor: 'rgba(43, 43, 43, 0.3)',
-        marginBottom: 30
-    },
-    title: {
-        fontSize: Platform.OS === "web" ? 35 : 25,
-        color: Colors.White,
-        fontWeight: 'bold',
-        paddingTop: 15,
+    contentContainer: {
+        justifyContent: 'center',
+        alignItems: 'center'
     },
     response: {
-        flexDirection: 'row',
         position: 'absolute',
         bottom: 20,
         left: 20,
         alignItems: 'center',
-        justifyContent: 'space-between',
+        justifyContent: 'center',
         backgroundColor: 'rgba(43, 43, 43, 0.5)',
         width: 50,
         height: 50,
         borderRadius: 25,
         padding: 10,
     },
-    itemContainer: {
-        width: '100%',
-        alignItems: 'center',
+    noCommentText: {
+        color: Colors.White,
+        fontSize: 20,
+        textAlign: 'center',
+        marginTop: 30,
     },
 });
 

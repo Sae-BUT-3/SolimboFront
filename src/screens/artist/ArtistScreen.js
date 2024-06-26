@@ -1,19 +1,20 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import axiosInstance from '../../api/axiosInstance';
-import { StyleSheet, ScrollView, Text, View, Pressable, Platform, Animated, RefreshControl } from 'react-native';
+import { ScrollView, Text, View, Pressable, Platform, Animated, RefreshControl, FlatList } from 'react-native';
 import Discography from '../../components/artist/Discograpy';
 import Profil from '../../components/artist/Profil';
 import Loader from '../../components/common/Loader';
 import ErrorRequest from '../../components/common/ErrorRequest';
-import ArtistReview from '../../components/artist/ArtistReview';
 import { Colors } from '../../style/color';
 import { useRoute, useNavigation, useFocusEffect } from '@react-navigation/native';
 import ArtistAppearsOn from '../../components/artist/ArtistAppearsOn';
 import DiscograpyPopup from '../../components/artist/DicograpyPopup';
-import { Snackbar } from 'react-native-paper';
+import { Avatar, Snackbar } from 'react-native-paper';
 import { FontAwesome5 } from '@expo/vector-icons'; // Importation de FontAwesome5
 import Filter from '../../components/search/Filter';
 import ImagePanel from '../../components/common/ImagePanel';
+import ListReview from '../../components/review/ListReview';
+import screenStyle from '../../style/screenStyle';
 
 const ArtistScreen = () => {
     const navigation = useNavigation();
@@ -26,6 +27,7 @@ const ArtistScreen = () => {
     const [appearsOn, setAppearsOn] = useState([]);
     const [reviews, setReviews] = useState([]);
     const [artistProfile, setArtistProfile] = useState([]);
+    const [related, setRelated] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [fail, setFailed] = useState(null);
     const [response, setResponse] = useState(null);
@@ -33,10 +35,6 @@ const ArtistScreen = () => {
     const [showTitle, setShowTitle] = useState(false);
     const [refreshing, setRefreshing] = useState(false);
     const [showAll, setShowAll] = useState(false);
-
-    const handleShowAll = () => {
-      setShowAll(true);
-    };
 
     const onRefresh = useCallback(() => {
       setRefreshing(true);
@@ -80,6 +78,7 @@ const ArtistScreen = () => {
         axiosInstance.get('/artist/' + id)
         .then(response => {
             setArtistProfile(response.data.artist);
+            setRelated(response.data.artist.relatedArtist)
             setDiscography(response.data.albums);
             setFriendsFollowers(response.data.friends_followers);
             setReviews(response.data.reviewsByTime);
@@ -101,6 +100,7 @@ const ArtistScreen = () => {
         axiosInstance.get('/artist/' + id)
             .then(response => {
                 setArtistProfile(response.data.artist);
+                setRelated(response.data.artist.relatedArtist)
                 navigation.setOptions({ title: response.data.artist?.name + ' | Solimbo' });
                 setDiscography(response.data.albums);
                 setFriendsFollowers(response.data.friends_followers);
@@ -126,14 +126,12 @@ const ArtistScreen = () => {
         const offsetY = event.nativeEvent.contentOffset.y;
         setShowTitle(offsetY > 0);
     };
-    console.log(reviews)
+
     if (fail) {
         return <ErrorRequest err={fail} />;
     }
-
     return (
-        
-        <View style={styles.container}>
+        <View style={screenStyle.container}>
             {isLoading ? (<Loader />) : (
                 <>
                     <ScrollView
@@ -154,20 +152,20 @@ const ArtistScreen = () => {
                                 { useNativeDriver: true }
                             )}
                         >
-                            <View style={styles.sectionFilter}>
-                                <Text style={styles.sectionTitle}>Discographie</Text>
+                            <View style={screenStyle.sectionFilter}>
+                                <Text style={screenStyle.sectionTitle}>Discographie</Text>
                                 {(Platform.OS === 'web' && discography.length > 0) && <Pressable onPress={handlePress}>
-                                    <Text style={styles.buttonText}>Afficher plus</Text>
+                                    <Text style={screenStyle.buttonText}>Afficher plus</Text>
                                 </Pressable>}
                             </View>
                             <Discography items={discography} id={id} />
                             {isDiscograpyPopupVisible && (
                                 <DiscograpyPopup onClose={() => setDiscograpyPopupVisible(false)} _id={id} />
                             )}
-                            <View style={[styles.sectionFilter,  {marginBottom: 10}]}>
-                                <Text style={styles.sectionTitle}>Récentes reviews</Text>
-                                { (reviews.length > 3 && Platform.OS === 'web') && <Pressable onPress={() => { navigation.navigate('review', { id }) }}>
-                                    <Text style={styles.buttonText}>Afficher plus</Text>
+                            <View style={[screenStyle.sectionFilter,  {marginBottom: 10}]}>
+                                <Text style={screenStyle.sectionTitle}>Récentes reviews</Text>
+                                { (reviews.length > 0 && Platform.OS === 'web') && <Pressable onPress={() => { navigation.navigate('review', { id }) }}>
+                                    <Text style={screenStyle.buttonText}>Afficher plus</Text>
                                 </Pressable>}
                             </View>
                             {reviews.length > 3 && <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 10,marginBottom: 25, marginLeft: 30}}>
@@ -177,12 +175,32 @@ const ArtistScreen = () => {
                                     text={"Suivis uniquement"}
                                 />
                             </View>}
-                            <ArtistReview items={reviews} id={id} />
-                           
-                            <View style={styles.sectionFilter}>
-                                <Text style={styles.sectionTitle}>Apparaît sur</Text>
+                            <ListReview items={reviews} id={id} />
+                            <View style={screenStyle.sectionFilter}>
+                                <Text style={screenStyle.sectionTitle}>Apparaît sur</Text>
                             </View>
                             <ArtistAppearsOn items={appearsOn} />
+                            <View style={screenStyle.sectionFilter}>
+                                <Text style={screenStyle.sectionTitle}>Les fans aiment aussi</Text>
+                            </View>
+                            <FlatList
+                                data={related.slice(0, 5)}
+                                renderItem={({ item }) => (
+                                    <View style={screenStyle.relatedItem}>
+                                         <Pressable
+                                            activeOpacity={1}
+                                            onPress={() => navigation.navigate('artist', { id: item.id })}
+                                        >    
+                                            <Avatar.Image source={{ uri: item.image }} size={164} />
+                                        </Pressable>
+                                        <Text style={screenStyle.relatedName}>{item.name}</Text>
+                                    </View>
+                                )}
+                                keyExtractor={(item, index) => index.toString()}
+                                horizontal={true}
+                                showsHorizontalScrollIndicator={false}
+                                style={{marginBottom: 30}}
+                            />
                             {response && (<Snackbar
                                 visible={response !== null}
                                 onDismiss={handleClose}
@@ -191,13 +209,13 @@ const ArtistScreen = () => {
                                     onPress: handleClose
                                 }}
                                 duration={Snackbar.DURATION_MEDIUM}
-                                style={{width: Platform.OS == 'web' ? 500 : 400, position: 'absolute'}}
+                                style={{width: Platform.OS === 'web' ? 500 : 400, position: 'absolute'}}
                             >
                                 {response}
                             </Snackbar>)}
                         </ScrollView>
                     </ScrollView>
-                    <View style={styles.titleHeader}>
+                    <View style={screenStyle.titleHeader}>
                         <Pressable onPress={() => { navigation.goBack() }}>
                             <FontAwesome5 name="chevron-left" size={25} color={Colors.White} />
                         </Pressable>
@@ -207,50 +225,5 @@ const ArtistScreen = () => {
         </View>
     );
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: Colors.Licorice,
-    },
-    sectionTitle: {
-        color: Colors.SeaGreen,
-        fontWeight: 'bold',
-        fontSize: Platform.OS === 'web' ? 35 : 27,
-        textShadowColor: 'rgba(0, 0, 0, 0.5)',
-        textShadowOffset: {width: -1, height: 1},
-        textShadowRadius: 10,
-        padding: 5,
-    },
-    sectionFilter: {
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginLeft: 10,
-        marginRight: 10,
-        marginBottom: 30,
-        padding: 5
-    },
-    buttonText: {
-        color: Colors.White,
-        fontWeight: 'bold',
-        marginRight: 30,
-        fontSize: 16
-    },
-    titleHeader: {
-        flexDirection: 'row',
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        zIndex: 1,
-        paddingTop: Platform.OS === 'web' ? 10 : 45,
-        paddingLeft: 10,
-        paddingBottom: 20,
-    },
-});
 
 export default ArtistScreen;

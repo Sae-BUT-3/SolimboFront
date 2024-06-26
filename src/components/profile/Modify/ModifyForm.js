@@ -1,13 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-  View,
-  Text,
-  Image,
-  StyleSheet,
-  useWindowDimensions,
-  TouchableOpacity,
-  Pressable,
-} from "react-native";
+import {View, Text, Image, StyleSheet, useWindowDimensions, Pressable} from "react-native";
 import { Switch } from "react-native-switch";
 import { Colors } from "../../../style/color";
 import { breakpoint } from "../../../style/breakpoint";
@@ -16,16 +8,17 @@ import axiosInstance from "../../../api/axiosInstance";
 import ModifyInput from "./ModifyInput";
 import hexToRgbA from "../../../utils/HexToRgbA";
 import pressableBasicStyle from "../../../style/pressableBasicStyle";
-import { FontAwesome, FontAwesome5 } from "@expo/vector-icons";
+import { FontAwesome} from "@expo/vector-icons";
 import BasicInput from "../../form/BasicInput";
 import Toast from "react-native-toast-message";
 import { useAuth } from "../../../contexts/AuthContext";
 import { Divider } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
 import { Buffer } from "buffer";
+
 const MIN_PSEUDO = 3;
 
-const Update = ({ user ,spotify}) => {
+const UpdateSection = ({ user, spotify }) => {
   const [showPasswordInput, setShowPasswordInput] = useState(false);
   const [showEmailInput, setShowEmailInput] = useState(false);
   const [email, setEmail] = useState("");
@@ -40,6 +33,7 @@ const Update = ({ user ,spotify}) => {
   const handleUpdateEmail = () => {
     setShowEmailInput(!showEmailInput);
   };
+
 
   const handleSubmitEmail = () => {
     axiosInstance
@@ -74,40 +68,77 @@ const Update = ({ user ,spotify}) => {
         // Handle error
       });
   };
-
+  const styles = StyleSheet.create({
+    buttonText: {
+      color: Colors.White,
+      marginBottom: 10,
+    },
+    input: {
+      height: 40,
+      borderColor: "gray",
+      borderWidth: 1,
+      marginBottom: 10,
+      paddingLeft: 8,
+    },
+    divider: {
+      height: 2,
+      borderColor: Colors.Silver,
+      marginVertical: 10,
+    },
+    updateContainer: {
+      justifyContent: "center",
+    },
+    updateButtonsContainer: {
+      justifyContent: "space-between",
+      flexDirection: "row",
+      alignItems: "baseline",
+      flexWrap: "wrap",
+      gap: 20,
+    },
+    centeredContainer: {
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    actionButtonsContainer: {
+      flexDirection: "row",
+      justifyContent: "center",
+    },
+    actionButton: {
+      width: 120,
+    },
+    cancelButton: {
+      backgroundColor: Colors.Red,
+      width: 120,
+    },
+    icon: {
+      paddingRight: 10,
+    },
+  });
   return (
-    <View style={{ justifyContent: "center" }}>
-      <View
-        style={{
-          justifyContent: "space-between",
-          flexDirection: "row",
-          alignItems: "baseline",
-          flexWrap: "wrap",
-          gap: 20,
-        }}
-      >
-        {spotify && (<Pressable onPress={handleUpdateEmail}>
-          <Text style={styles.buttonText}>Mettre à jour l'email</Text>
-        </Pressable>)}
+    <View style={styles.updateContainer}>
+      <View style={styles.updateButtonsContainer}>
+        {spotify && (
+          <Pressable onPress={handleUpdateEmail}>
+            <Text style={styles.buttonText}>Mettre à jour l'email</Text>
+          </Pressable>
+        )}
         <Divider style={styles.divider} />
         {spotify && (
-        <Pressable onPress={handleResetPassword}>
-          <Text style={styles.buttonText}>Réinitialiser le mot de passe</Text>
-        </Pressable>)}
-        
+          <Pressable onPress={handleResetPassword}>
+            <Text style={styles.buttonText}>Réinitialiser le mot de passe</Text>
+          </Pressable>
+        )}
         <Pressable
           onPress={() => {
             logout();
             navigation.navigate("signin");
           }}
         >
-          <Text style={[styles.text, { color: Colors.Red }]}>
-            Se déconnecter
-          </Text>
+          <Text style={[styles.buttonText, { color: Colors.Red }]}>Se déconnecter</Text>
         </Pressable>
       </View>
 
-      <View style={{ justifyContent: "center", alignItems: "center" }}>
+      <View style={styles.centeredContainer}>
         {showEmailInput && (
           <>
             <BasicInput
@@ -119,32 +150,19 @@ const Update = ({ user ,spotify}) => {
               value={email}
               onChangeText={setEmail}
             />
-            <View style={{ flexDirection: "row", justifyContent: "center" }}>
+            <View style={styles.actionButtonsContainer}>
               <Pressable
-                style={[pressableBasicStyle.button, { width: 120 }]}
+                style={[pressableBasicStyle.button, styles.actionButton]}
                 onPress={handleSubmitEmail}
               >
-                <FontAwesome
-                  size={20}
-                  name="pencil"
-                  color={Colors.White}
-                  style={{ paddingRight: 10 }}
-                />
+                <FontAwesome size={20} name="pencil" color={Colors.White} style={styles.icon} />
                 <Text style={pressableBasicStyle.button_text}>Modifier</Text>
               </Pressable>
               <Pressable
-                style={[
-                  pressableBasicStyle.button,
-                  { backgroundColor: Colors.Red, width: 120 },
-                ]}
+                style={[pressableBasicStyle.button, styles.cancelButton]}
                 onPress={() => setShowEmailInput(false)}
               >
-                <FontAwesome
-                  size={20}
-                  name="close"
-                  color={Colors.White}
-                  style={{ paddingRight: 10 }}
-                />
+                <FontAwesome size={20} name="close" color={Colors.White} style={styles.icon} />
                 <Text style={pressableBasicStyle.button_text}>Annuler</Text>
               </Pressable>
             </View>
@@ -159,32 +177,19 @@ const Update = ({ user ,spotify}) => {
               onChangeText={setPassword}
               value={password}
             />
-            <View style={{ flexDirection: "row", justifyContent: "center" }}>
+            <View style={styles.actionButtonsContainer}>
               <Pressable
-                style={[pressableBasicStyle.button, { width: 120 }]}
+                style={[pressableBasicStyle.button, styles.actionButton]}
                 onPress={handleSubmitPassword}
               >
-                <FontAwesome
-                  size={20}
-                  name="pencil"
-                  color={Colors.White}
-                  style={{ paddingRight: 10 }}
-                />
+                <FontAwesome size={20} name="pencil" color={Colors.White} style={styles.icon} />
                 <Text style={pressableBasicStyle.button_text}>Modifier</Text>
               </Pressable>
               <Pressable
-                style={[
-                  pressableBasicStyle.button,
-                  { backgroundColor: Colors.Red, width: 120 },
-                ]}
+                style={[pressableBasicStyle.button, styles.cancelButton]}
                 onPress={() => setShowPasswordInput(false)}
               >
-                <FontAwesome
-                  size={20}
-                  name="close"
-                  color={Colors.White}
-                  style={{ paddingRight: 10 }}
-                />
+                <FontAwesome size={20} name="close" color={Colors.White} style={styles.icon} />
                 <Text style={pressableBasicStyle.button_text}>Annuler</Text>
               </Pressable>
             </View>
@@ -195,9 +200,7 @@ const Update = ({ user ,spotify}) => {
   );
 };
 
-function ModifyForm({ user, checkPseudo, handleModify, isModify, setModify }) {
-  const windowDimensions = useWindowDimensions();
-  const width = windowDimensions ? windowDimensions.width : 0;
+const ModifyForm = ({ user, checkPseudo, handleModify, isModify, setModify }) => {
   const [imageHovered, setImageHovered] = useState(false);
   const [image, setImage] = useState("");
   const [uri, setUri] = useState(undefined);
@@ -210,6 +213,90 @@ function ModifyForm({ user, checkPseudo, handleModify, isModify, setModify }) {
   const [isEnabled, setIsEnabled] = useState(false);
   const [isPrivate, setIsPrivate] = useState(false);
   const [spotify, setAuthSpotify] = useState(false);
+  const windowDimensions = useWindowDimensions();
+  const width = windowDimensions ? windowDimensions.width : 0;
+  
+  const styles = StyleSheet.create({
+    container: {
+      alignItems: "center",
+      backgroundColor: Colors.Licorice,
+    },
+    imageContainer: {
+      position: "relative",
+      marginBottom: 10,
+      marginTop: 20,
+      backgroundColor: Colors.Licorice,
+    },
+    image: {
+      width: width > breakpoint.small ? 200 : 150,
+      height: width > breakpoint.small ? 200 : 150,
+      borderRadius: width < breakpoint.medium ? 100 : 75,
+    },
+    imageChangeContainer: {
+      position: "absolute",
+      top: 0,
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      backgroundColor: hexToRgbA(Colors.Jet, imageHovered ? 0.1 : 0.4),
+    },
+    imageChange: {
+      width: "70%",
+      height: "70%",
+    },
+    switch: {
+      marginBottom: 10,
+    },
+    header: {
+      flex: 1,
+      flexDirection: "row",
+      justifyContent: "space-between",
+    },
+    buttonText: {
+      color: Colors.White,
+      marginBottom: 10,
+    },
+    input: {
+      height: 40,
+      borderColor: "gray",
+      borderWidth: 1,
+      marginBottom: 10,
+      paddingLeft: 8,
+    },
+    divider: {
+      height: 2,
+      borderColor: Colors.Silver,
+      marginVertical: 10,
+    },
+    updateContainer: {
+      justifyContent: "center",
+    },
+    updateButtonsContainer: {
+      justifyContent: "space-between",
+      flexDirection: "row",
+      alignItems: "baseline",
+      flexWrap: "wrap",
+      gap: 20,
+    },
+    centeredContainer: {
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    actionButtonsContainer: {
+      flexDirection: "row",
+      justifyContent: "center",
+    },
+    actionButton: {
+      width: 120,
+    },
+    cancelButton: {
+      backgroundColor: Colors.Red,
+      width: 120,
+    },
+    icon: {
+      paddingRight: 10,
+    },
+  });
 
   const toggleSwitch = () => setIsEnabled((previousState) => !previousState);
 
@@ -298,49 +385,12 @@ function ModifyForm({ user, checkPseudo, handleModify, isModify, setModify }) {
     }
   };
 
-  const styles = StyleSheet.create({
-    container: {
-      alignItems: "center",
-      backgroundColor: Colors.Licorice,
-    },
-    imageContainer: {
-      position: "relative",
-      marginBottom: 10,
-      backgroundColor: Colors.Licorice,
-    },
-    image: {
-      width: width > breakpoint.small ? 200 : 150,
-      height: width > breakpoint.small ? 200 : 150,
-      borderRadius: width < breakpoint.medium ? 100 : 75,
-    },
-    imageChangeContainer: {
-      position: "absolute",
-      top: 0,
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center",
-      backgroundColor: hexToRgbA(Colors.Jet, imageHovered ? 0.1 : 0.4),
-    },
-    imageChange: {
-      width: "70%",
-      height: "70%",
-    },
-    switch: {
-      marginBottom: 10,
-    },
-    header: {
-      flex: 1,
-      flexDirection: "row",
-      justifyContent: "space-between",
-    },
-  });
-
   return (
     <View style={styles.container}>
       <View style={styles.imageContainer}>
         <Image style={styles.image} source={{ uri: uri }} />
         {isModify && (
-          <TouchableOpacity
+          <Pressable
             onPress={handleImagePickerPress}
             style={[styles.image, styles.imageChangeContainer]}
             onMouseEnter={() => setImageHovered(true)}
@@ -350,7 +400,7 @@ function ModifyForm({ user, checkPseudo, handleModify, isModify, setModify }) {
               style={styles.imageChange}
               source={require("../../../assets/images/photo.png")}
             />
-          </TouchableOpacity>
+          </Pressable>
         )}
       </View>
       <Switch
@@ -401,58 +451,27 @@ function ModifyForm({ user, checkPseudo, handleModify, isModify, setModify }) {
         disabled={!isModify}
       />
       {isModify && (
-        <View style={{ flexDirection: "row", justifyContent: "center" }}>
+        <View style={styles.actionButtonsContainer}>
           <Pressable
-            style={[pressableBasicStyle.button, { width: 150 }]}
+            style={[pressableBasicStyle.button, styles.actionButton]}
             onPress={handleSubmit}
           >
-            <FontAwesome
-              size={20}
-              name="pencil"
-              color={Colors.White}
-              style={{ paddingRight: 10 }}
-            />
+            <FontAwesome size={20} name="pencil" color={Colors.White} style={styles.icon} />
             <Text style={pressableBasicStyle.button_text}>Modifier</Text>
           </Pressable>
           <Pressable
-            style={[
-              pressableBasicStyle.button,
-              { backgroundColor: Colors.Red, width: 150 },
-            ]}
+            style={[pressableBasicStyle.button, styles.cancelButton]}
             onPress={() => setModify(false)}
           >
-            <FontAwesome
-              size={20}
-              name="close"
-              color={Colors.White}
-              style={{ paddingRight: 10 }}
-            />
+            <FontAwesome size={20} name="close" color={Colors.White} style={styles.icon} />
             <Text style={pressableBasicStyle.button_text}>Annuler</Text>
           </Pressable>
         </View>
       )}
-      <Update user={user} spotify={spotify} />
+      <UpdateSection user={user} spotify={spotify} />
     </View>
   );
-}
+};
 
-const styles = StyleSheet.create({
-  buttonText: {
-    color: Colors.White,
-    marginBottom: 10,
-  },
-  input: {
-    height: 40,
-    borderColor: "gray",
-    borderWidth: 1,
-    marginBottom: 10,
-    paddingLeft: 8,
-  },
-  divider: {
-    height: 2,
-    borderColor: Colors.Silver,
-    marginVertical: 10,
-  },
-});
 
 export default ModifyForm;
