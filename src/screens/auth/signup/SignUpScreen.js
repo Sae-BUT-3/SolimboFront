@@ -9,7 +9,7 @@ import commonStyles from '../../../style/commonStyle';
 import authStyle from '../../../style/authStyle';
 import ProgressIndicator from '../../../components/form/ProgressIndicator';
 import { useAuth } from '../../../contexts/AuthContext';
-
+import { useTranslation } from 'react-i18next';
 function SignUpScreen({ navigation }) {
     const [step, setStep] = useState(1);
     const [formData, setFormData] = useState({});
