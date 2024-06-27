@@ -7,6 +7,7 @@
     "forgotpassword": "Forgot password?",
     "noaccount": "No account yet?",
     "signup": "Sign up",
+    "connection" : "Log in",
     "loginwithspotify": "Login with Spotify",
     "updatepassword": "Change my password",
     "updateemail": "Change my email",
@@ -18,9 +19,17 @@
       "alreadytaken": "Username is already taken",
       "aliaslength": "Alias must be at least 3 characters long",
       "pseudolength": "Username must be at least 3 characters long"
-    }
+    },
+    "entercode": "Enter the code received by email",
+    "confirmcode": "Confirm the code",
+    "createaccount": "Create an account",
+    "checkpseudoavailability" : "Checking username availability...",
+    "pseudoalreadyused": "This username is already taken",
+    "password": "Password",
+    "alreadyregistered": "Already registered ?"
   },
   "common": {
+    "confirm": "Confirm",
     "close": "Close",
     "refreshing": "Refreshing...",
     "displaymore": "Show more",
@@ -93,7 +102,8 @@
     "hide": "Hide replies",
     "display": "Show replies",
     "display2": "Show replies",
-    "deleteverification": "Do you really want to delete this comment?"
+    "deleteverification": "Do you really want to delete this comment?",
+    "nocomment" : "No comments yet, be the first to write a comment!"
   },
   "search": {
     "search": "Search for your artists, music, or friends",

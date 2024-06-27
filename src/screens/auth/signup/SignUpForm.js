@@ -6,11 +6,12 @@ import commonStyles from '../../../style/commonStyle';
 import authStyle from '../../../style/authStyle';
 import { Colors } from '../../../style/color';
 import { FontAwesome5 } from '@expo/vector-icons';
-
+import { useTranslation } from 'react-i18next';
 
 const SignupForm = ({ onSubmit, errors }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const t = useTranslation();
 
     const handleSubmit = () => {
         onSubmit({ email, password });
@@ -27,7 +28,7 @@ const SignupForm = ({ onSubmit, errors }) => {
             />
 
             <BasicInput
-                placeholder="Mot de passe"
+                placeholder={t("auth.password")}
                 secureTextEntry
                 value={password}
                 onChangeText={(text) => setPassword(text)}
@@ -43,7 +44,7 @@ const SignupForm = ({ onSubmit, errors }) => {
                 </View>
                 }
             </>
-            <PressableBasic text="Confirmer" onPress={handleSubmit} />
+            <PressableBasic text={t("common.confirm")} onPress={handleSubmit} />
         </View>
     );
 };

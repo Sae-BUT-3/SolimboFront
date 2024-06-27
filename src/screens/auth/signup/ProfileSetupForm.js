@@ -6,7 +6,7 @@ import commonStyles from '../../../style/commonStyle';
 import { Colors } from '../../../style/color';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import axiosInstance from '../../../api/axiosInstance';
-
+import { useTranslation } from 'react-i18next';
 
 const ProfileSetUpForm = ({ onSubmit, errors }) => {
     const [pseudo, setPseudo] = useState('');
@@ -15,6 +15,8 @@ const ProfileSetUpForm = ({ onSubmit, errors }) => {
     const [isCheckingPseudo, setIsCheckingPseudo] = useState(false);
     const [isPseudoAvailable, setIsPseudoAvailable] = useState(true);
     const [pseudoCheckTimeout, setPseudoCheckTimeout] = useState(null);
+
+    const t = useTranslation();
 
     const checkPseudoAvailability = async (pseudo) => {
         setIsCheckingPseudo(true);
@@ -53,9 +55,9 @@ const ProfileSetUpForm = ({ onSubmit, errors }) => {
                 value={alias}
                 onChangeText={setAlias}
             />
-            <PressableBasic text="Créer mon compte" onPress={handleSubmit} disabled={!isPseudoAvailable || pseudo.trim() === '' || alias.trim() === ''} />
+            <PressableBasic text={t("auth.createaccount")} onPress={handleSubmit} disabled={!isPseudoAvailable || pseudo.trim() === '' || alias.trim() === ''} />
             {isCheckingPseudo ? (
-                <Text>Vérification de la disponibilité du pseudo...</Text>
+                <Text>{t("auth.checkpseudoavailability")}</Text>
             ) : isPseudoAvailable ? null : (
                 <View style={[commonStyles.row, ]}>
                     <FontAwesome5
@@ -65,7 +67,7 @@ const ProfileSetUpForm = ({ onSubmit, errors }) => {
                         style={{ marginRight: 5 }}
                     />
                     <Text style={commonStyles.textError}>
-                        Ce pseudo est déjà pris
+                        {t("auth.pseudoalreadyused")}
                     </Text>
                 </View>
             )}
