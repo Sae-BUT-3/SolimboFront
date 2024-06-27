@@ -20,6 +20,8 @@ import ActionsPanel from "../common/ActionsPanel";
 import { useTranslation } from "react-i18next";
 import i18next from "i18next";
 import { getDeeplLangAttribute } from "../../utils/DeepLangAttribute";
+import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
+import PropTypes from 'prop-types';
 
 const toCapitalCase = (mot) => {
   return mot ? mot.charAt(0).toUpperCase() + mot.slice(1) : mot;
@@ -29,7 +31,7 @@ const Comment = ({ data, hide }) => {
   const [comment, setComment] = useState(data);
   const [replies, setReplies] = useState(null);
   const [like, setLike] = useState(false);
-  const [countlike, setCountLike] = useState(0);
+  const [countlike, setCountLike] = useState(0);  
   const [isExpanded, setIsExpanded] = useState(false);
   const [currentUser, setUser] = useState({});
   const [isActive, setActive] = useState(false);
@@ -41,17 +43,17 @@ const Comment = ({ data, hide }) => {
 
   useEffect(() => {
     axiosInstance
-        .get(`/comment/${data.id_com}`, {
+        .get(`/comment/${data?.id_com}`, {
           params: { page: 1, pageSize: 1, orderByLike: false , lang : getDeeplLangAttribute(i18next.language) },
         })
         .then((response) => {
-          setReplies(response.data.comments);
-          setComment(response.data.comment);
-          if (response.data.comment.translatedDescription != null) {
+          setReplies(response.data?.comments);
+          setComment(response.data?.comment);
+          if (response.data?.comment.translatedDescription != null && (response.data?.comment.translatedDescription !== response.data?.comment.description)) {
             setIsTradEnabled(true);
           }
         })
-        .catch((e) => console.log(`comment/${data.id_com} : ${e.response.data}`));
+        .catch((e) => console.log(`comment/${data?.id_com} : ${e.response.data}`));
   }, [data]);
 
   const handleTradButtonClick = () => {
@@ -88,11 +90,11 @@ const Comment = ({ data, hide }) => {
   };
   useEffect(() => {
     getData();
-    setLike(data.doesUserLike);
-    setCountLike(data.countLike);
+    setLike(data?.doesUserLike);
+    setCountLike(data?.countLike);
   }, [data]);
 
-  const handlePress = (id) => {
+  const handleLikePress = (id) => {
     axiosInstance
       .post(`comment/${id}/like`)
       .then((res) => {
@@ -111,13 +113,13 @@ const Comment = ({ data, hide }) => {
     setActive(false);
     if (replies === null) {
       axiosInstance
-        .get(`/comment/${data.id_com}`, {
-          params: { page: 1, pageSize: data.countComment, orderByLike: false , lang: i18next.language },
+        .get(`/comment/${data?.id_com}`, {
+          params: { page: 1, pageSize: data?.countComment, orderByLike: false , lang: i18next.language },
         })
         .then((response) => {
-          setReplies(response.data.comments);
-          setComment(response.data.comment);
-          if (response.data.comment.translatedDescription != null) {
+          setReplies(response.data?.comments);
+          setComment(response.data?.comment);
+          if (response.data?.comment.translatedDescription != null) {
             setIsTradEnabled(true);
           }
         })
@@ -129,7 +131,7 @@ const Comment = ({ data, hide }) => {
 
   const deleteComment = () => {
     axiosInstance
-      .delete(`comment/${data.id_com}`)
+      .delete(`comment/${data?.id_com}`)
       .then((res) => {})
       .catch((e) => console.log(`delete comment : ${e.response.data}`));
   };
@@ -160,7 +162,7 @@ const Comment = ({ data, hide }) => {
       name: "comment-medical",
       handle: () => {
         setActive(false);
-        navigation.navigate("Response", { type: "comment", id: data.id_com });
+        navigation.navigate("Response", { type: "comment", id: data?.id_com });
       },
       color: Colors.SeaGreen,
       text: t("common.reply"),
@@ -169,7 +171,7 @@ const Comment = ({ data, hide }) => {
       size: 30,
     },
   ];
-  if (data.countComment > 0) {
+  if (data?.countComment > 0) {
     actions.push({
       name: "comment-dots",
       handle: displayReply,
@@ -180,7 +182,7 @@ const Comment = ({ data, hide }) => {
       size: 30,
     });
   }
-  if (currentUser.id_utilisateur === data.utilisateur.id_utilisateur) {
+  if (currentUser.id_utilisateur === data?.utilisateur.id_utilisateur) {
     actions.push({
       name: "trash-alt",
       handle: handleDelete,
@@ -194,45 +196,32 @@ const Comment = ({ data, hide }) => {
   return (
     <View style={styles.commentContainer}>
       <Pressable onLongPress={() => setActive(!isActive)}>
-        <View
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
-        >
+        <View style={styles.userInfo} >
           <Pressable
             onPress={() =>
               navigation.navigate("user", {
-                id: data.utilisateur.id_utilisateur,
+                id: data?.utilisateur.id_utilisateur,
               })
             }
           >
             <Avatar.Image
-              source={{ uri: data.utilisateur.photo }}
+              source={{ uri: data?.utilisateur.photo }}
               size={Platform.OS === "web" ? 75 : 64}
             />
           </Pressable>
           <Pressable
             onPress={() =>
               navigation.navigate("user", {
-                id: data.utilisateur.id_utilisateur,
+                id: data?.utilisateur.id_utilisateur,
               })
             }
           >
-            <Text
-              style={{
-                color: Colors.DarkSpringGreen,
-                fontSize: 19,
-                fontWeight: "normal",
-              }}
-            >
-              {"@" + data.utilisateur.alias}
+            <Text style={styles.userName} >
+              {"@" + data?.utilisateur.alias}
             </Text>
           </Pressable>
         </View>
-        <View style={{ margin: Platform.OS == "web" ? 20 : 10 }}>
+        <View style={styles.commentTextContainer} >
           <ReadMore
             numberOfLines={5}
             renderTruncatedFooter={renderTruncatedFooter}
@@ -240,97 +229,23 @@ const Comment = ({ data, hide }) => {
             onReady={() => setIsExpanded(false)}
             onExpand={() => setIsExpanded(true)}
           >
-            <Text
-              style={{
-                color: Colors.White,
-                padding: 10,
-                fontSize: 19,
-                fontWeight: "normal",
-              }}
-            >
+            <Text style={styles.commentText} > 
               {isTradActive ? toCapitalCase(comment.translatedDescription) : toCapitalCase(comment.description)}  
             </Text>
           </ReadMore>
         </View>
         <View style={styles.commentInfo}>
-          <View
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              gap: 10,
-              justifyContent: "space-between",
-              alignItems: "center",
-              marginTop: 10,
-              marginBottom: 10,
-            }}
-          >
-            <View
-              style={{
-                display: "flex",
-                flexDirection: "row",
-                alignItems: "center",
-              }}
-            >
-              <View
-                style={{
-                  display: "flex",
-                  flexDirection: "row",
-                  alignItems: "center",
-                }}
-              >
-                <Pressable onPress={() => handlePress(data.id_com)}>
-                  {like ? (
-                    <FontAwesome5
-                      name="heart"
-                      size={30}
-                      color={Colors.DarkSpringGreen}
-                      solid
-                    />
-                  ) : (
-                    <FontAwesome5
-                      name="heart"
-                      size={30}
-                      color={Colors.DarkSpringGreen}
-                      regular
-                    />
-                  )}
-                </Pressable>
-                <Text
-                  style={{
-                    color: Colors.White,
-                    padding: 10,
-                    fontSize: 19,
-                    fontWeight: "normal",
-                  }}
-                >
-                  {countlike}
-                </Text>
-              </View>
-              <View
-                style={{
-                  display: "flex",
-                  flexDirection: "row",
-                  alignItems: "center",
-                }}
-              >
-                <FontAwesome5
-                  name="comments"
-                  size={30}
-                  color={Colors.DarkSpringGreen}
-                  regular
-                />
-                <Text
-                  style={{
-                    color: Colors.White,
-                    padding: 10,
-                    fontSize: 19,
-                    fontWeight: "normal",
-                  }}
-                >
-                  {data?.countComment}
-                </Text>
-                
-                {isTradEnabled ? (
+          <View style={styles.likeCommentInfo}>
+            <View style={styles.likeInfo}>
+              <Pressable onPress={() => handleLikePress(data?.id_com)}>
+                <FontAwesome5 name="heart" size={30} color={Colors.DarkSpringGreen} solid={like} />
+              </Pressable>
+              <Text style={styles.likeCount}>{countlike}</Text>
+            </View>
+            <View style={styles.commentCountInfo}>
+              <FontAwesome5 name="comments" size={30} color={Colors.DarkSpringGreen} />
+              <Text style={styles.commentCount}>{data?.countComment}</Text>
+              {isTradEnabled ? (
                 <Pressable onPress={handleTradButtonClick}>
                   {isTradActive ? (
                   <FontAwesome5
@@ -349,82 +264,32 @@ const Comment = ({ data, hide }) => {
                 )}
                 </Pressable>
               ) : null}
-
-              </View>
             </View>
-            <Date dateString={data?.createdAt} />
           </View>
-          {!hide &&
-            (data.countComment > 0 ? (
-              <>
-                <Divider style={styles.divider} />
-                <View
-                  style={{
-                    display: "flex",
-                    flexDirection: "row",
-                    gap: 10,
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    marginTop: 10,
-                  }}
-                >
-                  <Pressable onPress={displayReply}>
-                    <Text
-                      style={{
-                        color: Colors.DarkSpringGreen,
-                        fontSize: 19,
-                        fontWeight: "normal",
-                      }}
-                    >
-                      {replies ? "Masquer" : "Voir les réponses "}
-                    </Text>
-                  </Pressable>
-                  <Pressable
-                    onPress={() => {
-                      navigation.navigate("response", {
-                        type: "comment",
-                        id: data.id_com,
-                      });
-                    }}
-                  >
-                    <Text
-                      style={{
-                        color: Colors.DarkSpringGreen,
-                        fontSize: 19,
-                        fontWeight: "normal",
-                      }}
-                    >
-                      {t("common.reply")}
-                    </Text>
-                  </Pressable>
-                </View>
-              </>
-            ) : (
-              <>
-                <Divider style={styles.divider} />
-                <View style={{ marginTop: 10, alignItems: "flex-end" }}>
-                  <Pressable
-                    onPress={() => {
-                      navigation.navigate("response", {
-                        type: "comment",
-                        id: data.id_com,
-                      });
-                    }}
-                  >
-                    <Text
-                      style={{
-                        color: Colors.DarkSpringGreen,
-                        fontSize: 19,
-                        fontWeight: "normal",
-                      }}
-                    >
-                      {t("common.reply")}
-                    </Text>
-                  </Pressable>
-                </View>
-              </>
-            ))}
+          <Date dateString={data?.createdAt} />
         </View>
+        {!hide && (data?.countComment > 0 ? (
+          <>
+            <Divider style={styles.divider} />
+            <View style={styles.replySection}>
+              <Pressable onPress={displayReply}>
+                <Text style={styles.replyText}>{replies ?  t("comment.hide") : t("comment.display") }</Text>
+              </Pressable>
+              <Pressable onPress={() => { navigation.navigate('response', { type: 'comment', id: data?.id_com }) }}>
+                <Text style={styles.replyText}> {t("common.reply")}</Text>
+              </Pressable>
+            </View>
+          </>
+        ) : (
+          <>
+            <Divider style={styles.divider} />
+            <View style={styles.replyContainer}>
+              <Pressable onPress={() => { navigation.navigate('response', { type: 'comment', id: data?.id_com }) }}>
+                <Text style={styles.replyText}> {t("common.reply")}</Text>
+              </Pressable>
+            </View>
+          </>
+        ))}
       </Pressable>
       {replies && (
         <>
@@ -439,25 +304,100 @@ const Comment = ({ data, hide }) => {
 
 const styles = StyleSheet.create({
   commentContainer: {
-    display: "flex",
+    display: 'flex',
     padding: 20,
-    marginBottom: Platform.OS == "web" ? 30 : 20,
-    marginLeft: Platform.OS == "web" ? 20 : 0,
-    marginRight: Platform.OS == "web" ? 20 : 0,
-    width: Platform.OS != "web" ? 386 : 950,
+    marginBottom: Platform.OS == 'web' ? 30 : 20,
+    marginLeft: Platform.OS  == "web" ? 20 : 0,
+    marginRight: Platform.OS  == "web" ? 20 : 0,
+    marginHorizontal: Platform.OS == 'web' ? 20 : 0,
+    width:  Platform.OS  == "web" ? wp('85%') : wp('90%'),
     backgroundColor: Colors.Jet,
     borderRadius: 15,
     shadowColor: Colors.Onyx,
     shadowOpacity: 0.3,
     shadowRadius: 3,
-    elevation: Platform.OS === "android" ? 3 : 0,
+    elevation: Platform.OS === 'android' ? 3 : 0, 
+    elevation: Platform.OS === 'android' ? 3 : 0,
+    boxShadow: "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
+  },
+  userInfo: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  userName: {
+    color: Colors.DarkSpringGreen,
+    fontSize: 19,
+    fontWeight: 'normal',
+  },
+  commentTextContainer: {
+    marginBottom: Platform.OS == 'web' ? 20 : 10,
+    marginTop: Platform.OS == 'web' ? 20 : 10,
+  },
+  readMore: {
+    color: Colors.SeaGreen,
+    fontSize: Platform.OS == 'web' ? 20 : 17,
+    fontWeight: 'normal',
+  },
+  commentText: {
+    color: Colors.White,
+    padding: 10,
+    fontSize: 19,
+    fontWeight: 'normal',
   },
   commentInfo: {
-    display: "flex",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between'
+  },
+  likeCommentInfo: {
+    flexDirection: 'row',
+    gap: 5,
+    alignItems: 'center',
+  },
+  likeInfo: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  likeCount: {
+    color: Colors.White,
+    padding: 10,
+    fontSize: 19,
+    fontWeight: 'normal',
+  },
+  commentCountInfo: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  commentCount: {
+    color: Colors.White,
+    padding: 10,
+    fontSize: 19,
+    fontWeight: 'normal',
   },
   divider: {
     backgroundColor: Colors.BattleShipGray,
     marginTop: 10,
+  },
+  replySection: {
+    display: 'flex',
+    flexDirection: 'row',
+    gap: 10,
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginTop: 10,
+  },
+  replyText: {
+    color: Colors.DarkSpringGreen,
+    fontSize: 19,
+    fontWeight: 'normal',
+  },
+  replyContainer: {
+    marginTop: 10,
+    alignItems: 'flex-end',
   },
 });
 

@@ -30,6 +30,7 @@ const DiscograpyScreen = () => {
   const route = useRoute();
   const id = route.params?.id || null;
   const { t } = useTranslation();
+
   useEffect(() => {
     axiosInstance
       .get("/spotify/fetchArtistSongs", {
@@ -58,18 +59,18 @@ const DiscograpyScreen = () => {
     if (albums.length === 0) {
       setFilter("single");
     }
-  }, []);
+  }, [id]);
 
   if (error) {
     return <ErrorRequest err={error} />;
   }
   return (
-    <View style={styles.container}>
+    <View style={screenStyle.container}>
       {isLoading ? (
         <Loader />
       ) : (
         <>
-          <Animated.View style={styles.header}>
+          <Animated.View style={screenStyle.header}>
             <Pressable
               onPress={() => {
                 navigation.goBack();
@@ -82,7 +83,7 @@ const DiscograpyScreen = () => {
                 style={{ paddingTop: 15 }}
               />
             </Pressable>
-            <Text style={styles.title}>{t("dicography.title")}</Text>
+            <Text style={screenStyle.title}>{t("discography.title")}</Text>
             <Text />
           </Animated.View>
           <View
@@ -99,7 +100,7 @@ const DiscograpyScreen = () => {
           >
             <Pressable
               style={[
-                styles.filterButton,
+                screenStyle.filterButton,
                 filter === "album" && {
                   backgroundColor: Colors.DarkSpringGreen,
                 },
@@ -107,13 +108,13 @@ const DiscograpyScreen = () => {
               onPress={() => setFilter("album")}
               activeOpacity={1}
             >
-              <Text style={[styles.filterText, filter === "album"]}>
+              <Text style={[screenStyle.filterText, filter === "album"]}>
                 {t("album.plurialtitle")}
               </Text>
             </Pressable>
             <Pressable
               style={[
-                styles.filterButton,
+                screenStyle.filterButton,
                 filter === "single" && {
                   backgroundColor: Colors.DarkSpringGreen,
                 },
@@ -121,7 +122,7 @@ const DiscograpyScreen = () => {
               onPress={() => setFilter("single")}
               activeOpacity={1}
             >
-              <Text style={[styles.filterText, filter === "single"]}>
+              <Text style={[screenStyle.filterText, filter === "single"]}>
                 {t("single.plurialtitle")}
               </Text>
             </Pressable>
@@ -153,29 +154,6 @@ const DiscograpyScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    backgroundColor: Colors.Licorice,
-  },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "baseline",
-    paddingTop: 30,
-    paddingLeft: 10,
-    paddingRight: 10,
-    position: "relative",
-    top: 0,
-    left: 0,
-    right: 0,
-    zIndex: 1,
-    backgroundColor: "rgba(43, 43, 43, 0.3)",
-  },
-  title: {
-    fontSize: Platform.OS === "web" ? 35 : 25,
-    color: Colors.White,
-    fontWeight: "bold",
-    paddingTop: 15,
-  },
   item: {
     display: "flex",
     flexDirection: "row",
@@ -184,28 +162,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 30,
     backgroundColor: Colors.Licorice,
-  },
-  sectionTitle: {
-    color: Colors.SeaGreen,
-    fontWeight: "bold",
-    fontSize: 27,
-  },
-  filterButton: {
-    marginRight: 10,
-    paddingHorizontal: 15,
-    paddingVertical: 8,
-    borderRadius: 20,
-    backgroundColor: Colors.Jet,
-    shadowColor: Colors.Onyx,
-    shadowOpacity: 0.3,
-    shadowRadius: 3,
-    elevation: Platform.OS === "android" ? 3 : 0,
-    transition: "background-color 0.3s ease",
-  },
-  filterText: {
-    fontWeight: "bold",
-    color: Colors.White,
-    fontSize: Platform.OS === "web" ? 17 : 14,
   },
 });
 

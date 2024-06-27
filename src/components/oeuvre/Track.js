@@ -6,6 +6,7 @@ import {useNavigation} from '@react-navigation/native'
 import { Rating } from 'react-native-ratings';
 import { Divider } from 'react-native-paper';
 import axiosInstance from '../../api/axiosInstance';
+import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
 
 const Track = ({data}) => {
     const [isHovered, setIsHovered] = useState(false);
@@ -89,34 +90,53 @@ const Track = ({data}) => {
     )
 }
 const styles = StyleSheet.create({
-    container: { 
+    container: {
         backgroundColor: Colors.Jet,
         paddingHorizontal: 20,
         paddingVertical: 20,
         borderRadius: 15,
-        width: Platform.OS != 'web' ? 386 : 950,
         shadowColor: Colors.Onyx,
         shadowOpacity: 0.3,
         shadowRadius: 3,
-        elevation: Platform.OS === 'android' ? 3 : 0, 
-        transition: 'background-color 0.3s ease',
+        elevation: Platform.OS === 'android' ? 3 : 0,
+        width: Platform.OS === 'web'? wp('80%') : wp('90%'),
+        marginBottom: 20,
     },
     item: {
-        display:'flex',
         gap: 10,
-        justifyContent: 'space-around'
     },
-    itemHovered: {
-        backgroundColor: Colors.Onyx, // Fond avec effet de fondu
+    header: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+    },
+    title: {
+        color: Colors.White,
+        fontSize: 17,
     },
     divider: {
         backgroundColor: Colors.BattleShipGray,
         marginTop: 10,
+        marginBottom: 10,
     },
-    sectionIcon : {
-        display:  "flex",
-        flexDirection:"row",
-        justifyContent: 'space-between'
-    }
+    actions: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+    },
+    actionGroup: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    actionText: {
+        color: Colors.White,
+        fontSize: 20,
+        textAlign: 'center',
+        marginLeft: 5,
+    },
+    itemHovered: {
+        backgroundColor: Colors.Onyx,
+    },
 });
+
 export default Track

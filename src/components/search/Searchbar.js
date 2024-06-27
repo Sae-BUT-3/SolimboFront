@@ -13,6 +13,7 @@ import Svg, { Path } from "react-native-svg";
 import { Colors } from "../../style/color";
 import { breakpoint } from "../../style/breakpoint";
 import { useTranslation } from "react-i18next";
+import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
 
 function SearchBar({ keyPressHandler, filters, includeCancelButton = true }) {
   const { height, width } = useWindowDimensions();
@@ -24,7 +25,7 @@ function SearchBar({ keyPressHandler, filters, includeCancelButton = true }) {
     diplayContainer: {
       display: "flex",
       flexDirection: "row",
-      width: "100%",
+      width: wp("100%"),
       alignItems: "flex-start",
       justifyContent: "flex-start",
       marginBottom: 15,
@@ -37,7 +38,7 @@ function SearchBar({ keyPressHandler, filters, includeCancelButton = true }) {
       alignItems: "center",
       paddingLeft: 10,
       paddingTop: 10,
-      width: Platform.OS === "web" ? "90%" : "100%",
+      width: Platform.OS === "web" ? wp("80%") : wp("95%"),
     },
     SearchBar: {
       display: "flex",

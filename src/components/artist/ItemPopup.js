@@ -75,6 +75,7 @@ const styles = StyleSheet.create({
         elevation: Platform.OS === 'android' ? 3 : 0, 
         transition: 'background-color 0.3s ease',
         marginBottom: Platform.OS == 'web' ? 30 : 20,
+        boxShadow: "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
     },
     item: {
         display:'flex',

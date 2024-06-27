@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, View, FlatList, ActivityIndicator, Button, Platform, Text } from 'react-native';
+import { StyleSheet, View, FlatList, Platform, Text } from 'react-native';
 import { Colors } from '../../style/color';
 import Track from './Track';
-import { PaperProvider } from 'react-native-paper';
 import Loader from '../common/Loader';
 import { FontAwesome } from '@expo/vector-icons';
 
@@ -25,11 +24,8 @@ const Trackgraphy = ({ items }) => {
       setIsLoadingMore(true);
     }
     
-    // Simuler un appel API pour obtenir des éléments
-    if (items !== undefined) {
-      const newData = items.slice(newPage * itemsPerPage, (newPage * itemsPerPage) + itemsPerPage);
-      setData(newData);
-    }
+    const newData = items?.slice(newPage * itemsPerPage, (newPage * itemsPerPage) + itemsPerPage);
+    setData(newData);
     
     setIsLoading(false);
     setIsLoadingMore(false);
@@ -50,45 +46,45 @@ const Trackgraphy = ({ items }) => {
       loadMoreData(previousPage);
     }
   };
-
+  const renderFooter = () => (
+    <View style={styles.buttonContainer}>
+      <FontAwesome name="arrow-left" onPress={handleLoadPrevious} size={20} color={Colors.DarkSpringGreen} disabled={page === 0} />
+      <Text style={styles.pageNumber}>{page + 1}/{Math.ceil(items.length/itemsPerPage)} </Text>
+      <FontAwesome name="arrow-right"  onPress={handleLoadMore} size={20} color={Colors.DarkSpringGreen} disabled={(page + 1) * itemsPerPage >= items.length} />
+    </View>
+  );
+  
   return (
     isLoading ? (
         <Loader />
       ) : (
-        items ===undefined ? (
-          <Text style={{color: Colors.White}}>No data</Text>
-        ) : (
-        <View style={styles.container}>
-          <FlatList
-            data={data}
-            keyExtractor={(item, index) => index.toString()}
-            renderItem={({ item }) => (
-              <View style={{ width: '100%', alignItems: 'center',marginTop: 20}}>
-                <Track data={item} />
-              </View>
-            )}
-            showsHorizontalScrollIndicator={false}
-          />
-          <View style={styles.buttonContainer}>
-            <FontAwesome name="arrow-left" onPress={handleLoadPrevious} size={20} color={Colors.DarkSpringGreen} disabled={page === 0} />
-            <Text style={styles.pageNumber}>{page + 1}/{Math.ceil(items.length/itemsPerPage)} </Text>
-            <FontAwesome name="arrow-right"  onPress={handleLoadMore} size={20} color={Colors.DarkSpringGreen} disabled={(page + 1) * itemsPerPage >= items.length} />
+      <FlatList
+        contentContainerStyle={styles.container}
+        data={data}
+        keyExtractor={(item, index) => index.toString()}
+        renderItem={({ item }) => (
+          <View style={{marginBottom: 20}}>
+            <Track data={item} />
           </View>
-        </View>
-        )
+          
+        )}
+        ListFooterComponent={renderFooter}
+        showsHorizontalScrollIndicator={false}
+      />
    )
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     backgroundColor: Colors.Licorice,
-    marginBottom: 25
+    alignItems: 'center',
+    justifyContent: 'flex-start',
   },
   buttonContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
+    gap: 30,
     padding: 20,
   },
   sectionFilter: {

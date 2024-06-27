@@ -20,6 +20,8 @@ import Review from "../components/review/Review";
 import { Colors } from "../style/color";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../contexts/AuthContext";
+import screenStyle from "../style/screenStyle";
+
 const baseImageURL =
   "https://merriam-webster.com/assets/mw/images/article/art-wap-article-main/egg-3442-e1f6463624338504cd021bf23aef8441@1x.jpg";
 
@@ -88,8 +90,9 @@ const HomeScreen = () => {
   );
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
+    <View style={screenStyle.container}>
+       {Platform.OS !== 'web' && (
+      <View style={screenStyle.header}>
         <View style={{ flexDirection: "row", alignItems: "center" }}>
           <Image
             source={require("../assets/images/main_logo_no_bg.png")}
@@ -111,16 +114,19 @@ const HomeScreen = () => {
           />
         </Pressable>
       </View>
+      )}
       <FlatList
         data={reviews}
         keyExtractor={(item, index) => index.toString()}
         renderItem={({ item }) => (
-          <View style={styles.itemContainer}>
             <Review data={item} />
-          </View>
         )}
         onEndReached={loadMoreReviews}
         onEndReachedThreshold={0.5}
+        contentContainerStyle={{
+          alignItems: 'center',
+          justifyContent: 'flex-start',
+      }}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
@@ -131,13 +137,7 @@ const HomeScreen = () => {
         }
         ListFooterComponent={renderFooter}
         ListEmptyComponent={
-          <View
-            style={{
-              justifyContent: "space-around",
-              gap: 55,
-              alignItems: "center",
-            }}
-          >
+          <View style={screenStyle.emptyImage}>
             <Text />
             <ImageBackground
               source={require("../assets/images/main_logo_v1_500x500.png")}
@@ -156,27 +156,6 @@ const HomeScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: Colors.Licorice,
-  },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingLeft: 10,
-    paddingRight: 10,
-    paddingBottom: 15,
-    paddingTop: Platform.OS === "web" ? 25 : 55,
-    position: "relative",
-    top: 0,
-    left: 0,
-    right: 0,
-    zIndex: 1,
-    backgroundColor: "rgba(43, 43, 43, 0.5)",
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.Onyx,
-  },
   name: {
     fontSize: Platform.OS === "web" ? 30 : 20,
     color: Colors.Celadon,
@@ -186,19 +165,6 @@ const styles = StyleSheet.create({
     textShadowColor: "rgba(0, 0, 0, 0.5)",
     textShadowOffset: { width: -1, height: 1 },
     textShadowRadius: 10,
-  },
-  text: {
-    fontSize: Platform.OS === "web" ? 20 : 16,
-    color: Colors.Celadon,
-    marginBottom: 10,
-    textAlign: "center",
-    textShadowColor: "rgba(0, 0, 0, 0.5)",
-    textShadowOffset: { width: -1, height: 1 },
-    textShadowRadius: 10,
-  },
-  itemContainer: {
-    width: "100%",
-    alignItems: "center",
   },
 });
 

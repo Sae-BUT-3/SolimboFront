@@ -6,7 +6,6 @@ import {
   Pressable,
   Animated,
   Platform,
-  ScrollView,
 } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { FontAwesome5, FontAwesome } from "@expo/vector-icons"; // Importation de FontAwesome5
@@ -28,6 +27,8 @@ import pressableBasicStyle from "../../style/pressableBasicStyle";
 import Toast from "react-native-toast-message";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../../contexts/AuthContext";
+import screenStyle from '../../style/screenStyle';
+
 const ResponseScreen = () => {
   const route = useRoute();
   const { id, type } = route.params || null;
@@ -45,6 +46,7 @@ const ResponseScreen = () => {
   const getData = async () => {
     setUser(await Tokenizer.getCurrentUser());
   };
+
   useEffect(() => {
     getData();
     if (type === "review") {
@@ -73,16 +75,6 @@ const ResponseScreen = () => {
   const handleGoBack = () => {
     navigation.goBack();
   };
-
-  const headerOpacity = scrollY.interpolate({
-    inputRange: [0, 100, 200],
-    outputRange: [
-      "rgba(255, 255, 255, 0)",
-      "rgba(255, 255, 255, 1)",
-      "rgba(64, 64, 64, 1)",
-    ],
-    extrapolate: "clamp",
-  });
 
   const addComment = () => {
     if (comment !== "") {
@@ -133,13 +125,13 @@ const ResponseScreen = () => {
   }
 
   return (
-    <View style={styles.container}>
+    <View style={screenStyle.container}>
       {isLoading ? (
         <Loader />
       ) : (
         <PaperProvider>
           <Animated.View>
-            <View style={[styles.header, headerOpacity]}>
+          <View style={[screenStyle.header,{ marginBottom: 30}]}>
               <Pressable onPress={handleGoBack}>
                 <FontAwesome5
                   name="chevron-left"
@@ -165,26 +157,8 @@ const ResponseScreen = () => {
                 </View>
               </DataTable.Header>
             </DataTable>
-            <View
-              style={{
-                backgroundColor: Colors.Jet,
-                display: "flex",
-                gap: 5,
-                justifyContent: "flex-start",
-                padding: 20,
-                borderTopLeftRadius: 15,
-                borderTopRightRadius: 15,
-              }}
-            >
-              <View
-                style={{
-                  display: "flex",
-                  flexDirection: "row",
-                  gap: 10,
-                  justifyContent: "flex-start",
-                  alignItems: "center",
-                }}
-              >
+            <View style={styles.commentSection}>
+              <View style={styles.userInfo}>
                 <Avatar.Image
                   source={{
                     uri:
@@ -194,13 +168,7 @@ const ResponseScreen = () => {
                   size={64}
                   accessibilityLabel={currentUser.pseudo}
                 />
-                <Text
-                  style={{
-                    color: Colors.SeaGreen,
-                    fontSize: 19,
-                    fontWeight: "normal",
-                  }}
-                >
+                <Text style={styles.userAlias}>
                   {"@" + currentUser.alias}
                 </Text>
               </View>
@@ -210,7 +178,7 @@ const ResponseScreen = () => {
                 placeholder={
                   type === "review"
                     ? t("comment.writecomment")
-                    : t("comment.response", { alias: user.alias })
+                    : t("comment.response", { alias: currentUser.alias })
                 }
                 value={comment}
                 onChangeText={(text) => setText(text)}
@@ -223,7 +191,7 @@ const ResponseScreen = () => {
                 style={styles.input} // Ajoutez le style input
               />
               <Pressable
-                style={[pressableBasicStyle.button, { width: 160 }]}
+                style={[pressableBasicStyle.button, styles.commentButton]}
                 onPress={addComment}
               >
                 <FontAwesome
@@ -232,7 +200,7 @@ const ResponseScreen = () => {
                   color={Colors.White}
                   style={{ paddingRight: 10 }}
                 />
-                <Text style={styles.text}>{t("comment.comment")}</Text>
+                <Text style={screenStyle.filterText}>{t("comment.comment")}</Text>
               </Pressable>
             </View>
           </KeyboardAwareScrollView>
@@ -243,53 +211,38 @@ const ResponseScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: Colors.Licorice,
-  },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "flex-start",
-    paddingTop: 35,
-    paddingLeft: 20,
-    paddingBottom: 10,
-    position: "relative",
-    top: 0,
-    left: 0,
-    right: 0,
-    zIndex: 1,
-    marginBottom: Platform.OS === "web" ? 30 : 20,
-    marginTop: Platform.OS === "web" ? 30 : 20,
-  },
-  text: {
-    fontWeight: "bold",
-    color: Colors.White,
-    fontSize: 17,
-    textAlign: "center",
-  },
-  button: {
-    marginRight: 10,
-    paddingHorizontal: 15,
-    paddingVertical: 8,
-    borderRadius: 20,
-    width: 200,
-    backgroundColor: Colors.DarkSpringGreen,
-    shadowColor: Colors.Onyx,
-    shadowOpacity: 0.3,
-    shadowRadius: 3,
-    elevation: Platform.OS === "android" ? 3 : 0,
-    transition: "background-color 0.3s ease",
-  },
   scrollView: {
-    flexGrow: 1, // Ajoutez flexGrow: 1 pour que le contenu puisse se faire défiler
-    justifyContent: "space-between", // Ajustez cet espace comme vous le souhaitez
+      flexGrow: 1,
+      justifyContent: 'space-between',
+  },
+  commentSection: {
+      backgroundColor: Colors.Jet,
+      padding: 20,
+      borderTopLeftRadius: 15,
+      borderTopRightRadius: 15,
+  },
+  userInfo: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginBottom: 20,
+  },
+  userAlias: {
+      color: Colors.SeaGreen,
+      fontSize: 19,
+      fontWeight: 'normal',
+      marginLeft: 10,
   },
   input: {
-    backgroundColor: Colors.Jet,
-    fontSize: 18,
-    padding: 10,
-    marginBottom: 20,
+      backgroundColor: Colors.Jet,
+      fontSize: 18,
+      padding: 10,
+      marginBottom: 20,
+  },
+  commentButton: {
+      width: 160,
+  },
+  sendIcon: {
+      paddingRight: 10,
   },
 });
 

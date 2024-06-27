@@ -179,7 +179,6 @@ const CommentScreen = () => {
             }
             onEndReached={handleLoadMore}
             onEndReachedThreshold={0.5}
-            ListFooterComponent={isLoadingMore ? <Loader /> : null}
           />
           <View style={styles.response}>
             <Pressable onPress={handleResponse}>
