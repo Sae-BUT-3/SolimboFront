@@ -32,6 +32,8 @@ import Toast from "react-native-toast-message";
 import commonStyles from "../style/commonStyle";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../contexts/AuthContext";
+import screenStyle from "../style/screenStyle";
+
 const ProfileScreen = () => {
   const navigation = useNavigation();
   const { checkLogin } = useAuth();
@@ -151,7 +153,7 @@ const ProfileScreen = () => {
   return isLoading ? (
     <Loader />
   ) : (
-    <View style={styles.container}>
+    <View style={screenStyle.container}>
       <Animated.View style={styles.header}>
         <View style={styles.headerContent}>
           <FontAwesome
@@ -198,8 +200,7 @@ const ProfileScreen = () => {
       </Animated.View>
       <View
         style={[
-          styles.subcontainer,
-          { width: width > breakpoint.medium ? 1200 : "100%", flex: 1 },
+          styles.subcontainer
         ]}
       >
         {data.forbidden && !data.isCurrent ? (
@@ -210,23 +211,12 @@ const ProfileScreen = () => {
               <FlatList
                 data={favoris}
                 keyExtractor={(item, index) => index.toString()}
-                renderItem={({ item, index }) =>
-                  index !== favoris.length - 1 ? (
-                    <View style={{ width: "100%", alignItems: "center" }}>
-                      <Item data={item} />
-                    </View>
-                  ) : (
-                    <View
-                      style={{
-                        width: "100%",
-                        alignItems: "center",
-                        paddingBottom: 50,
-                      }}
-                    >
-                      <Item data={item} />
-                    </View>
-                  )
-                }
+                renderItem={({ item, index }) => <Item data={item} />}
+                contentContainerStyle={{
+                  justifyContent: "flex-start",
+                  alignItems: "center",
+                }}
+                ListEmptyComponent={<EmptyList />}
                 refreshControl={
                   <RefreshControl
                     refreshing={refreshing}
@@ -235,17 +225,19 @@ const ProfileScreen = () => {
                     tintColor={Colors.SeaGreen}
                   />
                 }
+                horizontal={Platform.OS === "web"}
+                showsHorizontalScrollIndicator={false}
               />
             )}
             {tab === "posts" && (
               <FlatList
                 data={reviews}
                 keyExtractor={(item, index) => index.toString()}
-                renderItem={({ item }) => (
-                  <View style={{ width: "100%", alignItems: "center" }}>
-                    <Review data={item} />
-                  </View>
-                )}
+                renderItem={({ item }) => <Review data={item} />}
+                contentContainerStyle={{
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
                 onEndReached={loadMoreReviews}
                 onEndReachedThreshold={0.5}
                 ListEmptyComponent={<EmptyList />}
@@ -285,18 +277,15 @@ const EmptyList = () => (
     <Text />
     <ImageBackground
       source={require("../assets/images/main_logo_v1_500x500.png")}
-      style={styles.emptyImage}
+      style={screenStyle.emptyImage}
     />
     <Text />
   </View>
 );
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: Colors.Licorice,
-  },
   subcontainer: {
+    flex: 1,
     alignItems: "center",
     justifyContent: "center",
     marginTop: 30,
@@ -357,8 +346,10 @@ const styles = StyleSheet.create({
   headerContent: {
     flexDirection: "row",
     justifyContent: "space-between",
-    paddingBottom: 15,
-    paddingTop: 10,
+    alignItems: 'baseline',
+    paddingLeft: 5,
+    padding: 10,
+    marginBottom: 10
   },
   chevronIcon: {
     paddingLeft: 15,

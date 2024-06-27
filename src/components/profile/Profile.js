@@ -14,13 +14,15 @@ import commonStyles from "../../style/commonStyle";
 import ReadMore from "react-native-read-more-text";
 import ImagePanel from "../common/ImagePanel";
 import { useTranslation } from "react-i18next";
+import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
+import screenStyle from "../../style/screenStyle";
 
 const toCapitalCase = (mot) => {
   if (mot == "artist") mot = mot + "e";
   return mot ? mot.charAt(0).toUpperCase() + mot.slice(1) : mot;
 };
 
-function SearchBar({
+function Profile({
   user,
   isCurrent,
   relation,
@@ -88,7 +90,7 @@ function SearchBar({
 
   useEffect(() => {
     setFollowText(getFollowValues(user, relation));
-  }, []);
+  }, [user, relation]);
   const handleFollowMouseEnter = () => {
     setIsFollowHovered(true);
   };
@@ -113,6 +115,8 @@ function SearchBar({
     diplayContainer: {
       alignItems: "flex-start",
       justifyContent: "space-between",
+      paddingBottom: 15,
+      width: Platform.OS === "web" ?  wp('80%') : wp('90%'),
     },
     image: {
       width: width < breakpoint.medium ? 75 : 80,
@@ -124,7 +128,7 @@ function SearchBar({
       justifyContent: "space-between",
       alignItems: "center",
       gap: 10,
-      paddingLeft: 9,
+      paddingLeft: 15,
     },
 
     infoContainer: {
@@ -189,8 +193,13 @@ function SearchBar({
     },
     bioText: {
       color: Colors.White,
-      textAlign: "left",
-      fontSize: Platform.OS === "web" ? 20 : 15,
+      textAlign: "justify",
+      fontSize: Platform.OS === "web" ? 20 : 17,
+    },
+    descriptionContainer: {
+      marginBottom: Platform.OS == 'web' ? 20 : 15,
+      marginTop: Platform.OS == 'web' ? 20 : 15,
+      marginLeft: 20,
     },
   });
 
@@ -198,14 +207,7 @@ function SearchBar({
     <>
       <View style={[styles.container]}>
         <View style={[styles.imageContainer]}>
-          <View
-            style={{
-              justifyContent: "space-around",
-              alignItems: "flex-start",
-              flexDirection: "row",
-              gap: 35,
-            }}
-          >
+          <View style={styles.diplayContainer}>
             <Image
               style={styles.image}
               source={{
@@ -227,7 +229,7 @@ function SearchBar({
           {isCurrent ? null : (
             <Pressable
               style={[
-                styles.followButton,
+                screenStyle.followButton,
                 {
                   backgroundColor: btnColored
                     ? Colors.Jet
@@ -260,12 +262,7 @@ function SearchBar({
           onExpand={() => setIsExpanded(true)}
         >
           <Text
-            style={{
-              color: Colors.White,
-              padding: 10,
-              fontSize: Platform.OS == "web" ? 20 : 16,
-              fontWeight: "normal",
-            }}
+            style={styles.bioText}
           >
             {toCapitalCase(user?.bio)}
           </Text>
@@ -313,4 +310,4 @@ function SearchBar({
   );
 }
 
-export default SearchBar;
+export default Profile;

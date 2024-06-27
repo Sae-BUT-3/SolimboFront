@@ -1,54 +1,29 @@
-import { useState } from "react";
-import {
-  FlatList,
-  Modal,
-  Platform,
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
-import { FontAwesome5, FontAwesome } from "@expo/vector-icons"; // Importation de FontAwesome5
-import { Colors } from "../../style/color";
+import React, { useState } from "react";
+import { FlatList, Modal, Platform, Pressable, StyleSheet, Text, View } from "react-native";
+import { FontAwesome5, FontAwesome } from '@expo/vector-icons';
+import { Colors } from '../../style/color';
 import { Avatar } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
-import axiosInstance from "../../api/axiosInstance";
+import axiosInstance from '../../api/axiosInstance';
 import GestureRecognizer from "react-native-swipe-gestures";
-import { useTranslation } from "react-i18next";
+import screenStyle from "../../style/screenStyle";
 
 const ImagePanel = ({ avatars, type, show, onRefresh }) => {
   const [isModalVisible, setIsModalVisible] = useState(true);
   const navigation = useNavigation();
-  const { t } = useTranslation();
+
   const closeModal = () => {
     setIsModalVisible(false);
     show(false);
   };
 
-  const onfollow = (item) => {
-    if (type == "artist" || item?.type === "artist") {
-      axiosInstance
-        .post("/users/follow", { artistId: item.id })
-        .then((res) => {
-          onRefresh();
-        })
-        .catch((e) =>
-          console.log(
-            "Une erreur interne à notre serveur est survenue. Réessayer plus tard !"
-          )
-        );
-    } else {
-      axiosInstance.post("/amis/unfollow", {
-        amiIdUtilisateur: item.id_utilisateur,
-      });
-      onRefresh()
-        .then((res) => {})
-        .catch((e) =>
-          console.log(
-            "Une erreur interne à notre serveur est survenue. Réessayer plus tard !"
-          )
-        );
-    }
+  const handleFollow = (item) => {
+    const endpoint = type === 'artist' || item?.type === 'artist' ? '/users/follow' : '/amis/unfollow';
+    const id = type === 'artist' || item?.type === 'artist' ? { artistId: item.id } : { amiIdUtilisateur: item.id_utilisateur };
+
+    axiosInstance.post(endpoint, id)
+      .then(() => onRefresh())
+      .catch(() => console.log('An internal server error occurred. Please try again later.'));
   };
 
   return (
@@ -56,7 +31,7 @@ const ImagePanel = ({ avatars, type, show, onRefresh }) => {
       <Modal
         isVisible={isModalVisible}
         style={styles.modal}
-        swipeDirection={["down"]}
+        swipeDirection={['down']}
         onSwipeComplete={closeModal}
         onBackdropPress={closeModal}
         animationType="slide"
@@ -71,73 +46,23 @@ const ImagePanel = ({ avatars, type, show, onRefresh }) => {
           <View style={styles.panelContent}>
             <FlatList
               data={avatars}
-              renderItem={(
-                { item } // Correction ici
-              ) => (
-                <View
-                  style={{
-                    display: "flex",
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    padding: 10,
-                    flexWrap: "wrap",
-                  }}
-                >
-                  <View
-                    style={{
-                      display: "flex",
-                      flexDirection: "row",
-                      justifyContent: "flex-end",
-                      alignItems: "flex-end",
-                      gap: 15,
-                    }}
-                  >
-                    <Pressable
-                      onPress={() => {
-                        if (type === "artist") {
-                          closeModal();
-                          navigation.navigate("artist", { id: item.id });
-                        } else {
-                          closeModal();
-                          navigation.navigate("user", {
-                            id: item.id_utilisateur,
-                          });
-                        }
-                      }}
-                    >
-                      <Avatar.Image
-                        size={56}
-                        source={{
-                          uri:
-                            type === "user" || item?.type === "user"
-                              ? item?.photo
-                              : item?.image,
-                        }}
-                      />
+              renderItem={({ item }) => (
+                <View style={styles.avatarContainer}>
+                  <View style={styles.avatarInfo}>
+                    <Pressable onPress={() => {
+                      closeModal();
+                      navigation.navigate(type === 'artist' ? 'artist' : 'user', { id: item.id || item.id_utilisateur });
+                    }}>
+                      <Avatar.Image size={56} source={{ uri: type === 'user' || item?.type === 'user' ? item?.photo : item?.image }} />
                     </Pressable>
                     <Text numberOfLines={1} style={styles.panelText}>
-                      {type === "user" || item?.type === "user"
-                        ? item?.pseudo
-                        : item?.name}
+                      {type === 'user' || item?.type === 'user' ? item?.pseudo : item?.name}
                     </Text>
                   </View>
-                  <Pressable
-                    style={styles.followButton}
-                    activeOpacity={1}
-                    onPress={() => onfollow(item)}
-                  >
-                    {type === "user" ||
-                    item?.type === "user" ||
-                    item.doesUserFollow ? (
-                      <Text style={styles.buttonText}>
-                        {t("friend.followed")}
-                      </Text>
-                    ) : (
-                      <Text style={styles.buttonText}>
-                        {t("friend.follow")}
-                      </Text>
-                    )}
+                  <Pressable style={screenStyle.followButton} onPress={() => handleFollow(item)}>
+                    <Text style={styles.buttonText}>
+                      {(type === 'user' || item?.type === 'user') || item.doesUserFollow ? 'Suivi(e)' : '+ Suivre'}
+                    </Text>
                   </Pressable>
                 </View>
               )}
@@ -152,7 +77,7 @@ const ImagePanel = ({ avatars, type, show, onRefresh }) => {
 
 const styles = StyleSheet.create({
   modal: {
-    justifyContent: "flex-end",
+    justifyContent: 'flex-end',
     margin: 0,
   },
   panelContainer: {
@@ -167,10 +92,22 @@ const styles = StyleSheet.create({
   panelContent: {
     backgroundColor: Colors.Onyx,
     borderRadius: 15,
-    justifyContent: "space-around",
+    justifyContent: 'space-around',
     marginTop: 10,
     paddingTop: 20,
     paddingBottom: 20,
+  },
+  avatarContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 10,
+    flexWrap: 'wrap',
+  },
+  avatarInfo: {
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    gap: 15,
   },
   panelText: {
     color: Colors.White,
@@ -180,21 +117,9 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: Colors.White,
-    fontWeight: "bold",
-    textAlign: "center",
+    fontWeight: 'bold',
+    textAlign: 'center',
     fontSize: 15,
-  },
-  followButton: {
-    backgroundColor: Colors.DarkSpringGreen,
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 10,
-    marginTop: 10,
-    shadowColor: Colors.Onyx,
-    shadowOpacity: 0.3,
-    shadowRadius: 3,
-    elevation: Platform.OS === "android" ? 4 : 0,
-    transition: "background-color 0.3s ease",
   },
 });
 

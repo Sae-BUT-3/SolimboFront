@@ -96,7 +96,7 @@ const Oeuvre = ({ data, artists, favoris, likeUser, setResponse, show }) => {
                   source={{
                     uri: data.type === "track" ? data.album.image : data.image,
                   }}
-                  style={{ width: 164, height: 164, borderRadius: 5 }}
+                  style={styles.image}
                 />
                 <View style={styles.playButtonContainer}>
                   <Pressable onPress={linkto}>
@@ -105,60 +105,24 @@ const Oeuvre = ({ data, artists, favoris, likeUser, setResponse, show }) => {
                 </View>
               </Pressable>
               <View style={styles.section}>
-                <View
-                  style={[
-                    styles.section,
-                    {
-                      flexDirection: "row",
-                      alignItems: "center",
-                      flexWrap: "wrap",
-                    },
-                  ]}
-                >
+                <View style={styles.infoContainer}>
                   {data.type !== "track" && (
                     <>
-                      <Text
-                        style={{
-                          color: Colors.White,
-                          fontSize: Platform.OS === "web" ? 20 : 17,
-                          textShadowColor: "rgba(0, 0, 0, 0.75)",
-                          textShadowOffset: { width: -1, height: 1 },
-                          textShadowRadius: 10,
-                          textTransform: "uppercase",
-                        }}
-                      >
+                      <Text style={styles.infoText}>
                         {data.type}
                       </Text>
                       <PointTrait point={true} />
                     </>
                   )}
-                  <Text
-                    style={{
-                      color: Colors.White,
-                      fontSize: Platform.OS === "web" ? 20 : 17,
-                      textAlign: "center",
-                      textShadowColor: "rgba(0, 0, 0, 0.75)",
-                      textShadowOffset: { width: -1, height: 1 },
-                      textShadowRadius: 10,
-                    }}
-                  >
-                    {data.type !== "track"
-                      ? data.release_date.substring(0, 4)
-                      : data.album.release_date.substring(0, 4)}
+                  <Text style={styles.infoText}>
+                    {data?.type !== "track"
+                      ? data?.release_date.substring(0, 4)
+                      : data?.album.release_date.substring(0, 4)}
                   </Text>
-                  {data.total_tracks > 1 && (
+                  {data?.total_tracks > 1 && (
                     <>
                       <PointTrait point={true} />
-                      <Text
-                        style={{
-                          color: Colors.White,
-                          fontSize: Platform.OS === "web" ? 20 : 17,
-                          textAlign: "center",
-                          textShadowColor: "rgba(0, 0, 0, 0.75)",
-                          textShadowOffset: { width: -1, height: 1 },
-                          textShadowRadius: 10,
-                        }}
-                      >
+                      <Text style={styles.infoText}>
                         {data.total_tracks + " titres"}
                       </Text>
                     </>
@@ -172,11 +136,7 @@ const Oeuvre = ({ data, artists, favoris, likeUser, setResponse, show }) => {
                     >
                       <Image
                         source={{ uri: artists[0].image }}
-                        style={{
-                          width: Platform.OS === "web" ? 64 : 40,
-                          height: Platform.OS === "web" ? 64 : 40,
-                          borderRadius: 82,
-                        }}
+                        style={styles.artistImage}
                       />
                     </Pressable>
                   ) : (
@@ -216,13 +176,7 @@ const Oeuvre = ({ data, artists, favoris, likeUser, setResponse, show }) => {
                   color={Colors.DarkSpringGreen}
                   regular
                 />
-                <Text
-                  style={{
-                    color: Colors.White,
-                    fontSize: 20,
-                    textAlign: Platform.OS !== "web" ? "center" : undefined,
-                  }}
-                >
+                <Text style={styles.infoText}>
                   {data.reviewCount ? data.reviewCount : 0}
                 </Text>
               </View>
@@ -284,7 +238,6 @@ const Oeuvre = ({ data, artists, favoris, likeUser, setResponse, show }) => {
 
 const styles = StyleSheet.create({
   profileContainer: {
-    display: "flex",
     justifyContent: "center",
     alignItems: "flex-start",
     gap: 10,
@@ -295,6 +248,9 @@ const styles = StyleSheet.create({
     display: "flex",
     gap: 40,
     alignContent: "flex-start",
+    paddingHorizontal: 15,
+    paddingTop: 45,
+    gap: 10,
   },
   section: {
     display: "flex",
@@ -303,7 +259,6 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
   },
   sectionFollower: {
-    display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
     flexDirection: "row",
@@ -379,6 +334,35 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(43, 43, 43, 0.5)",
     padding: 10,
     borderRadius: 5,
+  },
+  image: {
+    width: 164,
+    height: 164,
+    borderRadius: 5,
+  },
+  sectionIcon: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
+  artistImage: {
+    width: Platform.OS === 'web' ? 64 : 40,
+    height: Platform.OS === 'web' ? 64 : 40,
+    borderRadius: 82,
+  },
+  infoContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+    gap: 3,
+  },
+  infoText: {
+    color: Colors.White,
+    fontSize: Platform.OS === 'web' ? 20 : 17,
+    textAlign: 'center',
+    textShadowColor: 'rgba(0, 0, 0, 0.75)',
+    textShadowOffset: { width: -1, height: 1 },
+    textShadowRadius: 10,
   },
 });
 

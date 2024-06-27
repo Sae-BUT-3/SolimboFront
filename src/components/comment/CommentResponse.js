@@ -17,6 +17,7 @@ import { useNavigation } from "@react-navigation/native";
 import ActionsPanel from "../common/ActionsPanel";
 import Tokenizer from "../../utils/Tokenizer";
 import { useTranslation } from "react-i18next";
+
 const toCapitalCase = (mot) => {
   return mot ? mot.charAt(0).toUpperCase() + mot.slice(1) : mot;
 };
@@ -129,7 +130,7 @@ const Response = ({ data }) => {
       name: "comment-dots",
       handle: displayReply,
       color: Colors.SeaGreen,
-      text: replies ? "Masquer les réponses" : "Afficher les réponses",
+      text: replies ? t("comment.hide") : t("comment.display"),
       textColor: Colors.White,
       solid: true,
       size: 30,
@@ -166,15 +167,7 @@ const Response = ({ data }) => {
   return (
     <View style={styles.commentContainer}>
       <Pressable onLongPress={() => setActive(!isActive)}>
-        <View
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            justifyContent: "flex-start",
-            gap: 10,
-            alignItems: "center",
-          }}
-        >
+        <View style={styles.header}>
           <Pressable
             onPress={() =>
               navigation.navigate("user", {
@@ -194,18 +187,12 @@ const Response = ({ data }) => {
               })
             }
           >
-            <Text
-              style={{
-                color: Colors.DarkSpringGreen,
-                fontSize: 19,
-                fontWeight: "normal",
-              }}
-            >
+            <Text style={styles.alias}>
               {"@" + data.utilisateur.alias}
             </Text>
           </Pressable>
         </View>
-        <View style={{ margin: Platform.OS == "web" ? 20 : 10 }}>
+        <View  style={styles.body}>
           <ReadMore
             numberOfLines={5}
             renderTruncatedFooter={renderTruncatedFooter}
@@ -213,44 +200,15 @@ const Response = ({ data }) => {
             onReady={() => setIsExpanded(false)}
             onExpand={() => setIsExpanded(true)}
           >
-            <Text
-              style={{
-                color: Colors.White,
-                padding: 10,
-                fontSize: 19,
-                fontWeight: "normal",
-              }}
-            >
+            <Text style={styles.description}>
               {toCapitalCase(data.description)}
             </Text>
           </ReadMore>
         </View>
         <View style={styles.commentInfo}>
-          <View
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              gap: 10,
-              justifyContent: "space-between",
-              alignItems: "center",
-              marginTop: 10,
-              marginBottom: 10,
-            }}
-          >
-            <View
-              style={{
-                display: "flex",
-                flexDirection: "row",
-                alignItems: "center",
-              }}
-            >
-              <View
-                style={{
-                  display: "flex",
-                  flexDirection: "row",
-                  alignItems: "center",
-                }}
-              >
+          <View style={styles.commentStats}>
+            <View style={styles.statItem}>
+              <View style={styles.statItem}>
                 <Pressable onPress={() => handlePress(data.id_com)}>
                   {like ? (
                     <FontAwesome5
@@ -268,38 +226,18 @@ const Response = ({ data }) => {
                     />
                   )}
                 </Pressable>
-                <Text
-                  style={{
-                    color: Colors.White,
-                    padding: 10,
-                    fontSize: 19,
-                    fontWeight: "normal",
-                  }}
-                >
+                <Text style={styles.statText}>
                   {countlike}
                 </Text>
               </View>
-              <View
-                style={{
-                  display: "flex",
-                  flexDirection: "row",
-                  alignItems: "center",
-                }}
-              >
+              <View style={styles.statItem}>
                 <FontAwesome5
                   name="comments"
                   size={30}
                   color={Colors.DarkSpringGreen}
                   regular
                 />
-                <Text
-                  style={{
-                    color: Colors.White,
-                    padding: 10,
-                    fontSize: 19,
-                    fontWeight: "normal",
-                  }}
-                >
+                <Text style={styles.statText}>
                   {data?.countComment}
                 </Text>
               </View>
@@ -308,25 +246,10 @@ const Response = ({ data }) => {
           </View>
           {data.countComment > 0 ? (
             <>
-              <Divider style={{ backgroundColor: Colors.Onyx }} />
-              <View
-                style={{
-                  display: "flex",
-                  flexDirection: "row",
-                  gap: 10,
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  marginTop: 10,
-                }}
-              >
+              <Divider style={styles.divider} />
+              <View style={styles.commentActions}>
                 <Pressable onPress={displayReply}>
-                  <Text
-                    style={{
-                      color: Colors.DarkSpringGreen,
-                      fontSize: 19,
-                      fontWeight: "normal",
-                    }}
-                  >
+                  <Text style={styles.commentActionText}>
                     {replies ? t("comment.hide") : t("comment.display")}
                   </Text>
                 </Pressable>
@@ -338,13 +261,7 @@ const Response = ({ data }) => {
                     });
                   }}
                 >
-                  <Text
-                    style={{
-                      color: Colors.DarkSpringGreen,
-                      fontSize: 19,
-                      fontWeight: "normal",
-                    }}
-                  >
+                  <Text style={styles.commentActionText}>
                     {" "}
                     {t("common.reply")}
                   </Text>
@@ -353,7 +270,7 @@ const Response = ({ data }) => {
             </>
           ) : (
             <>
-              <Divider style={{ backgroundColor: Colors.Onyx }} />
+              <Divider style={[styles.divider, styles.repliesDivider]} />
               <View style={{ marginTop: 10, alignItems: "flex-end" }}>
                 <Pressable
                   onPress={() => {
@@ -363,13 +280,7 @@ const Response = ({ data }) => {
                     });
                   }}
                 >
-                  <Text
-                    style={{
-                      color: Colors.DarkSpringGreen,
-                      fontSize: 19,
-                      fontWeight: "normal",
-                    }}
-                  >
+                  <Text style={styles.commentActionText}>
                     {t("common.reply")}
                   </Text>
                 </Pressable>
@@ -380,7 +291,7 @@ const Response = ({ data }) => {
       </Pressable>
       {replies && (
         <>
-          <Divider style={[styles.divider, { marginTop: 10 }]} />
+          <Divider style={[styles.divider, styles.repliesDivider]} />
           <CommentResponse items={replies} />
         </>
       )}
@@ -400,20 +311,65 @@ const CommentResponse = ({ items }) => {
 
 const styles = StyleSheet.create({
   commentContainer: {
-    display: "flex",
     backgroundColor: Colors.Jet,
     marginBottom: 10,
     marginTop: 5,
+    padding: 10,
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
+  alias: {
+    color: Colors.DarkSpringGreen,
+    fontSize: 19,
+  },
+  body: {
+    marginVertical: 10,
+  },
+  description: {
+    color: Colors.White,
+    padding: 10,
+    fontSize: 19,
+  },
+  readMore: {
+    color: Colors.SeaGreen,
+    fontSize: Platform.OS === 'web' ? 20 : 17,
+  },
+  commentInfo: {
+    marginTop: 10,
+  },
+  commentStats: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  statItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
+  statText: {
+    color: Colors.White,
+    fontSize: 19,
+  },
+  commentActions: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: 10,
+  },
+  commentActionText: {
+    color: Colors.DarkSpringGreen,
+    fontSize: 19,
   },
   divider: {
     backgroundColor: Colors.Onyx,
-    marginBottom: 10,
+    marginVertical: 10,
   },
-  commentInfo: {
-    display: "flex",
-  },
-  icon: {
-    fontSize: Platform.OS === "web" ? 24 : 20,
+  repliesDivider: {
+    marginTop: 10,
   },
 });
 

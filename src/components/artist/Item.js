@@ -14,6 +14,7 @@ const Item = ({data}) => {
     const navigation = useNavigation();
 
     const handlePress = () => {
+        console.log("handlePressItem",data);
         switch(data.type){
             case 'single':
             case 'album':
@@ -106,13 +107,14 @@ const styles = StyleSheet.create({
         backgroundColor: Colors.Jet,
         paddingHorizontal: 20,
         paddingVertical: 20,
-        marginLeft: Platform.OS == 'web' ? 30 : 10,
-        marginRight: Platform.OS == 'web' ? 0 : 10,
+        marginLeft: Platform.OS == 'web' ? 20 : 10,
+        marginRight: Platform.OS == 'web' ? 20 : 10,
         borderRadius: 15,
         maxWidth: Platform.OS === 'web' ? 200 : null,
         width: Platform.OS !== 'web' ? 390 : null,
         transition: 'background-color 0.3s ease',
         marginBottom: Platform.OS == 'web' ? 30 : 20,
+        boxShadow: "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
     },
     item: {
         display:'flex',

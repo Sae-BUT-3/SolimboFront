@@ -6,6 +6,8 @@ import ModifyForm from "./ModifyForm";
 import { FontAwesome } from "@expo/vector-icons";
 import modalStyle from "../../../style/modalStyle";
 import { useNavigation, useRoute } from "@react-navigation/native";
+import screenStyle from "../../../style/screenStyle";
+
 function ModifyProfile({}) {
   const [data, setData] = useState([]);
   const navigation = useNavigation();
@@ -63,8 +65,8 @@ function ModifyProfile({}) {
   }, []);
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
+    <View style={screenStyle.container}>
+      <View style={screenStyle.header}>
         <FontAwesome
           name="chevron-left"
           size={25}
@@ -93,10 +95,6 @@ function ModifyProfile({}) {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: Colors.Licorice,
-  },
   text: {
     fontSize: 20,
     color: Colors.White,
@@ -109,24 +107,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     backgroundColor: Colors.Onyx,
     marginBottom: 15,
-  },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingLeft: 10,
-    paddingRight: 10,
-    paddingBottom: 20,
-    paddingTop: Platform.OS === "web" ? 25 : 55,
-    position: "relative",
-    top: 0,
-    left: 0,
-    right: 0,
-    zIndex: 1,
-    borderBottomWidth: 1,
-    backgroundColor: "rgba(43, 43, 43, 0.3)",
-    marginBottom: 25,
-    borderBottomColor: Colors.Onyx,
   },
   albumContainer: {
     flex: 1,

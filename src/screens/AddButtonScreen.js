@@ -89,13 +89,14 @@ const AddButtonScreen = () => {
                         contentContainerStyle={
                             { flex: 1, justifyContent: 'flex-start', gap: 5, padding: 15, alignItems: 'center'}
                         }
+                        ListHeaderComponentStyle={{marginLeft: 30, alignItems: 'center'}}
                         style={{marginTop: 15}}
                         keyExtractor={(item, index) => index.toString()}  // Clé unique pour chaque élément
                         ListEmptyComponent={messageText && <Text style={modalStyle.messageText}>{messageText}</Text>}
                         ListHeaderComponent={<Searchbar filters={filter} keyPressHandler={handleSearch} includeCancelButton={true} />}
                     />
                     ) : (
-                    <View style={modalStyle.reviewContainer}>
+                    <View style={[modalStyle.reviewContainer, {marginTop: 10}]}>
                         <View style={{ gap: 10, justifyContent: 'center', alignItems: 'center'}}>
                             <Image
                                 source={{ uri: musicItem.imageURL || require('../assets/images/profil.png') }}

@@ -5,7 +5,6 @@ import {
   Image,
   StyleSheet,
   useWindowDimensions,
-  TouchableOpacity,
   Pressable,
 } from "react-native";
 import { Switch } from "react-native-switch";
@@ -34,6 +33,52 @@ const Update = ({ user, spotify }) => {
   const { logout } = useAuth();
   const navigation = useNavigation();
   const { t } = useTranslation();
+  const styles = StyleSheet.create({
+    buttonText: {
+      color: Colors.White,
+      marginBottom: 10,
+    },
+    input: {
+      height: 40,
+      borderColor: "gray",
+      borderWidth: 1,
+      marginBottom: 10,
+      paddingLeft: 8,
+    },
+    divider: {
+      height: 2,
+      borderColor: Colors.Silver,
+      marginVertical: 10,
+    },
+    updateContainer: {
+      justifyContent: "center",
+    },
+    updateButtonsContainer: {
+      justifyContent: "space-between",
+      flexDirection: "row",
+      alignItems: "baseline",
+      flexWrap: "wrap",
+      gap: 20,
+    },
+    centeredContainer: {
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    actionButtonsContainer: {
+      flexDirection: "row",
+      justifyContent: "center",
+    },
+    actionButton: {
+      width: 120,
+    },
+    cancelButton: {
+      backgroundColor: Colors.Red,
+      width: 120,
+    },
+    icon: {
+      paddingRight: 10,
+    },
+  });
   const handleResetPassword = () => {
     setShowPasswordInput(!showPasswordInput);
   };
@@ -77,16 +122,8 @@ const Update = ({ user, spotify }) => {
   };
 
   return (
-    <View style={{ justifyContent: "center" }}>
-      <View
-        style={{
-          justifyContent: "space-between",
-          flexDirection: "row",
-          alignItems: "baseline",
-          flexWrap: "wrap",
-          gap: 20,
-        }}
-      >
+    <View style={styles.updateContainer}>
+      <View style={styles.updateButtonsContainer}>
         {spotify && (
           <Pressable onPress={handleUpdateEmail}>
             <Text style={styles.buttonText}>{t("auth.updateemail")}</Text>
@@ -111,7 +148,7 @@ const Update = ({ user, spotify }) => {
         </Pressable>
       </View>
 
-      <View style={{ justifyContent: "center", alignItems: "center" }}>
+      <View style={styles.centeredContainer}>
         {showEmailInput && (
           <>
             <BasicInput
@@ -123,16 +160,16 @@ const Update = ({ user, spotify }) => {
               value={email}
               onChangeText={setEmail}
             />
-            <View style={{ flexDirection: "row", justifyContent: "center" }}>
+            <View style={styles.actionButtonsContainer}>
               <Pressable
-                style={[pressableBasicStyle.button, { width: 120 }]}
+                style={[pressableBasicStyle.button,  styles.actionButton]}
                 onPress={handleSubmitEmail}
               >
                 <FontAwesome
                   size={20}
                   name="pencil"
                   color={Colors.White}
-                  style={{ paddingRight: 10 }}
+                  style={styles.icon}
                 />
                 <Text style={pressableBasicStyle.button_text}>
                   {t("common.modify")}
@@ -141,7 +178,7 @@ const Update = ({ user, spotify }) => {
               <Pressable
                 style={[
                   pressableBasicStyle.button,
-                  { backgroundColor: Colors.Red, width: 120 },
+                  styles.cancelButton,
                 ]}
                 onPress={() => setShowEmailInput(false)}
               >
@@ -149,7 +186,7 @@ const Update = ({ user, spotify }) => {
                   size={20}
                   name="close"
                   color={Colors.White}
-                  style={{ paddingRight: 10 }}
+                  style={styles.icon}
                 />
                 <Text style={pressableBasicStyle.button_text}>
                   {t("common.cancel")}
@@ -167,16 +204,16 @@ const Update = ({ user, spotify }) => {
               onChangeText={setPassword}
               value={password}
             />
-            <View style={{ flexDirection: "row", justifyContent: "center" }}>
+            <View style={styles.actionButtonsContainer}>
               <Pressable
-                style={[pressableBasicStyle.button, { width: 120 }]}
+                style={[pressableBasicStyle.button, styles.actionButton]}
                 onPress={handleSubmitPassword}
               >
                 <FontAwesome
                   size={20}
                   name="pencil"
                   color={Colors.White}
-                  style={{ paddingRight: 10 }}
+                  style={styles.icon}
                 />
                 <Text style={pressableBasicStyle.button_text}>
                   {t("common.modify")}
@@ -185,7 +222,7 @@ const Update = ({ user, spotify }) => {
               <Pressable
                 style={[
                   pressableBasicStyle.button,
-                  { backgroundColor: Colors.Red, width: 120 },
+                  styles.cancelButton,
                 ]}
                 onPress={() => setShowPasswordInput(false)}
               >
@@ -193,7 +230,7 @@ const Update = ({ user, spotify }) => {
                   size={20}
                   name="close"
                   color={Colors.White}
-                  style={{ paddingRight: 10 }}
+                  style={styles.icon}
                 />
                 <Text style={pressableBasicStyle.button_text}>
                   {t("common.cancel")}
@@ -318,6 +355,7 @@ function ModifyForm({ user, checkPseudo, handleModify, isModify, setModify }) {
     imageContainer: {
       position: "relative",
       marginBottom: 10,
+      marginTop: 20,
       backgroundColor: Colors.Licorice,
     },
     image: {
@@ -345,6 +383,50 @@ function ModifyForm({ user, checkPseudo, handleModify, isModify, setModify }) {
       flexDirection: "row",
       justifyContent: "space-between",
     },
+    buttonText: {
+      color: Colors.White,
+      marginBottom: 10,
+    },
+    input: {
+      height: 40,
+      borderColor: "gray",
+      borderWidth: 1,
+      marginBottom: 10,
+      paddingLeft: 8,
+    },
+    divider: {
+      height: 2,
+      borderColor: Colors.Silver,
+      marginVertical: 10,
+    },
+    updateContainer: {
+      justifyContent: "center",
+    },
+    updateButtonsContainer: {
+      justifyContent: "space-between",
+      flexDirection: "row",
+      alignItems: "baseline",
+      flexWrap: "wrap",
+      gap: 20,
+    },
+    centeredContainer: {
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    actionButtonsContainer: {
+      flexDirection: "row",
+      justifyContent: "center",
+    },
+    actionButton: {
+      width: 120,
+    },
+    cancelButton: {
+      backgroundColor: Colors.Red,
+      width: 120,
+    },
+    icon: {
+      paddingRight: 10,
+    },
   });
 
   return (
@@ -352,7 +434,7 @@ function ModifyForm({ user, checkPseudo, handleModify, isModify, setModify }) {
       <View style={styles.imageContainer}>
         <Image style={styles.image} source={{ uri: uri }} />
         {isModify && (
-          <TouchableOpacity
+          <Pressable
             onPress={handleImagePickerPress}
             style={[styles.image, styles.imageChangeContainer]}
             onMouseEnter={() => setImageHovered(true)}
@@ -362,7 +444,7 @@ function ModifyForm({ user, checkPseudo, handleModify, isModify, setModify }) {
               style={styles.imageChange}
               source={require("../../../assets/images/photo.png")}
             />
-          </TouchableOpacity>
+          </Pressable>
         )}
       </View>
       <Switch
@@ -413,23 +495,23 @@ function ModifyForm({ user, checkPseudo, handleModify, isModify, setModify }) {
         disabled={!isModify}
       />
       {isModify && (
-        <View style={{ flexDirection: "row", justifyContent: "center" }}>
+        <View style={styles.actionButtonsContainer}>
           <Pressable
-            style={[pressableBasicStyle.button, { width: 150 }]}
+            style={[pressableBasicStyle.button, styles.actionButton]}
             onPress={handleSubmit}
           >
             <FontAwesome
               size={20}
               name="pencil"
               color={Colors.White}
-              style={{ paddingRight: 10 }}
+              style={styles.icon}
             />
             <Text style={pressableBasicStyle.button_text}>Modifier</Text>
           </Pressable>
           <Pressable
             style={[
               pressableBasicStyle.button,
-              { backgroundColor: Colors.Red, width: 150 },
+              styles.cancelButton,
             ]}
             onPress={() => setModify(false)}
           >
@@ -437,7 +519,7 @@ function ModifyForm({ user, checkPseudo, handleModify, isModify, setModify }) {
               size={20}
               name="close"
               color={Colors.White}
-              style={{ paddingRight: 10 }}
+              style={styles.icon}
             />
             <Text style={pressableBasicStyle.button_text}>Annuler</Text>
           </Pressable>
@@ -447,24 +529,5 @@ function ModifyForm({ user, checkPseudo, handleModify, isModify, setModify }) {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  buttonText: {
-    color: Colors.White,
-    marginBottom: 10,
-  },
-  input: {
-    height: 40,
-    borderColor: "gray",
-    borderWidth: 1,
-    marginBottom: 10,
-    paddingLeft: 8,
-  },
-  divider: {
-    height: 2,
-    borderColor: Colors.Silver,
-    marginVertical: 10,
-  },
-});
 
 export default ModifyForm;

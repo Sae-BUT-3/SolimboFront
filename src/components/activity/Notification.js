@@ -3,19 +3,16 @@ import { View, Text, Image, Pressable, StyleSheet, Platform } from 'react-native
 import { Colors } from "../../style/color";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { useTranslation } from "react-i18next";
-import { useNavigation } from "@react-navigation/native";
-
-const formatDate = (date) => {
-    const options = { year: "numeric", month: "long", day: "numeric" };
-    return new Date(date).toLocaleDateString("fr-FR", options);
-};
+import { useNavigation } from "@react-navigation/native"
+import Date from "../common/DateT";
+import { widthPercentageToDP as wp} from 'react-native-responsive-screen';
 
 const Notification = ({ data }) => {
     const { t } = useTranslation();
     const navigation = useNavigation();
 
     const [multipleSender, setMultipleSender] = useState(data.sender.length > 1);   
-    const [timestampFormated, setTimestampFormated] = useState(formatDate(data.createdAt));
+    
     const [includeReviewPreview, setIncludeReviewPreview] = useState(data.type === "reply");
     const [textNotification, setTextNotification] = useState("");
 
@@ -71,32 +68,36 @@ const Notification = ({ data }) => {
     }
 
     return (
-        <Pressable style={[styles.container, data?.is_old && styles.isOld]} onPress={handlePress}>
-            <View style={styles.header}>
-                <View style={styles.leftHeader}>
-                    <FontAwesome5 name={typeEnumIcon[data.type]} size={24} color={Colors.CalPolyGreen} style={styles.iconHeader} solid/>
-                    {data.sender.slice(0, 5).map((sender, index) => (
-                        <View key={index} style={styles.sender}>
-                            <Image
-                                source={{ uri: sender.photo }}
-                                style={styles.image}
-                            />
-                        </View>
-                    ))}
+        <Pressable style={[data?.is_old && styles.isOld]} onPress={handlePress}>
+            <View style={styles.container}>
+                <View style={styles.header}>
+                    <View style={styles.leftHeader}>
+                        <FontAwesome5 name={typeEnumIcon[data.type]} size={24} color={Colors.CalPolyGreen} style={styles.iconHeader} solid/>
+                        {data.sender.slice(0, 5).map((sender, index) => (
+                            <View key={index} style={styles.sender}>
+                                <Image
+                                    source={{ uri: sender.photo }}
+                                    style={styles.image}
+                                />
+                            </View>
+                        ))}
+                    </View>
+                    <Text style={styles.date}>
+                        <Date dateString={data.createdAt} />
+                    </Text>
                 </View>
-                <Text style={styles.date}>{timestampFormated}</Text>
-            </View>
-            <View style={styles.content}>
-                <Text style={styles.text}>
-                    <Text style={styles.senderName} > {data.sender[0].pseudo} </Text> 
-                    {textNotification}
-                </Text>
-            </View>
-            {includeReviewPreview && (data?.reply?.description ) && (
-                <View style={styles.footer}>
-                    <Text style={styles.text}>{data?.reply?.description}</Text>
+                <View style={styles.content}>
+                    <Text style={styles.text}>
+                        <Text style={styles.senderName} > {data.sender[0].pseudo} </Text> 
+                        {textNotification}
+                    </Text>
                 </View>
-            )}
+                {includeReviewPreview && (data?.reply?.description ) && (
+                    <View style={styles.footer}>
+                        <Text style={styles.text}>{data?.reply?.description}</Text>
+                    </View>
+                )}
+            </View>
         </Pressable>
     );
 }
@@ -107,6 +108,7 @@ const styles = StyleSheet.create({
         backgroundColor: Colors.Jet,
         padding: 5,
         borderRadius: 10,
+        width:  Platform.OS  == "web" ? wp('85%') : wp('90%'),
     },
     isOld: {
         opacity: 0.5,

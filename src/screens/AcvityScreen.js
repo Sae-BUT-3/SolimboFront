@@ -20,6 +20,8 @@ import Toast from "react-native-toast-message";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../contexts/AuthContext";
 import Notification from "../components/activity/Notification";
+import screenStyle from '../style/screenStyle';
+import { widthPercentageToDP } from 'react-native-responsive-screen';
 
 function ActivityScreen() {
   const [tab, setTab] = useState("1");
@@ -154,6 +156,7 @@ function ActivityScreen() {
         <>
           {tab == "1" && (
             <FlatList
+              scrollEnabled={true}
               data={notifications}
               renderItem={({ item }) => (
                 <View
@@ -168,22 +171,16 @@ function ActivityScreen() {
                 </View>
               )}
               ListEmptyComponent={
-                <View
-                  style={{
-                    justifyContent: "space-around",
-                    gap: 55,
-                    alignItems: "center",
-                  }}
-                >
+                <View style={screenStyle.emptyListContainer} >
                   <Text />
                   <ImageBackground
                     source={require("../assets/images/main_logo_v1_500x500.png")}
-                    style={{ width: 165, height: 165, opacity: 0.3 }}
+                    style={screenStyle.emptyImage}
                   />
-                  <Text style={styles.text}>{t("activity.nonotification")}</Text>
+                  <Text style={screenStyle.text}>{t("activity.nonotification")}</Text>
                 </View>
               }
-              showsVerticalScrollIndicator={false}
+              showsVerticalScrollIndicator={true}
               refreshControl={
                 <RefreshControl
                   refreshing={refreshingNotificatons}
@@ -269,19 +266,13 @@ function ActivityScreen() {
                 </View>
               )}
               ListEmptyComponent={
-                <View
-                  style={{
-                    justifyContent: "space-around",
-                    gap: 55,
-                    alignItems: "center",
-                  }}
-                >
+                <View style={screenStyle.emptyListContainer} >
                   <Text />
                   <ImageBackground
                     source={require("../assets/images/main_logo_v1_500x500.png")}
-                    style={{ width: 165, height: 165, opacity: 0.3 }}
+                    style={screenStyle.emptyImage}
                   />
-                  <Text style={styles.text}>{t("friend.norequest")}</Text>
+                  <Text style={screenStyle.text}>{t("friend.norequest")}</Text>
                 </View>
               }
               showsVerticalScrollIndicator={false}
@@ -303,51 +294,58 @@ function ActivityScreen() {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: Colors.Licorice,
-    flex: 1,
-    paddingTop: 50,
-    gap: 10,
+      flex: 1,
+      backgroundColor: Colors.Licorice,
+      paddingTop: 50,
+      paddingHorizontal: 10,
+      alignItems: 'center'
   },
   tab: {
-    borderRadius: 30,
-    marginLeft: 10,
-    marginRight: 10,
-    backgroundColor: Colors.Jet,
-    justifyContent: "space-between",
-    alignItems: "flex-start",
-    flexDirection: "row",
-    padding: 8,
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: 30,
+      backgroundColor: Colors.Jet,
+      borderRadius: 30,
+      width: widthPercentageToDP('80%'),
   },
   tabButton: {
-    borderRadius: 30,
-    width: 170,
-    padding: 15,
+      borderRadius: 30,
+      width: widthPercentageToDP('35%'),
+      paddingVertical: 15,
+      backgroundColor: Colors.Onyx
   },
   buttonText: {
-    color: Colors.White,
-    fontWeight: "bold",
-    textAlign: "center",
-    fontSize: 16,
+      color: Colors.White,
+      fontWeight: 'bold',
+      textAlign: 'center',
+      fontSize: 16,
   },
-  followButton: {
-    backgroundColor: Colors.SeaGreen,
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 10,
-    shadowColor: Colors.Onyx,
-    shadowOpacity: 0.3,
-    shadowRadius: 3,
-    elevation: Platform.OS === "android" ? 4 : 0,
-    transition: "background-color 0.3s ease",
+  requestContainer: {
+      flexDirection: 'row',
+      justifyContent: 'space-around',
+      alignItems: 'center',
+      paddingVertical: 10,
+      paddingHorizontal: 5,
+      borderBottomWidth: 1,
+      borderBottomColor: Colors.Jet,
   },
-  text: {
-    fontSize: Platform.OS === "web" ? 20 : 16,
-    color: Colors.Celadon,
-    marginBottom: 10,
-    textAlign: "center",
-    textShadowColor: "rgba(0, 0, 0, 0.5)",
-    textShadowOffset: { width: -1, height: 1 },
-    textShadowRadius: 10,
+  buttonsContainer: {
+      flexDirection: 'row',
+      justifyContent: 'center',
+      alignItems: 'center',
+  },
+  button: {
+      backgroundColor: Colors.SeaGreen,
+      borderRadius: 30,
+      padding: 10,
+      marginHorizontal: 5,
+  },
+  activityContainer: {
+      justifyContent: 'center',
+      alignItems: 'center',
+      flex: 1,
+      gap: 20
   },
 });
 

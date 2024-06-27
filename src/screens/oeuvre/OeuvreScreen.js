@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import axiosInstance from "../../api/axiosInstance";
 import {
-  StyleSheet,
   ScrollView,
   Text,
   View,
@@ -9,6 +8,7 @@ import {
   Platform,
   Animated,
   RefreshControl,
+  FlatList,
 } from "react-native";
 import Loader from "../../components/common/Loader";
 import ErrorRequest from "../../components/common/ErrorRequest";
@@ -20,13 +20,15 @@ import {
 } from "@react-navigation/native";
 import { Snackbar } from "react-native-paper";
 import { FontAwesome5 } from "@expo/vector-icons"; // Importation de FontAwesome5
-import OeuvreReview from "../../components/oeuvre/OeuvreReview";
 import Oeuvre from "../../components/oeuvre/Oeuvre";
 import Trackgraphy from "../../components/oeuvre/Trackgraphy";
 import ImagePanel from "../../components/common/ImagePanel";
 import Filter from "../../components/search/Filter";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../../contexts/AuthContext";
+import screenStyle from '../../style/screenStyle';
+import ListReview from "../../components/review/ListReview";
+
 const OeuvreScreen = () => {
   const navigation = useNavigation();
   const { checkLogin } = useAuth();
@@ -38,6 +40,7 @@ const OeuvreScreen = () => {
   const [favoris, setFavoris] = useState(false);
   const [reviews, setReviews] = useState([]);
   const [oeuvre, setOeuvre] = useState([]);
+  const [related, setRelated] = useState([]);
   const [artists, setArtists] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [fail, setFailed] = useState(null);
@@ -57,7 +60,7 @@ const OeuvreScreen = () => {
     setTimeout(() => {
       setRefreshing(false);
     }, 2000);
-  }, []);
+  }, [id]);
 
   const handleClose = () => {
     setResponse(null);
@@ -65,13 +68,18 @@ const OeuvreScreen = () => {
 
     useFocusEffect(
         useCallback(() => {
+            setIsLoading(true);
             updateData();
-        }, [])
+        }, [id])
     );
     const updateData = () => {
+
         axiosInstance.get(`/oeuvre/${id}`)
         .then(response => {
-            if (response.data.oeuvre) setOeuvre(response.data.oeuvre);
+            if (response.data.oeuvre) {
+              setOeuvre(response.data.oeuvre);
+              setRelated(response.data.oeuvre.topTracks);
+            }
             if (response.data.artist) setArtists(response.data.artist);
             if (response.data.oeuvre.tracks) setTracks(response.data.oeuvre.tracks);
             if (response.data.reviewsByTime) setReviews(response.data.reviewsByTime);
@@ -82,6 +90,7 @@ const OeuvreScreen = () => {
     }
 
   useEffect(() => {
+    setIsLoading(true);
     axiosInstance
       .get(`/oeuvre/${id}`)
       .then((response) => {
@@ -97,7 +106,7 @@ const OeuvreScreen = () => {
         setIsLoading(false);
       })
       .catch((e) => setFailed(e.response.data));
-  }, []);
+  }, [id]);
 
   const [scrollY] = useState(new Animated.Value(0));
 
@@ -111,7 +120,7 @@ const OeuvreScreen = () => {
   }
 
     return (
-        <View style={styles.container}>
+        <View style={screenStyle.container}>
     {isLoading ? (<Loader />) : (
         <>
             <ScrollView
@@ -124,34 +133,44 @@ const OeuvreScreen = () => {
                     <Oeuvre data={oeuvre} artists={artists} favoris={favoris} likeUser={like} setResponse={setResponse} show={handleShowAll} />
                 </View>
                 { (artists.length > 1 && showAll) && <ImagePanel avatars={artists} type={'artist'} show={setShowAll} onRefresh={updateData}/>}
-                <ScrollView
-                    scrollEventThrottle={16}
-                >
-                    { type !== 'track' && (<Trackgraphy items={tracks} id={id} />)}
-                    <View style={[styles.sectionFilter,  {marginBottom: 25}]}>
-                        <Text style={styles.sectionTitle}>Récentes reviews</Text>
-                        { (reviews && reviews.length > 3 && Platform.OS === 'web') &&
-                            <Pressable onPress={() => { navigation.navigate('review', { id }) }}>
-                                <Text style={styles.buttonText}>Afficher plus</Text>
-                            </Pressable>}
+                { type !== 'track' && (<Trackgraphy items={tracks} id={id} />)}
+                <View style={[screenStyle.sectionFilter,  {marginBottom: 25}]}>
+                    <Text style={screenStyle.sectionTitle}>Récentes reviews</Text>
+                    { (reviews && reviews.length > 3 && Platform.OS === 'web') &&
+                        <Pressable onPress={() => { navigation.navigate('review', { id }) }}>
+                            <Text style={screenStyle.buttonText}>Afficher plus</Text>
+                        </Pressable>}
+                </View>
+                {reviews && reviews.length > 3 && <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 10,marginBottom: 25, marginLeft: 30}}>
+                    <FontAwesome5 name="filter" size={20} color={Colors.SeaGreen} />
+                    <Filter 
+                        onPressHandler={()=>{setFilter(!filter)}}
+                        text={"Suivis uniquement"}
+                    />
+                </View>}
+                <ListReview items={reviews.filter(item => {
+                        if(filter) 
+                            return item.made_by_friend
+                        return 1
+                    })} id={id} 
+                />  
+                {related.length > 0 && (
+                    <View style={screenStyle.sectionFilter}>
+                        <Text style={screenStyle.sectionTitle}>Plus de contenus </Text>
                     </View>
-                    {reviews && reviews.length > 3 && <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 10,marginBottom: 25, marginLeft: 30}}>
-                        <FontAwesome5 name="filter" size={20} color={Colors.SeaGreen} />
-                        <Filter 
-                            onPressHandler={()=>{setFilter(!filter)}}
-                            text={"Suivis uniquement"}
-                        />
-                    </View>}
-                    <OeuvreReview items={reviews.filter(item => {
-                            if(filter) 
-                                return item.made_by_friend
-                            return 1
-                        })} id={id} 
-                    />  
-                </ScrollView>
+                )}
+                <FlatList
+                    data={related.slice(0, 5)}
+                    renderItem={({ item }) => (
+                        <Item data={item} />
+                    )}
+                    keyExtractor={(item, index) => index.toString()}
+                    horizontal={Platform.OS === 'web'}
+                    showsHorizontalScrollIndicator={false}
+                />
             </ScrollView>
       
-            <View style={styles.titleHeader}>
+            <View style={screenStyle.titleHeader}>
                 <Pressable onPress={() => { navigation.goBack() }}>
                     <FontAwesome5 name="chevron-left" size={25} color={Colors.White} />
                 </Pressable>
@@ -173,49 +192,5 @@ const OeuvreScreen = () => {
 </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: Colors.Licorice,
-    color: Colors.White,
-  },
-  sectionTitle: {
-    color: Colors.SeaGreen,
-    fontWeight: "bold",
-    fontSize: Platform.OS === "web" ? 35 : 27,
-    textShadowColor: "rgba(0, 0, 0, 0.5)",
-    textShadowOffset: { width: -1, height: 1 },
-    textShadowRadius: 10,
-  },
-  sectionFilter: {
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginLeft: 20,
-    marginRight: 15,
-    marginBottom: 20,
-    alignItems: "center",
-  },
-  buttonText: {
-    color: Colors.White,
-    fontWeight: "bold",
-    marginRight: 30,
-    fontSize: 16,
-  },
-  titleHeader: {
-    flexDirection: "row",
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    alignItems: "center",
-    justifyContent: "space-between",
-    zIndex: 1,
-    paddingTop: Platform.OS === "web" ? 10 : 45,
-    paddingLeft: 10,
-    paddingBottom: 20,
-  },
-});
 
 export default OeuvreScreen;
