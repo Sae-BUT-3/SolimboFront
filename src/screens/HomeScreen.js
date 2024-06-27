@@ -89,6 +89,7 @@ const HomeScreen = () => {
 
   return (
     <View style={styles.container}>
+       {Platform.OS !== 'web' && (
       <View style={styles.header}>
         <View style={{ flexDirection: "row", alignItems: "center" }}>
           <Image
@@ -111,6 +112,7 @@ const HomeScreen = () => {
           />
         </Pressable>
       </View>
+      )}
       <FlatList
         data={reviews}
         keyExtractor={(item, index) => index.toString()}
