@@ -30,6 +30,8 @@
   },
   "common": {
     "confirm": "Confirm",
+    "morecontent": "More content ",
+    "typepseudo": "Enter your pseudo",
     "close": "Close",
     "refreshing": "Refreshing...",
     "displaymore": "Show more",
@@ -51,6 +53,7 @@
     "cancel": "Cancel",
     "return": "Return",
     "modify": "Modify",
+    "topost": "Post",
     "posts": "Posts",
     "favorites": "Favorites",
     "share": "Share"
@@ -75,7 +78,12 @@
   "review": {
     "plurialtitle": "Reviews",
     "title(s)": "Review(s)",
+    "writenew": "Write a review...",
+    "search": "Search for a music or artist to write a review",
+    "noresult":"No results for this search",
     "newreview": "Recent reviews",
+    "valid": "✅  Your review has been successfully posted.",
+    "invalid": "❌  Your review could not be posted.",
     "noreview": "No reviews yet, be the first to write a review!",
     "noreview2": "No reviews available for now.",
     "subscribeinvitation": "Subscribe to artists or users to follow the latest reviews!",
@@ -107,6 +115,7 @@
   },
   "search": {
     "search": "Search for your artists, music, or friends",
+    "search1": "Search...",
     "noresult": "No results for this search"
   },
   "activity": {

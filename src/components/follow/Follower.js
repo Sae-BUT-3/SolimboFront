@@ -7,13 +7,13 @@ import { FontAwesome } from '@expo/vector-icons';
 import GestureRecognizer from 'react-native-swipe-gestures';
 import Tokenizer from '../../utils/Tokenizer';
 import screenStyle from '../../style/screenStyle';
-
+import { useTranslation } from 'react-i18next';
 const Follower = ({ id, type, isVisible }) => {
     const [searchQuery, setSearchQuery] = useState('');
     const [data, setData] = useState([]);
     const [isModalVisible, setIsModalVisible] = useState(true);
     const [currentUser, setCurrentUser] = useState({});
-
+    const { t } = useTranslation();
     const getData = async () => {
         setCurrentUser(await Tokenizer.getCurrentUser());
     };
@@ -60,7 +60,7 @@ const Follower = ({ id, type, isVisible }) => {
                     </View>
                     <View style={styles.panelContent}>
                         <Searchbar
-                            placeholder="Rechercher..."
+                            placeholder={t("search.search")}
                             onChangeText={setSearchQuery}
                             value={searchQuery}
                             iconColor={Colors.White}
@@ -87,7 +87,7 @@ const Follower = ({ id, type, isVisible }) => {
                                             onPress={() => handleFollowToggle(item.areFriends, item.id_utilisateur)}
                                         >
                                             <Text style={styles.buttonText}>
-                                                {item.areFriends ? 'Suivi(e)' : '+ Suivre'}
+                                                {item.areFriends ? t("friend.followed") : t("friend.follow")}
                                             </Text>
                                         </Pressable>
                                     )}

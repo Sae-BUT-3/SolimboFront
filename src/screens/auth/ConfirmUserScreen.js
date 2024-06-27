@@ -123,7 +123,7 @@ function ConfirmUserScreen({ route, navigation }) {
         <View style={[commonStyles.columnCenterContainer]}>
           <View style={[commonStyles.centerW50percent]}>
             <View style={[commonStyles.row]}>
-              <Text style={[commonStyles.text]}>Indiquez votre pseudo</Text>
+              <Text style={[commonStyles.text]}>{t("common.typepseudo")}</Text>
             </View>
             <View style={[commonStyles.row]}>
               <BasicInput

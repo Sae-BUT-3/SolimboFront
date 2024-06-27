@@ -135,10 +135,10 @@ const OeuvreScreen = () => {
                 { (artists.length > 1 && showAll) && <ImagePanel avatars={artists} type={'artist'} show={setShowAll} onRefresh={updateData}/>}
                 { type !== 'track' && (<Trackgraphy items={tracks} id={id} />)}
                 <View style={[screenStyle.sectionFilter,  {marginBottom: 25}]}>
-                    <Text style={screenStyle.sectionTitle}>Récentes reviews</Text>
+                    <Text style={screenStyle.sectionTitle}>{t("review.newreview")}</Text>
                     { (reviews && reviews.length > 3 && Platform.OS === 'web') &&
                         <Pressable onPress={() => { navigation.navigate('review', { id }) }}>
-                            <Text style={screenStyle.buttonText}>Afficher plus</Text>
+                            <Text style={screenStyle.buttonText}>{t("common.displaymore")}</Text>
                         </Pressable>}
                 </View>
                 {reviews && reviews.length > 3 && <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 10,marginBottom: 25, marginLeft: 30}}>
@@ -156,7 +156,7 @@ const OeuvreScreen = () => {
                 />  
                 {related.length > 0 && (
                     <View style={screenStyle.sectionFilter}>
-                        <Text style={screenStyle.sectionTitle}>Plus de contenus </Text>
+                        <Text style={screenStyle.sectionTitle}>{t("common.morecontent")}</Text>
                     </View>
                 )}
                 <FlatList
@@ -179,7 +179,7 @@ const OeuvreScreen = () => {
                 visible={response !== null}
                 onDismiss={handleClose}
                 action={{
-                    label: 'Fermer',
+                    label: t('common.close'),
                     onPress: handleClose
                 }}
                 duration={Snackbar.DURATION_MEDIUM}

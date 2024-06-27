@@ -3,7 +3,6 @@ import { View, Text } from 'react-native';
 import PressableBasic from '../../../components/pressables/PressableBasic';
 import BasicInput from '../../../components/form/BasicInput';
 import commonStyles from '../../../style/commonStyle';
-import styles from './styles';
 import { useTranslation } from 'react-i18next';
 
 const ConfirmationCodeForm = ({ onSubmit, error }) => {

@@ -30,6 +30,8 @@
   },
   "common": {
     "confirm": "Confirmer",
+    "morecontent": "Plus de contenu ",
+    "typepseudo": "Entrez votre pseudo",
     "close": "Fermer",
     "refreshing": "Actualisation...",
     "displaymore": "Afficher plus",
@@ -52,6 +54,7 @@
     "return": "Retour",
     "modify": "Modifier",
     "posts": "Posts",
+    "topost": "Poster",
     "favorites": "Favoris",
     "share": "Partager"
   },
@@ -76,8 +79,13 @@
     "plurialtitle": "Reviews",
     "title(s)": "Critique(s)",
     "newreview": "Récentes reviews",
+    "writenew": "Rédiger votre critique...",
     "noreview": "Aucune critique, soyez le premier à rédiger une critique !",
+    "search": "Recherchez une œuvre ou un artiste pour rédiger une critique",
+    "noresult":"Pas de résulat pour cette recherche",
     "noreview2": "Aucune critique disponible pour le moment.",
+    "valid": "✅  Votre critique a bien été postée.",
+    "invalid": "❌  Votre critique n'a pas pu être postée.",
     "subscribeinvitation": "Abonnez-vous à des artistes ou utilisateurs pour suivre les derniers critiques rédigées !",
     "followtoseereview": "Abonnez-vous à cet utilisateur pour pouvoir voir ses critiques.",
     "seeall": "Voir toutes les critiques",
@@ -107,6 +115,7 @@
   },
   "search": {
     "search": "Recherchez vos artistes, musiques ou amis",
+    "search1": "Rechercher...",
     "noresult": "Pas de résulat pour cette recherche"
   },
   "activity": {

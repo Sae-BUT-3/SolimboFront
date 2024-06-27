@@ -141,12 +141,12 @@ const Comment = ({ data, hide }) => {
       t("comment.deleteverification"),
       [
         {
-          text: "Annuler",
+          text: t("common.cancel"),
           onPress: () => t("review.canceldelete"),
           style: "cancel",
         },
         {
-          text: "Supprimer",
+          text: t("common.delete"),
           onPress: () => {
             setActive(false);
             deleteComment();
