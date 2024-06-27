@@ -16,14 +16,15 @@ import Toast, { BaseToast } from 'react-native-toast-message';
 import { useNavigation } from '@react-navigation/native';
 import Tokenizer from '../utils/Tokenizer';
 import { Avatar } from 'react-native-paper';
+import { useTranslation } from 'react-i18next';
+import { t } from 'i18next';
 
 const Drawer = createDrawerNavigator();
 const Tab = createBottomTabNavigator();
 const baseImageURL = "https://merriam-webster.com/assets/mw/images/article/art-wap-article-main/egg-3442-e1f6463624338504cd021bf23aef8441@1x.jpg";
-
 function CustomDrawerContent(props) {
   const [currentUser, setCurrentUser] = useState({});
-
+  const t = useTranslation();
   useEffect(() => {
     const getCurrentUser = async () => {
       setCurrentUser(await Tokenizer.getCurrentUser());
@@ -112,7 +113,7 @@ function TabNavigator() {
           name="Home"
           component={HomeScreen}
           options={{
-            title: 'Accueil',
+            title: t("common.home"),
             drawerIcon: ({ focused, color, size }) => (
               <FontAwesome5 name="home" size={size} color={color} />
             ),
@@ -122,7 +123,7 @@ function TabNavigator() {
           name="Search"
           component={SearchScreen}
           options={{
-            title: 'Rechercher',
+            title: t("common.search"),
             drawerIcon: ({ focused, color, size }) => (
               <FontAwesome5 name="search" size={size} color={color} />
             ),
@@ -132,7 +133,7 @@ function TabNavigator() {
           name="AddButton"
           component={AddButtonScreen}
           options={{
-            title: 'Commenter',
+            title: t("comment.comment"),
             drawerIcon: ({ color, size }) => (
               <FontAwesome5 name="plus" size={size} color={color} />
             ),
@@ -142,7 +143,7 @@ function TabNavigator() {
           name="Activity"
           component={ActivityScreen}
           options={{
-            title: 'Activité',
+            title: t("activity.title"),
             drawerIcon: ({ focused, color, size }) => (
               <FontAwesome5 name="bell" size={size} color={color} />
             ),
@@ -152,7 +153,7 @@ function TabNavigator() {
           name="Profile"
           component={ProfileScreen}
           options={{
-            title: 'Profile',
+            title: t("common.profile"),
             drawerIcon: ({ focused, color, size }) => (
               <Pressable onPress={() => {
                 setPage(1);
@@ -187,7 +188,7 @@ function TabNavigator() {
             name="Home"
             component={HomeScreen}
             options={{
-              title: 'Solimbo - Réseau social de partage de musique',
+              title: t("common.maintitle"),
               tabBarIcon: ({ focused, color, size }) => (
                 <FontAwesome5 name={focused ? 'home' : 'home'} size={size} color={color} />
               ),
@@ -197,7 +198,7 @@ function TabNavigator() {
             name="Search"
             component={SearchScreen}
             options={{
-              title: 'Solimbo - Rechercher',
+              title: t("solimbo.search"),
               tabBarIcon: ({ focused, color, size }) => (
                 <FontAwesome5 name={focused ? 'search' : 'search'} size={size} color={color} />
               ),
@@ -207,7 +208,7 @@ function TabNavigator() {
             name="AddButton"
             component={AddButtonScreen}
             options={{
-              title: 'Solimbo - Commenter une oeuvre',
+              title: t("solimbo.comment"),
               tabBarIcon: ({ color, size }) => (
                 <Pressable
                   style={{
@@ -229,7 +230,7 @@ function TabNavigator() {
             name="Activity"
             component={ActivityScreen}
             options={{
-              title: 'Solimbo - Activité utilisateur',
+              title: t("solimbo.useractivity"),
               tabBarIcon: ({ focused, color, size }) => (
                 <FontAwesome5 name={focused ? 'bell' : 'bell'} size={size} color={color} />
               ),
@@ -239,7 +240,7 @@ function TabNavigator() {
             name="Profile"
             component={ProfileScreen}
             options={{
-              title: 'Solimbo - Profil utilisateur',
+              title: t("solimbo.userprofile"),
               tabBarIcon: ({ focused, color, size }) => (
                 <FontAwesome5 name={focused ? 'user' : 'user'} size={size} color={color} />
               ),

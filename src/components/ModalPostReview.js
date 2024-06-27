@@ -15,7 +15,7 @@ import PointTrait from './common/PointTrait';
 import { Avatar, Divider } from 'react-native-paper';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import Toast from 'react-native-toast-message';
-
+import { useTranslation } from 'react-i18next';
 const ModalPostReview = ({ visible, onClose }) => {
     const [filter, setFilter] = useState([]);
     const [items, setItems] = useState([]);
@@ -26,7 +26,7 @@ const ModalPostReview = ({ visible, onClose }) => {
     const [rating, setRating] = useState(0);
     const [description, setDescription] = useState("");
     const [currentUser, setCurrentUser] = useState({});
-
+    const { t } = useTranslation();
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -47,7 +47,7 @@ const ModalPostReview = ({ visible, onClose }) => {
     const handleSearch = useCallback((query) => {
         if (!query.text.length) {
             setItems([]);
-            setMessageText('Recherchez une œuvre ou un artiste pour rédiger une critique');
+            setMessageText(t("review.search"));
             return;
         }
         const params = {
@@ -59,7 +59,7 @@ const ModalPostReview = ({ visible, onClose }) => {
         axiosInstance.get("/spotify/search", { params })
             .then(response => {
                 setItems(response.data);
-                setMessageText(response.data.length > 0 ? null : 'Pas de résultat pour cette recherche');
+                setMessageText(response.data.length > 0 ? null : t("review.noresult"));
             })
             .catch(error => {
                 console.error("Error searching:", error);
@@ -85,7 +85,7 @@ const ModalPostReview = ({ visible, onClose }) => {
 
             Toast.show({
                 type: 'success',
-                text1: '✅ Votre critique a bien été postée.',
+                text1: t('review.valid'),
                 text1Style: { color: Colors.White }
             });
         })
@@ -97,7 +97,7 @@ const ModalPostReview = ({ visible, onClose }) => {
 
             Toast.show({
                 type: 'error',
-                text1: '❌ Votre critique n\'a pas pu être postée.',
+                text1: t('review.invalid'),
                 text1Style: { color: Colors.White }
             });
         });
@@ -118,7 +118,7 @@ const ModalPostReview = ({ visible, onClose }) => {
                 <View style={modalStyle.modal}>
                     <View style={modalStyle.modalHeader}>
                         <FontAwesome name="close" size={30} color={Colors.Silver} onPress={onClose} />
-                        <Text style={modalStyle.modalTitle}>Rédaction d'une critique</Text>
+                        <Text style={modalStyle.modalTitle}>{t("review.writenew")}</Text>
                         <FontAwesome name="pencil-square-o" size={25} color={Colors.Silver} onPress={onClose} />
                     </View>
                     <Divider style={{ backgroundColor: Colors.BattleShipGray }} />
@@ -186,7 +186,7 @@ const ModalPostReview = ({ visible, onClose }) => {
                                                 enableSwiping={true}
                                             />
                                             <MultilineInput
-                                                placeholder="Rédiger votre critique..."
+                                                placeholder={t("review.writenew")}
                                                 value={description}
                                                 onChangeText={setDescription}
                                                 maxLength={1500}
@@ -197,14 +197,14 @@ const ModalPostReview = ({ visible, onClose }) => {
                                                     onPress={handlePostReview}
                                                 >
                                                     <FontAwesome size={20} name='send-o' color={Colors.White} style={{ paddingRight: 10 }} />
-                                                    <Text style={pressableBasicStyle.button_text}>Poster</Text>
+                                                    <Text style={pressableBasicStyle.button_text}>{t("common.topost")}</Text>
                                                 </Pressable>
                                                 <Pressable
                                                     style={[pressableBasicStyle.button, { backgroundColor: Colors.Red, width: 150 }]}
                                                     onPress={() => { setMusicItem(null); setRating(0); setDescription(""); }}
                                                 >
                                                     <FontAwesome size={20} name='close' color={Colors.White} style={{ paddingRight: 10 }} regular />
-                                                    <Text style={pressableBasicStyle.button_text}>Annuler</Text>
+                                                    <Text style={pressableBasicStyle.button_text}>{t("common.cancel")}</Text>
                                                 </Pressable>
                                             </View>
                                         </View>

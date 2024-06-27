@@ -1,3 +1,8 @@
+# Installer les dépendances
+```
+> npm i
+```
+
 # Build pour android
 
 ```
@@ -15,5 +20,8 @@
 > npm install react-native-keyboard-aware-scroll-view
 > npm install react-native-app-intro-slider
 > npm install react-native-onboarding-swiper
+> npm install react-native-responsive-screen
+> npm install @react-navigation/drawer 
+> npm install react-native-gesture-handler
 ```
 

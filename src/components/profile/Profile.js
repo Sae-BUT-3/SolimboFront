@@ -248,7 +248,7 @@ function Profile({
                 </Text>
               ) : (
                 <Text numberOfLines={1} style={styles.followText}>
-                  Suivi
+                  {t("friend.followed")}
                 </Text>
               )}
             </Pressable>

@@ -7,6 +7,7 @@
     "forgotpassword": "Forgot password?",
     "noaccount": "No account yet?",
     "signup": "Sign up",
+    "connection" : "Log in",
     "loginwithspotify": "Login with Spotify",
     "updatepassword": "Change my password",
     "updateemail": "Change my email",
@@ -18,9 +19,22 @@
       "alreadytaken": "Username is already taken",
       "aliaslength": "Alias must be at least 3 characters long",
       "pseudolength": "Username must be at least 3 characters long"
-    }
+    },
+    "entercode": "Enter the code received by email",
+    "confirmcode": "Confirm the code",
+    "createaccount": "Create an account",
+    "checkpseudoavailability" : "Checking username availability...",
+    "pseudoalreadyused": "This username is already taken",
+    "password": "Password",
+    "alreadyregistered": "Already registered ?",
+    "spotifyLimit" : "Spotify currently limits the association of accounts with Solimbo.",
+    "registerWithMail" : "Sign up with an email"
   },
   "common": {
+    "confirm": "Confirm",
+    "home": "Home",
+    "morecontent": "More content ",
+    "typepseudo": "Enter your pseudo",
     "close": "Close",
     "refreshing": "Refreshing...",
     "displaymore": "Show more",
@@ -36,12 +50,15 @@
     "popular": "Popular",
     "readmore": "Read more",
     "readless": "Read less",
+    "search": "Search",
     "confirmation": "Confirmation",
     "reply": "Reply",
     "delete": "Delete",
     "cancel": "Cancel",
     "return": "Return",
     "modify": "Modify",
+    "topost": "Post",
+    "profile": "Profil",
     "posts": "Posts",
     "favorites": "Favorites",
     "share": "Share"
@@ -66,7 +83,12 @@
   "review": {
     "plurialtitle": "Reviews",
     "title(s)": "Review(s)",
+    "writenew": "Write a review...",
+    "search": "Search for a music or artist to write a review",
+    "noresult":"No results for this search",
     "newreview": "Recent reviews",
+    "valid": "✅  Your review has been successfully posted.",
+    "invalid": "❌  Your review could not be posted.",
     "noreview": "No reviews yet, be the first to write a review!",
     "noreview2": "No reviews available for now.",
     "subscribeinvitation": "Subscribe to artists or users to follow the latest reviews!",
@@ -93,10 +115,12 @@
     "hide": "Hide replies",
     "display": "Show replies",
     "display2": "Show replies",
-    "deleteverification": "Do you really want to delete this comment?"
+    "deleteverification": "Do you really want to delete this comment?",
+    "nocomment" : "No comments yet, be the first to write a comment!"
   },
   "search": {
     "search": "Search for your artists, music, or friends",
+    "search1": "Search...",
     "noresult": "No results for this search"
   },
   "activity": {
@@ -130,5 +154,12 @@
         "replyCommentSingle": " commented on your comment",
         "followMultiple": " are following you",
         "followSingle": " is following you"
-    }
+    },
+  "solimbo": {
+    "maintitle": "Solimbo - Social music sharing network",
+    "search": "Solimbo - Search",
+    "comment": "Solimbo - Leave a review",
+    "useractivity": "Solimbo - User activity",
+    "userprofile": "Solimbo - User profile"
+  }
 }
