@@ -38,6 +38,7 @@ const HomeScreen = () => {
   const { checkLogin } = useAuth();
   checkLogin(navigation);
   const getData = async () => {
+    setReviews([]);
     setUser(await Tokenizer.getCurrentUser());
   };
 
