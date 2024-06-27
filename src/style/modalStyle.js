@@ -1,5 +1,6 @@
 import { StyleSheet } from 'react-native';
 import { Colors } from './color';
+import { heightPercentageToDP, widthPercentageToDP } from 'react-native-responsive-screen';
 
 const modalStyle = StyleSheet.create({
     modalContainer: {
@@ -11,7 +12,7 @@ const modalStyle = StyleSheet.create({
         marginTop: 60,
         borderRadius: 30,
         padding: 20,
-        height : '100%',
+        height : heightPercentageToDP('100%'),
         display: 'flex',
     },
     messageText: {
@@ -50,7 +51,7 @@ const modalStyle = StyleSheet.create({
         marginTop: 5
     },
     musicItemContainer : {
-        width: "100%",
+        width: widthPercentageToDP("100%"),
         maxHeight: 60,
         margin: 5,
     },
@@ -60,7 +61,7 @@ const modalStyle = StyleSheet.create({
         fontSize: 16,
         fontFamily : "inter-regular",
         borderRadius: 10,
-        height: "50%",
+        height: heightPercentageToDP("50%"),
         marginTop: 10,
         marginBottom: 5,
         paddingTop: 15,

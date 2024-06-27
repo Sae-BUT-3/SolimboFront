@@ -86,6 +86,7 @@ const AddButtonScreen = () => {
                                 onPress={() => setMusicItem(item)}
                             />
                         )}
+                        ListHeaderComponentStyle={{alignItems: 'center', justifyContent: 'flex-start', marginLeft: 30}}
                         contentContainerStyle={
                             { flex: 1, justifyContent: 'flex-start', gap: 5, padding: 15, alignItems: 'center'}
                         }
@@ -95,7 +96,7 @@ const AddButtonScreen = () => {
                         ListHeaderComponent={<Searchbar filters={filter} keyPressHandler={handleSearch} includeCancelButton={true} />}
                     />
                     ) : (
-                    <View style={modalStyle.reviewContainer}>
+                    <View style={[modalStyle.reviewContainer, {marginTop: 20}]}>
                         <View style={{ gap: 10, justifyContent: 'center', alignItems: 'center'}}>
                             <Image
                                 source={{ uri: musicItem.imageURL || require('../assets/images/profil.png') }}
