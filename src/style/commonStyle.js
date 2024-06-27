@@ -33,10 +33,18 @@ const commonStyles = StyleSheet.create({
         color: Colors.GreyWhite,
         fontFamily : "inter-semi-bold",
     },
+    textInfo: {
+        fontSize: 16,
+        color: Colors.CalPolyGreen,
+        fontFamily : "inter-semi-bold",
+    },
     textLink: {
         fontSize: 16,
         color: Colors.SeaGreen,
         fontFamily : "inter-semi-bold",
+    },
+    textUnderline: {
+        textDecorationLine: "underline",
     },
     textError: {
         fontSize: 16,
@@ -94,6 +102,11 @@ const commonStyles = StyleSheet.create({
         width: 150,
         height: 150,
         margin: 30,
+    },
+    SpotifynotAvailable: {
+        display: "flex",
+        flexDirection: "column",
+        margin: 40,
     },
 });
 

@@ -27,6 +27,8 @@
     "pseudoalreadyused": "Ce pseudo est déjà pris",
     "password": "Mot de passe",
     "alreadyregistered": "Déjà inscrit ?"
+    "spotifyLimit" : "Spotify limite actuellement l'association de compte avec Solimbo.",
+    "registerWithMail" : "S'inscrire avec un email"
   },
   "common": {
     "confirm": "Confirmer",

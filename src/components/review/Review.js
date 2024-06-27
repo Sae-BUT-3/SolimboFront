@@ -225,6 +225,9 @@ const Review = ({ data}) => {
               <View style={styles.avatarTextContainer}>
                   <Text numberOfLines={1} style={styles.oeuvreName}>{toCapitalCase(data.oeuvre.name)}</Text>
                   <Text style={styles.oeuvreType}>{data.oeuvre.type === 'track' ? 'Titre' : toCapitalCase(data.oeuvre.type)}</Text>
+                  <Pressable onPress={() => navigation.navigate('user', { id: data.utilisateur.id_utilisateur })}>
+                    <Text numberOfLines={1} style={styles.userAlias}>{'@' + data.utilisateur.alias}</Text>
+                </Pressable>
               </View>
           </View>
           <View style={styles.ratingContainer}>
@@ -239,9 +242,6 @@ const Review = ({ data}) => {
                   readonly
               />
               {Platform.OS != 'web' && <PointTrait point={true} />}
-              <Pressable onPress={() => navigation.navigate('user', { id: data.utilisateur.id_utilisateur })}>
-                  <Text numberOfLines={1} style={styles.userAlias}>{'@' + data.utilisateur.alias}</Text>
-              </Pressable>
           </View>
         </View>
         <View style={styles.descriptionContainer}>
@@ -380,11 +380,9 @@ const styles = StyleSheet.create({
       flexWrap: 'nowrap',
   },
   userAlias: {
-      maxWidth: wp('0%'),
       color: Colors.DarkSpringGreen,
-      fontSize: Platform.OS == 'web' ? 20 : 19,
+      fontSize: Platform.OS == 'web' ? 17 : 15,
       fontWeight: 'normal',
-      textAlign: 'right',
       fontFamily : "inter-regular",
   },
   descriptionContainer: {
