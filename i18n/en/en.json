@@ -30,6 +30,7 @@
   },
   "common": {
     "confirm": "Confirm",
+    "home": "Home",
     "morecontent": "More content ",
     "typepseudo": "Enter your pseudo",
     "close": "Close",
@@ -47,6 +48,7 @@
     "popular": "Popular",
     "readmore": "Read more",
     "readless": "Read less",
+    "search": "Search",
     "confirmation": "Confirmation",
     "reply": "Reply",
     "delete": "Delete",
@@ -54,6 +56,7 @@
     "return": "Return",
     "modify": "Modify",
     "topost": "Post",
+    "profile": "Profil",
     "posts": "Posts",
     "favorites": "Favorites",
     "share": "Share"
@@ -149,5 +152,12 @@
         "replyCommentSingle": " commented on your comment",
         "followMultiple": " are following you",
         "followSingle": " is following you"
-    }
+    },
+  "solimbo": {
+    "maintitle": "Solimbo - Social music sharing network",
+    "search": "Solimbo - Search",
+    "comment": "Solimbo - Leave a review",
+    "useractivity": "Solimbo - User activity",
+    "userprofile": "Solimbo - User profile"
+  }
 }
