@@ -18,7 +18,9 @@
       "alreadytaken": "Username is already taken",
       "aliaslength": "Alias must be at least 3 characters long",
       "pseudolength": "Username must be at least 3 characters long"
-    }
+    },
+    "spotifyLimit" : "Spotify currently limits the association of accounts with Solimbo.",
+    "registerWithMail" : "Sign up with an email"
   },
   "common": {
     "close": "Close",

@@ -18,7 +18,9 @@
       "alreadytaken": "Le pseudo est déjà pris",
       "aliaslength": "L'alias doit contenir au moins 3 caractères",
       "pseudolength": "Le pseudo doit contenir au moins 3 caractères"
-    }
+    },
+    "spotifyLimit" : "Spotify limite actuellement l'association de compte avec Solimbo.",
+    "registerWithMail" : "S'inscrire avec un email"
   },
   "common": {
     "close": "Fermer",

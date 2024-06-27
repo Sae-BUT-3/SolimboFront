@@ -10,6 +10,8 @@ import { FontAwesome5 } from "@expo/vector-icons";
 import Tokenizer from "../../utils/Tokenizer";
 import { useTranslation } from "react-i18next";
 function ConfirmUserScreen({ route, navigation }) {
+  const [spotifyNotAvailable, setSpotifyNotAvailable] = useState(true);
+
   const [confirmtoken, setConfirmtoken] = useState("");
   const [user, setUser] = useState({});
   const { code, redirectUri } = route.params;
@@ -122,6 +124,18 @@ function ConfirmUserScreen({ route, navigation }) {
       {user ? (
         <View style={[commonStyles.columnCenterContainer]}>
           <View style={[commonStyles.centerW50percent]}>
+          {spotifyNotAvailable ? (
+            <View style={[commonStyles.row, commonStyles.SpotifynotAvailable]}>
+              <Text style={[commonStyles.text ]}>
+                {t("auth.spotifyLimit")}
+              </Text>
+              <Text style={[commonStyles.text,commonStyles.textLink, commonStyles.textUnderline ]} onPress={() => navigation.navigate("signup")}>
+              {t("auth.registerWithMail")}
+              </Text>
+            </View>
+          ) : 
+          (
+          <>
             <View style={[commonStyles.row]}>
               <Text style={[commonStyles.text]}>Indiquez votre pseudo</Text>
             </View>
@@ -132,6 +146,8 @@ function ConfirmUserScreen({ route, navigation }) {
                 onChangeText={handlePseudoChange}
               />
             </View>
+          </>
+            )}
             {isCheckingPseudo ? (
               <Text>{t("pseudo.checking")}</Text>
             ) : isPseudoAvailable ? (
@@ -151,10 +167,12 @@ function ConfirmUserScreen({ route, navigation }) {
                 </View>
               </>
             )}
+            {!spotifyNotAvailable ? (
             <PressableBasic
               text={t("common.continue")}
               onPress={handleConfirmUser}
             />
+            ) : null}
           </View>
         </View>
       ) : (
