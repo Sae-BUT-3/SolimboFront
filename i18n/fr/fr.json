@@ -26,7 +26,7 @@
     "checkpseudoavailability" : "Vérification de la disponibilité du pseudo...",
     "pseudoalreadyused": "Ce pseudo est déjà pris",
     "password": "Mot de passe",
-    "alreadyregistered": "Déjà inscrit ?"
+    "alreadyregistered": "Déjà inscrit ?",
     "spotifyLimit" : "Spotify limite actuellement l'association de compte avec Solimbo.",
     "registerWithMail" : "S'inscrire avec un email"
   },
