@@ -14,7 +14,7 @@ function SignUpScreen({ navigation }) {
     const [step, setStep] = useState(1);
     const [formData, setFormData] = useState({});
     const [confirmToken, setConfirmToken] = useState('');
-    const t = useTranslation();
+    const { t } = useTranslation();
 
     const { signInViaToken } = useAuth();
 

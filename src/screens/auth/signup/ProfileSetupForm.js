@@ -16,7 +16,7 @@ const ProfileSetUpForm = ({ onSubmit, errors }) => {
     const [isPseudoAvailable, setIsPseudoAvailable] = useState(true);
     const [pseudoCheckTimeout, setPseudoCheckTimeout] = useState(null);
 
-    const t = useTranslation();
+    const { t } = useTranslation();
 
     const checkPseudoAvailability = async (pseudo) => {
         setIsCheckingPseudo(true);

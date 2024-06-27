@@ -11,7 +11,7 @@ import { useTranslation } from 'react-i18next';
 const SignupForm = ({ onSubmit, errors }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const t = useTranslation();
+    const { t } = useTranslation();
 
     const handleSubmit = () => {
         onSubmit({ email, password });

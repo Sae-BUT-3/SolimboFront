@@ -24,7 +24,7 @@ const Tab = createBottomTabNavigator();
 const baseImageURL = "https://merriam-webster.com/assets/mw/images/article/art-wap-article-main/egg-3442-e1f6463624338504cd021bf23aef8441@1x.jpg";
 function CustomDrawerContent(props) {
   const [currentUser, setCurrentUser] = useState({});
-  const t = useTranslation();
+  const { t } = useTranslation();
   useEffect(() => {
     const getCurrentUser = async () => {
       setCurrentUser(await Tokenizer.getCurrentUser());
