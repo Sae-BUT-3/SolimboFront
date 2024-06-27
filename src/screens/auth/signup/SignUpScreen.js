@@ -1,25 +1,20 @@
 import React, { useState } from 'react';
 import { View, Text, Image, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-
 import SignupForm from './SignUpForm';
 import ProfileSetUpForm from './ProfileSetupForm';
 import ConfirmationCodeForm from './ConfirmationCodeForm';
-
 import axiosInstance from '../../../api/axiosInstance';
-
 import commonStyles from '../../../style/commonStyle';
 import authStyle from '../../../style/authStyle';
-
 import ProgressIndicator from '../../../components/form/ProgressIndicator';
-
 import { useAuth } from '../../../contexts/AuthContext';
-
 
 function SignUpScreen({ navigation }) {
     const [step, setStep] = useState(1);
     const [formData, setFormData] = useState({});
     const [confirmToken, setConfirmToken] = useState('');
+    const t = useTranslation();
 
     const { signInViaToken } = useAuth();
 
@@ -116,10 +111,10 @@ function SignUpScreen({ navigation }) {
 
             </View>
             <View style={commonStyles.row} >
-                <Text style={[commonStyles.text, authStyle.noAccount]}>Déja un compte ? </Text>
+                <Text style={[commonStyles.text, authStyle.noAccount]}>{t("auth.alreadyregistered")} </Text>
                 <Text style={commonStyles.textLink} 
                     onPress={() => navigation.navigate('signin')}
-                >Se connecter</Text>
+                >{t("auth.connection")}</Text>
             </View>
         </SafeAreaView>
     );

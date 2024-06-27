@@ -163,7 +163,7 @@ const CommentScreen = () => {
                   marginTop: 30,
                 }}
               >
-                Aucun commentaire, soyez le premier à rédiger un commentaire !
+                {t("comment.nocomment")}
               </Text>
             }
             refreshControl={

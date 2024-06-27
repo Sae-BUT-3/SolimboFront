@@ -7,11 +7,11 @@ import { useNavigation } from "@react-navigation/native";
 import axiosInstance from '../../api/axiosInstance';
 import GestureRecognizer from "react-native-swipe-gestures";
 import screenStyle from "../../style/screenStyle";
-
+import { useTranslation } from 'react-i18next';
 const ImagePanel = ({ avatars, type, show, onRefresh }) => {
   const [isModalVisible, setIsModalVisible] = useState(true);
   const navigation = useNavigation();
-
+  const { t } = useTranslation();
   const closeModal = () => {
     setIsModalVisible(false);
     show(false);
@@ -61,7 +61,7 @@ const ImagePanel = ({ avatars, type, show, onRefresh }) => {
                   </View>
                   <Pressable style={screenStyle.followButton} onPress={() => handleFollow(item)}>
                     <Text style={styles.buttonText}>
-                      {(type === 'user' || item?.type === 'user') || item.doesUserFollow ? 'Suivi(e)' : '+ Suivre'}
+                      {(type === 'user' || item?.type === 'user') || item.doesUserFollow ? t('friend.followed') : t('friend.follow')}
                     </Text>
                   </Pressable>
                 </View>

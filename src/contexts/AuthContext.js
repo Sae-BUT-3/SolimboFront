@@ -46,7 +46,6 @@ export const AuthProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    console.log("test");
     autoSignIn().then(() => setIsLoading(false));
   }, []);
 

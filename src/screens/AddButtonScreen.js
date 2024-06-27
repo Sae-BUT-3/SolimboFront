@@ -18,7 +18,7 @@ import Toast from 'react-native-toast-message';
 import screenStyle from '../style/screenStyle';
 import searchStyle from '../style/searchStyle';
 import { FlatList } from 'react-native';
-
+import { useTranslation } from 'react-i18next';
 const AddButtonScreen = () => {
     const [filter, setFilter] = useState([]);
     const [items, setItems] = useState(null);
@@ -30,7 +30,7 @@ const AddButtonScreen = () => {
     const [rating, setRating] = useState(0);
     const [description, setDescription] = useState("");
     const [currentUser, setUser] = useState({});
-
+    const { t } = useTranslation();
     const getData = async () => {
         setUser(await Tokenizer.getCurrentUser());
     }
@@ -127,7 +127,7 @@ const AddButtonScreen = () => {
                                 enableSwiping={true}
                             />
                             <MultilineInput
-                                placeholder="Rédiger votre critique..."
+                                placeholder={t("review.writenew")}
                                 value={description}
                                 onChangeText={setDescription}
                                 maxLength={1500}
@@ -145,7 +145,7 @@ const AddButtonScreen = () => {
                                             setIsLoading(false);
                                             Toast.show({
                                                 type: 'success',
-                                                text1: '✅  Votre critique a bien été postée.',
+                                                text1: t('review.valid'),
                                                 text1Style: {color: Colors.White}
                                             });
                                         })
@@ -155,14 +155,14 @@ const AddButtonScreen = () => {
                                             setError(error.response.data);
                                             Toast.show({
                                                 type: 'error',
-                                                text1: '❌  Votre critique n\'a pas pu être postée.',
+                                                text1: t('review.invalid'),
                                                 text1Style: {color: Colors.White}
                                             });
                                         })
                                     }}
                                 >
                                     <FontAwesome size={20} name='send-o' color={Colors.White} style={{ paddingRight: 10 }} />
-                                    <Text style={pressableBasicStyle.button_text}>Poster</Text>
+                                    <Text style={pressableBasicStyle.button_text}>{t('common.topost')}</Text>
                                 </Pressable>
                                 <Pressable
                                     style={[pressableBasicStyle.button, { backgroundColor: Colors.Red, width: 150 }]}
@@ -173,7 +173,7 @@ const AddButtonScreen = () => {
                                     }}
                                 >
                                     <FontAwesome size={20} name='close' color={Colors.White} style={{ paddingRight: 10 }} regular />
-                                    <Text style={pressableBasicStyle.button_text}>Annuler</Text>
+                                    <Text style={pressableBasicStyle.button_text}>{t('common.cancel')}</Text>
                                 </Pressable>
                             </View>
                         </View>

@@ -149,9 +149,9 @@ const ArtistScreen = () => {
                         { friendsFollowers.length > 1 && showAll && <ImagePanel avatars={friendsFollowers} type={'user'} show={setShowAll} onRefresh={updateData}/>}
 
                         <View style={screenStyle.sectionFilter}>
-                            <Text style={screenStyle.sectionTitle}>Discographie</Text>
+                            <Text style={screenStyle.sectionTitle}>{t("discography.title")}</Text>
                             {(Platform.OS === 'web' && discography.length > 0) && <Pressable onPress={handlePress}>
-                                <Text style={screenStyle.buttonText}>Afficher plus</Text>
+                                <Text style={screenStyle.buttonText}>{t("commmon.displaymore")}</Text>
                             </Pressable>}
                         </View>
                         <Discography items={discography} id={id} />
