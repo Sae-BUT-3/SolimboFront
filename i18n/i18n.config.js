@@ -62,7 +62,6 @@ i18next
         "path",
         "subdomain",
       ],
-      caches: ["localStorage", "cookie"], // Where to store the detected language
       lookupQuerystring: "lng",
       lookupCookie: "i18next",
       lookupLocalStorage: "i18nextLng",
